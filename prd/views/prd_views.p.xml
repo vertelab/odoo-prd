@@ -32,11 +32,8 @@
       <field name="arch" type="xml">
         <form string="Product Requirement Document">
           <header>
-<!--
-            <button name="button_major_version" string="Major Version" type="object" xclass="oe_highlight" groups="project_prd.group_prd_manager" data-hotkey="m" />
--->
-            <button name="button_major_version" string="Major Version" type="object" xclass="oe_highlight" data-hotkey="m" />
-            <button name="button_minor_version" string="Minor Version" type="object" class="oe_highlight" groups="project_prd.group_prd_manager" data-hotkey="m" />
+            <button name="button_major_version" string="Major Version" type="object" xclass="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
+            <button name="button_minor_version" string="Minor Version" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
             <!--
                  <field name="state" widget="statusbar_duration" options="{'clickable': '1', 'fold_field': 'fold'}" groups="project.group_project_stages" domain="[('company_id', 'in', (company_id, False))]" />
             -->
@@ -80,9 +77,15 @@
                   -->
                   <field name="name" options="{'line_breaks': False}" widget="text" class="o_text_overflow" placeholder="e.g. Office Party" />
                 </h1>
+                
+<!--
                 <field name="summary" />
+-->
               </div>
             </group>
+<group>
+                <field name="tender_id" invisible="document_type != 'procurement'" required="document_type == 'procurement'"/>
+</group>
             <group col="2">
             <group id="c1">
               <field name="parent_id" />

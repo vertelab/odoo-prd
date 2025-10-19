@@ -20,7 +20,7 @@
 ##############################################################################
 
 {
-    'name': 'Project: Product Requirement Document',
+    'name': 'PRD: Product Requirement Document',
     'version': '1.0',
     'summary': 'A Product Requirements Document (PRD) is a formal document that outlines the purpose, features, and requirements.',
     'category': 'Productivity',
@@ -31,7 +31,7 @@
         understanding of the product's goals, functionality, and priorities.
     """,
     'author': 'Vertel AB',
-    'website': 'https://vertel.se/apps/odoo-project/project_prd',
+    'website': 'https://vertel.se/apps/odoo-project/prd',
     'license': 'AGPL-3',
     'contributor': '',
     'maintainer': 'Vertel AB',
@@ -41,12 +41,15 @@
     ],
     'data': [
         # ~ 'data/cron.xml',
-        # ~ 'data/server_action.xml',
+        'data/server_action.xml',
+        'data/odoo_repo.xml',
+        'data/odoo_view_types.xml',
         'views/prd_views.xml',
         'views/prd_function_views.xml',
         'views/prd_requirement_views.xml',
+        'views/prd_configuration_views.xml',
         'security/ir.model.access.csv',
-        # ~ 'security/prd_security.xml',
+        'security/prd_security.xml',
     ],
     'application': True,
 }

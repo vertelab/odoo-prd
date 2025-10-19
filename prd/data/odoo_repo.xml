@@ -1,0 +1,7 @@
+<odoo>
+  <record id="repo_odoo" model="prd.odoo_repo">
+    <field name="name">Odoo</field>
+    <field name="path">addons</field>
+  </record>
+
+</odoo>

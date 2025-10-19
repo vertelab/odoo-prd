@@ -49,6 +49,6 @@
         'security/ir.model.access.csv',
         'views/prd_views.xml',
     ],
-    'application': True,
+    'application': False,
 }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
