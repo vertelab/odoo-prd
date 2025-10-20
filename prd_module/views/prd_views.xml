@@ -7,7 +7,6 @@
       <field name="inherit_id" ref="prd.view_prd_document_search" />
       <field name="arch" type="xml">
         <field name="state" position="after">
-<!--
           <field name="app_module" />
           <field name="app_project" />
           <field name="app_tree" />
@@ -15,16 +14,13 @@
           <field name="app_category" />
           <field name="app_manifest" />
           <field name="app_license" />
--->
         </field>
-<!--
         <filter name="group_by_approved_by" position="after">
           <filter string="App Project" name="group_by_app_project" context="{'group_by':'app_project'}" />
           <filter string="App Tree" name="group_by_app_tree" context="{'group_by':'app_tree'}" />
           <filter string="App Category" name="group_by_app_category" context="{'group_by':'app_category'}" />
           <filter string="App License" name="group_by_app_license" context="{'group_by':'app_license'}" />
         </filter>
--->
       </field>
     </record>
     <!-- Form View -->
@@ -37,18 +33,13 @@
           <button name="button_export_module" string="Export Module" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
         </header>
         <group id="c2" position="inside">
-<!--
           <field name="sequence" />
--->
           <field name="app_module" />
-<!--
           <field name="app_tree" />
           <field name="app_icon" />
           <field name="app_url" />
           <field name="app_banner" />
--->
           <field name="app_summary" />
-<!--
           <field name="app_category" />
           <field name="app_description" />
           <field name="app_manifest" />
@@ -57,13 +48,10 @@
           <field name="user_persona" />
           <field name="use_cases" />
           <field name="dependencies" />
--->
         </group>
         <notebook position="inside">
           <page string="Index-file" id="index">
-<!--
             <field name="app_index" />
--->
           </page>
         </notebook>
       </field>
@@ -75,21 +63,15 @@
             <field name="inherit_id" ref="prd.view_prd_document_tree" />
       <field name="arch" type="xml">
         <list position="inside">
-<!--
           <field name="sequence" optional="view" />
--->
-<!--
           <field name="app_project" optional="hide" invisible="not document_type == 'module'" />
           <field name="app_module" optional="hide" invisible="not document_type == 'module'" />
           <field name="app_tree" optional="hide" invisible="not document_type == 'module'" />
           <field name="app_icon" optional="hide" invisible="not document_type == 'module'" />
           <field name="app_url" optional="hide" invisible="not document_type == 'module'" />
--->
           <field name="app_summary" optional="hide" invisible="not document_type == 'module'" />
-<!--
           <field name="app_category" optional="hide" invisible="not document_type == 'module'" />
           <field name="app_license" optional="hide" invisible="not document_type == 'module'" />
--->
         </list>
       </field>
     </record>

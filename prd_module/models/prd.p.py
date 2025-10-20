@@ -9,35 +9,34 @@ _logger = logging.getLogger(__name__)
 class ProductRequirementDocument(models.Model):
     _inherit = 'prd.document'
     
-    # ~ sequence = fields.Integer(string="Sequence",)
     app_module = fields.Many2one(comodel_name="prd.odoo_module",string="App Module",)
-    # ~ app_project = fields.Many2one(comodel_name='prd.odoo_repo',string="App Project",help="")
-    # ~ app_tree = fields.Char(string="Branch Tree", default="14.0")
-    # ~ app_icon = fields.Image(string="Icon")    
-    # ~ app_url = fields.Char(string="Website", compute="_get_app_url", default="vertel")
-    # ~ app_banner = fields.Image(string="App Banner")
+    app_project = fields.Many2one(comodel_name='prd.odoo_repo',string="App Project",help="")
+    app_tree = fields.Char(string="Branch Tree", default="14.0")
+    app_icon = fields.Image(string="Icon")    
+    app_url = fields.Char(string="Website", compute="_get_app_url", default="vertel")
+    app_banner = fields.Image(string="App Banner")
     app_summary = fields.Char(string="App Summary")
-    # ~ app_category = fields.Many2one('ir.module.category', string="Category", default=1)
-    # ~ app_description = fields.Text(string="App Description", default="The module description goes here.")
-    # ~ app_manifest = fields.Char(string="App Manifest")
-    # ~ app_license = fields.Char(string="App License", default="LGPL-3")
+    app_category = fields.Many2one('ir.module.category', string="Category", default=1)
+    app_description = fields.Text(string="App Description", default="The module description goes here.")
+    app_manifest = fields.Char(string="App Manifest")
+    app_license = fields.Char(string="App License", default="LGPL-3")
     # ~ app_index = fields.Html(string="App Index", translate=html_translate, sanitize_attributes=False,sanitize_form=False, default=_default_description)
-    # ~ app_index = fields.Html(string="App Index", )
-    # ~ app_depends = fields.Many2many(comodel_name='prd.odoo_module',string='Dependensies',help="") # relation|column1|column2
+    app_index = fields.Html(string="App Index", )
+    app_depends = fields.Many2many(comodel_name='prd.odoo_module',string='Dependensies',help="") # relation|column1|column2
 
     def button_export_module(self):
         for prd in self:
             pass
 
 
-    # ~ @api.depends('app_module','app_project')
-    # ~ def _get_app_url(self):	 
-        # ~ pass
-        # ~ for b in self:
-            # ~ if b.app_module:
-               # ~ b.app_url = "https://vertel.se/apps/"+b.app_project.name+"/"+b.app_module.name
-            # ~ else:
-                # ~ b.app_url = False
+    @api.depends('app_module','app_project')
+    def _get_app_url(self):	 
+        pass
+        for b in self:
+            if b.app_module:
+               b.app_url = "https://vertel.se/apps/"+b.app_project.name+"/"+b.app_module.name
+            else:
+                b.app_url = False
 
     def sync_module(self):
         git_url = self.env['ir.config_parameter'].sudo().get_param('GitHubBaseUrl')

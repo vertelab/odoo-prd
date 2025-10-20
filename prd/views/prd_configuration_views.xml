@@ -157,6 +157,12 @@
                         <field name="module_id" />
                         <field name="application" />
                         <field name="repo_id" />
+                        <field name="description"/>
+                        <field name="description_html" />
+                        <field name="shortdesc" />
+                        <field name="icon" />
+                        <field name="icon_image" />
+                        <field name="website" />
                     </group>
                 </sheet>
             </form>

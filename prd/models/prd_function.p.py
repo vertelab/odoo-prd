@@ -2,12 +2,67 @@ from datetime import datetime, timedelta
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError, AccessError
 import logging
+from random import randint
+from odoo.addons.base.models.avatar_mixin import get_hsl_from_seed
+from secrets import choice
+import base64
 
 _logger = logging.getLogger(__name__)
 
+function_icon = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="#875a7b">
+  <circle cx="32" cy="32" r="30" fill="#875a7b" />
+  <g fill="#ffffff">
+    <!-- Central circle -->
+    <circle cx="32" cy="32" r="10"/>
+    <!-- Gear teeth -->
+    <path d="M42 30h4v4h-4zM18 30h4v4h-4zM32 18h4v4h-4zM32 42h4v4h-4zM45.1 45.1l2.8 2.8-2.8 2.8-2.8-2.8zM16.9 45.1l2.8 2.8-2.8 2.8-2.8-2.8zM45.1 16.9l2.8-2.8 2.8 2.8-2.8 2.8zM16.9 16.9l2.8-2.8 2.8 2.8-2.8 2.8z"/>
+  </g>
+</svg>"""
+
+
+class OdooModuleMixin(models.AbstractModel):
+    _name = 'prd.odoo_module.mixin'
+    _description = 'Odoo Module Mixin'
+
+    application = fields.Boolean(string='Application')
+    description = fields.Text(string='Description')
+    description_html = fields.Html(string='Index')
+    icon = fields.Char(string='Icon URL')
+    icon_image = fields.Image(string='Icon')
+    module_id = fields.Many2one(comodel_name='ir.module.module',string="Module",help="")
+    repo_id = fields.Many2one(comodel_name='prd.odoo_repo',string="Repo",help="")
+    summary = fields.Char(string='Summary')
+    shortdesc = fields.Char(string='ShortDesc')
+    technical_name = fields.Char(string='Technical Name')
+    website = fields.Char(string='Website',)
+
+    @api.model
+    def _module2dict(self,module):
+        return {
+            'application':  module.application,
+            'description':  module.description ,
+            'description_html': module.description_html,
+            'icon':         module.icon,
+            'icon_image':   module.icon_image,
+            'name':         module.shortdesc or module.name,
+            'repo_id': self.env.ref('prd.repo_odoo') if 'Odoo S.A.' in module.author else False,
+            'shortdesc':    module.shortdesc,
+            'summary':    module.summary,
+            'technical_name': module.name,
+            'website':      module.website,
+        }
+        
+    @api.onchange('module_id')
+    def _onchange_module_id(self):
+        for record in self:
+            if record.module_id:
+                for key, value in self._module2dict(record.module_id).items():
+                    setattr(record, key, value)
+
+
 class PrdFunction(models.Model):
     _name = 'prd.function'
-    _inherit = ['mermaid.mixin', 'mail.thread', 'mail.activity.mixin']
+    _inherit = ['mermaid.mixin', 'mail.thread', 'mail.activity.mixin','prd.odoo_module.mixin']
     _description = 'PRD Functions'
 
     # models / data / sequrity / sequirity.xml / views / 
@@ -21,7 +76,7 @@ class PrdFunction(models.Model):
     duration_tracking = fields.Float(string='Duration Tracking')
     func_type = fields.Many2one(comodel_name='prd.function_type', string="Type", help="")
     input_data = fields.Text(string="Input")
-    module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Odoo Module",help="")
+    # ~ module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Odoo Module",help="")
     module_prd_id = fields.Many2one(comodel_name='prd.document',string="Product Requirement Document",help="")
     name = fields.Char(string="Name", required=True)
     odoo_view_ids = fields.Many2many(
@@ -46,8 +101,28 @@ class PrdFunction(models.Model):
         readonly=True,
         store=False,
     )
+    color = fields.Integer(default=lambda self: randint(1, 11))
+    image_128 = fields.Image("Image", max_width=128, max_height=128)
+    @api.model
+    def _generate_random_token(self):
+        return ''.join(choice('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ23456789') for _i in range(10))
 
-    
+    uuid = fields.Char('UUID', size=50, default=_generate_random_token, copy=False)
+
+    @api.depends('image_128', 'uuid')
+    def _compute_avatar_128(self):
+        for record in self:
+            record.avatar_128 = record.image_128 or record._generate_avatar()
+
+    def _generate_avatar(self):
+        avatar = function_icon
+        bgcolor = get_hsl_from_seed(self.uuid)
+        avatar = avatar.replace('fill="#875a7b"', f'fill="{bgcolor}"')
+        return base64.b64encode(avatar.encode())
+    avatar_128 = fields.Image("Avatar", max_width=128, max_height=128, compute='_compute_avatar_128')
+  
+
+
 class OdooView(models.Model):
     _name = 'prd.odoo_view'
     _description = 'Odoo View'
@@ -95,36 +170,18 @@ class OdooRepo(models.Model):
 
 class OdooModule(models.Model):
     _name = 'prd.odoo_module'
+    _inherit = ['prd.odoo_module.mixin']
     _description = 'Odoo Module'
 
     name = fields.Char(string='Name', required=True)
-    technical_name = fields.Char(string='Technical Name', required=True)
-    module_id = fields.Many2one(comodel_name='ir.module.module',string="Module",help="")
-    repo_id = fields.Many2one(comodel_name='prd.odoo_repo',string="Repo",help="")
-    application = fields.Boolean(string='Application')
-
-    @api.onchange('module_id')
-    def _onchange_module_id(self):
-        for record in self:
-            if record.module_id:
-                record.technical_name = record.module_id.name
-                record.name = record.module_id.shortdesc or record.module_id.name
-                record.application = record.module_id.application
-                record.repo_id = self.env.ref('prd.repo_odoo') if 'Odoo S.A.' in record.module_id.author else None
-                
+                    
     @api.model
     def get_modules(self):
         for mod in self.env['ir.module.module'].search([]):
             if self.search([('technical_name', '=', mod.name)], limit=1):
                 continue
-            self.create({
-                'name': mod.shortdesc or mod.name,
-                'technical_name': mod.name,
-                'module_id': mod.id,
-                'application': mod.application,
-                'repo_id': ref('prd.repo_odoo') if 'Odoo' in mod.author else None,
-            })
-    
+            self.create(self._module2dict(mod))
+                
 class OdooViewType(models.Model):
     _name = 'prd.odoo_view_type'
     _description = 'Odoo View Type'

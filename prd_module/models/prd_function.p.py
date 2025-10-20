@@ -19,7 +19,8 @@ class PrdFunction(models.Model):
     security_xml = fields.Text(string="Security XML")
     views_filename = fields.Char(string="Views")
     views = fields.Text(string="Views")
-        
+    summary = fields.Char(string='Summary', )
+    
 class OdooBranches(models.Model):
     _name = 'prd.odoo_branches'
     _description = 'Odoo Branches'
