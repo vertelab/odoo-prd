@@ -11,7 +11,7 @@
           <div class="o_field_widget o_stat_info">
             <span class="o_stat_text">User Stories</span>
             <span class="o_stat_value">
-              <field name="user_story_count" />
+              <field name="scrum_us_count" />
             </span>
           </div>
         </button>
@@ -32,14 +32,14 @@
     <field name="inherit_id" ref="prd.view_prd_function_form" />
     <field name="arch" type="xml">
       <field name="func_type" position="after">
-        <field name="task_id" invisible="func_type.implementation_type != 'task'" required="func_type.implementation_type == 'task'" />
+        <field name="task_id" invisible="implementation_type != 'task'" required="implementation_type == 'task'" />
       </field>
       <notebook position="inside">
         <page string="User Stories">
           <field name="scrum_us_ids" context="{'default_func_id': id,}">
             <list string="User Stories" editable="bottom">
               <field name="sequence" widget="handle" />
-              <field name="func_id" context="{'default_prd_id': prd_id}" />
+              <field name="func_id"  invisible="1" />
               <field name="name" />
               <field name="actor_ids" widget="many2many_tags" />
               <field name="project_id" />

@@ -40,7 +40,14 @@ class PrdFunction(models.Model):
         ('done', 'Done')
     ], string="State", default='draft')
     user_id = fields.Many2one(comodel_name='res.users', string="Author", help="")
+    implementation_type = fields.Selection(
+        related="func_type.implementation_type",
+        string="Implementation Type",
+        readonly=True,
+        store=False,
+    )
 
+    
 class OdooView(models.Model):
     _name = 'prd.odoo_view'
     _description = 'Odoo View'

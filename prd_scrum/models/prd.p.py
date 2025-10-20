@@ -23,10 +23,10 @@ class ProductRequirementDocument(models.Model):
                 ('func_id.prd_id', '=', doc.id)
             ])
     
-    scrum_us_count = fields.Integer(compute = '_user_story_count', string="User Stories")
-    def _user_story_count(self):
+    scrum_us_count = fields.Integer(compute = '_scrum_us_count', string="User Stories")
+    def _scrum_us_count(self):
         for p in self:
-            p.user_story_count = len(p.scrum_us_ids)
+            p.scrum_us_count = len(p.scrum_us_ids)
     task_ids = fields.One2many(comodel_name='project.task',compute='_compute_task_ids',string="Tasks",help="") 
 
     @api.depends('function_ids.task_id')  

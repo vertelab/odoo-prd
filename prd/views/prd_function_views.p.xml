@@ -47,8 +47,9 @@
           <group col="2">
             <group id="c1">
               <field name="func_type" />
-              <field name="module_id" invisible="func_type.implementation_type != 'module'" required="func_type.implementation_type == 'module'" />
-              <field name="module_prd_id" invisible="func_type.implementation_type != 'prd'" required="func_type.implementation_type == 'prd'" />
+              <field name="implementation_type" invisible="1" />
+              <field name="module_id" invisible="implementation_type != 'module'" required="implementation_type == 'module'" />
+              <field name="module_prd_id" invisible="implementation_type != 'prd'" required="implementation_type == 'prd'" />
               <field name="user_id" />
               <field name="prd_id" invisible="1" />
               <field name="odoo_view_ids" widget="many2many_tags" />
