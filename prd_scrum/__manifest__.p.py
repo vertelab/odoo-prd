@@ -20,6 +20,7 @@
 ##############################################################################
 
 {
+    'name': 'PRD: with added scrum',
     'summary': 'PRD with added scrum capabilities',
     'category': 'Productivity',
     'description': """
