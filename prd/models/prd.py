@@ -14,6 +14,7 @@ class ProductRequirementDocument(models.Model):
     _name = 'prd.document'
     _inherit = ['mermaid.mixin', 'mail.thread', 'mail.activity.mixin']
     _description = 'Product Requirement Document'
+    _order = "sequence desc, name desc"
 
     duration_tracking = fields.Float(string='Duration Tracking')
     active = fields.Boolean(string='Active', default=True)
@@ -58,6 +59,7 @@ class ProductRequirementDocument(models.Model):
     closed_functions_count = fields.Integer(string="Closed Functions", compute='_compute_functions_counts')
     functions_percentage = fields.Float(string="Functions Completion %", compute='_compute_functions_counts')
     tender_id = fields.Char(string='Tender ID', size=64, trim=True, )
+    sequence = fields.Integer(string='Sequence')
 
     @api.onchange('state')
     def _onchange_state(self):

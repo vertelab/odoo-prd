@@ -98,7 +98,7 @@
                                 <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" />
 
                             </group>
-                            <group id="c2">
+                            <group id="c2" name="c2">
 
 
 
@@ -136,6 +136,7 @@
             <field name="model">prd.document</field>
             <field name="arch" type="xml">
                 <list string="Product Requirement Documents">
+                    <field name="sequence" widget="handle" />
                     <field name="name" />
                     <field name="version" />
                     <field name="state" />

@@ -1,0 +1,83 @@
+from datetime import datetime, timedelta 
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError, ValidationError, AccessError
+import logging
+
+_logger = logging.getLogger(__name__)
+
+class PrdFunction(models.Model):
+    _inherit = 'prd.function'
+
+    models_filename = fields.Char(string="Models")
+    models = fields.Text(string="Models")
+    data_filename = fields.Char(string="Data")
+    controller_filename = fields.Char(string="Controller")
+    controller = fields.Text(string="Controller")
+    data = fields.Text(string="Data")
+    security = fields.Text(string="Security")
+    security_filename = fields.Char(string="Security XML")
+    security_xml = fields.Text(string="Security XML")
+    views_filename = fields.Char(string="Views")
+    views = fields.Text(string="Views")
+        
+class OdooBranches(models.Model):
+    _name = 'prd.odoo_branches'
+    _description = 'Odoo Branches'
+
+    name = fields.Char(string='View Type Name', required=True)
+    active = fields.Boolean(string='Active', default=True)
+
+# ~ class OdooProject(models.Model):
+    # ~ _name = 'prd.odoo_project'
+    # ~ _description = 'Odoo Project'
+
+    # ~ # requirement.txt / requirement.repo
+
+    # ~ name = fields.Char(string='View Type Name', required=True)
+    # ~ url = fields.Char(string='View Type Code', required=True)
+    # ~ description = fields.Text(string='Description')
+    # ~ active = fields.Boolean(string='Active', default=True)
+
+class OdooLicence(models.Model):
+    _name = 'prd.odoo_lincence'
+    _description = 'Odoo Branches'
+
+    name = fields.Char(string='Name', required=True)
+    code = fields.Char(string='Licence Code', required=True)
+    description = fields.Text(string='Description')
+    active = fields.Boolean(string='Active', default=True)
+
+# ~ class OdooModule(models.Model):
+    # ~ _name = 'prd.odoo_module'
+    # ~ _description = 'Odoo Module'
+
+    # ~ # depends in __manifest__
+    # ~ # requirement.repo
+    
+    # ~ name = fields.Char(string='Name', required=True)
+    # ~ repo_id = fields.Many2one(comodel_name='prd.odoo_repo',string="Repo",help="")
+    # ~ description = fields.Text(string='Description')
+    # ~ active = fields.Boolean(string='Active', default=True)
+
+# ~ class OdooRepo(models.Model):
+    # ~ _name = 'prd.odoo_repo'
+    # ~ _description = 'Odoo Repo'
+
+    # ~ # depends in __manifest__
+    # ~ # requirement.repo
+    
+    # ~ name = fields.Char(string='Name', required=True)
+    # ~ url = fields.Char(string='Url', help="git@github.com:vertelab/odoo-contract.git")
+    # ~ path = fields.Char(string='Url', help="/usr/share/odoo-contract",)
+    # ~ description = fields.Text(string='Description')
+    # ~ active = fields.Boolean(string='Active', default=True)
+
+class OdooLibrary(models.Model):
+    _name = 'prd.odoo_library'
+    _description = 'Odoo Library'
+
+    # requitement.txt
+
+    name = fields.Char(string='Name', required=True)
+    description = fields.Text(string='Description')
+    active = fields.Boolean(string='Active', default=True)

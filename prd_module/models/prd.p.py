@@ -9,34 +9,35 @@ _logger = logging.getLogger(__name__)
 class ProductRequirementDocument(models.Model):
     _inherit = 'prd.document'
     
-    sequence = fields.Integer(string="Sequence",)
-    app_module = fields.Many2one(compdel_name="prd.odoo_module",string="App Module",)
-    app_project = fields.Many2one(comodel_name='prd.odoo_project',string="App Project",help="")
-    app_tree = fields.Char(string="Branch Tree", default="14.0")
-    app_icon = fields.Image(string="Icon")    
-    app_url = fields.Char(string="Website", compute="_get_app_url", default="vertel")
-    app_banner = fields.Image(string="App Banner")
+    # ~ sequence = fields.Integer(string="Sequence",)
+    app_module = fields.Many2one(comodel_name="prd.odoo_module",string="App Module",)
+    # ~ app_project = fields.Many2one(comodel_name='prd.odoo_repo',string="App Project",help="")
+    # ~ app_tree = fields.Char(string="Branch Tree", default="14.0")
+    # ~ app_icon = fields.Image(string="Icon")    
+    # ~ app_url = fields.Char(string="Website", compute="_get_app_url", default="vertel")
+    # ~ app_banner = fields.Image(string="App Banner")
     app_summary = fields.Char(string="App Summary")
-    app_category = fields.Many2one('ir.module.category', string="Category", default=1)
-    app_description = fields.Text(string="App Description", default="The module description goes here.")
-    app_manifest = fields.Char(string="App Manifest")
-    app_license = fields.Char(string="App License", default="LGPL-3")
+    # ~ app_category = fields.Many2one('ir.module.category', string="Category", default=1)
+    # ~ app_description = fields.Text(string="App Description", default="The module description goes here.")
+    # ~ app_manifest = fields.Char(string="App Manifest")
+    # ~ app_license = fields.Char(string="App License", default="LGPL-3")
     # ~ app_index = fields.Html(string="App Index", translate=html_translate, sanitize_attributes=False,sanitize_form=False, default=_default_description)
-    app_index = fields.Html(string="App Index", )
-    app_depends = fields.Many2many(comodel_name='prd.odoo_module',string='Dependensies',help="") # relation|column1|column2
+    # ~ app_index = fields.Html(string="App Index", )
+    # ~ app_depends = fields.Many2many(comodel_name='prd.odoo_module',string='Dependensies',help="") # relation|column1|column2
 
     def button_export_module(self):
         for prd in self:
             pass
 
 
-    @api.depends('app_module','app_project')
-    def _get_app_url(self):	 
-        for b in self:
-            if b.app_module:
-               b.app_url = "https://vertel.se/apps/"+b.app_project.name+"/"+b.app_module.name
-            else:
-                b.app_url = False
+    # ~ @api.depends('app_module','app_project')
+    # ~ def _get_app_url(self):	 
+        # ~ pass
+        # ~ for b in self:
+            # ~ if b.app_module:
+               # ~ b.app_url = "https://vertel.se/apps/"+b.app_project.name+"/"+b.app_module.name
+            # ~ else:
+                # ~ b.app_url = False
 
     def sync_module(self):
         git_url = self.env['ir.config_parameter'].sudo().get_param('GitHubBaseUrl')
@@ -150,83 +151,3 @@ class ProductRequirementDocument(models.Model):
             'target': 'new',
             'flags': {'mode': 'readonly'},
         }
-
-
-class PrdFunction(models.Model):
-    _inherit = 'prd.function'
-
-    models_filename = fields.Char(string="Models")
-    models = fields.Text(string="Models")
-    data_filename = fields.Char(string="Data")
-    controller_filename = fields.Char(string="Controller")
-    controller = fields.Text(string="Controller")
-    data = fields.Text(string="Data")
-    security = fields.Text(string="Security")
-    security_filename = fields.Char(string="Security XML")
-    security_xml = fields.Text(string="Security XML")
-    views_filename = fields.Char(string="Views")
-    views = fields.Text(string="Views")
-        
-class OdooBranches(models.Model):
-    _name = 'prd.odoo_branches'
-    _description = 'Odoo Branches'
-
-    name = fields.Char(string='View Type Name', required=True)
-    active = fields.Boolean(string='Active', default=True)
-
-class OdooProject(models.Model):
-    _name = 'prd.odoo_project'
-    _description = 'Odoo Project'
-
-    # requirement.txt / requirement.repo
-
-    name = fields.Char(string='View Type Name', required=True)
-    url = fields.Char(string='View Type Code', required=True)
-    description = fields.Text(string='Description')
-    active = fields.Boolean(string='Active', default=True)
-
-class OdooLicence(models.Model):
-    _name = 'prd.odoo_lincence'
-    _description = 'Odoo Branches'
-
-    name = fields.Char(string='Name', required=True)
-    code = fields.Char(string='Licence Code', required=True)
-    description = fields.Text(string='Description')
-    active = fields.Boolean(string='Active', default=True)
-
-class OdooModule(models.Model):
-    _name = 'prd.odoo_module'
-    _description = 'Odoo Module'
-
-    # depends in __manifest__
-    # requirement.repo
-    
-    name = fields.Char(string='Name', required=True)
-    repo_id = fields.Many2one(comodel_name='prd.odoo_repo',string="Repo",help="")
-    description = fields.Text(string='Description')
-    active = fields.Boolean(string='Active', default=True)
-
-class OdooRepo(models.Model):
-    _name = 'prd.odoo_repo'
-    _description = 'Odoo Repo'
-
-    # depends in __manifest__
-    # requirement.repo
-    
-    name = fields.Char(string='Name', required=True)
-    url = fields.Char(string='Url', help="git@github.com:vertelab/odoo-contract.git")
-    path = fields.Char(string='Url', help="/usr/share/odoo-contract",)
-    description = fields.Text(string='Description')
-    active = fields.Boolean(string='Active', default=True)
-
-
-class OdooLibrary(models.Model):
-    _name = 'prd.odoo_library'
-    _description = 'Odoo Library'
-
-    # requitement.txt
-
-    name = fields.Char(string='Name', required=True)
-    code = fields.Char(string='Licence Code', required=True)
-    description = fields.Text(string='Description')
-    active = fields.Boolean(string='Active', default=True)
