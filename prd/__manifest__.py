@@ -44,6 +44,7 @@
         'data/server_action.xml',
         'data/odoo_repo.xml',
         'data/odoo_view_types.xml',
+        'data/prd_function_types.xml',
         'views/prd_views.xml',
         'views/prd_function_views.xml',
         'views/prd_requirement_views.xml',

@@ -30,14 +30,14 @@
         understanding of the product's goals, functionality, and priorities.
     """,
     'author': 'Vertel AB',
-    'website': 'https://vertel.se/apps/odoo-project/project_prd',
+    'website': 'https://vertel.se/apps/odoo-prd/prd_scrum',
     'license': 'AGPL-3',
     'contributor': '',
     'maintainer': 'Vertel AB',
-    'depends': ['project_prd',
+    'depends': ['prd', 'project_scrum',
     ],
     'data': [
-        'security/ir.model.access.csv',
+        'data/prd_function_types.xml',
         'views/prd_views.xml',
     ],
     'application': False,

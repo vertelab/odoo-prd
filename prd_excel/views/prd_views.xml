@@ -5,11 +5,11 @@
     <record id="view_prd_document_form" model="ir.ui.view">
       <field name="name">prd.document.form</field>
       <field name="model">prd.document</field>
-      <field name="inherit_id" ref="project_prd.view_prd_document_form" />
+      <field name="inherit_id" ref="prd.view_prd_document_form" />
       <field name="arch" type="xml">
         <header position="inside">
 <!--
-          <button name="action_excel_wizard" string="Load Requirements" type="object" class="oe_highlight" groups="project_prd.group_prd_manager" data-hotkey="m" />
+          <button name="action_excel_wizard" string="Load Requirements" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
 -->
           <button name="action_excel_wizard" string="Load Requirements" type="object" class="oe_highlight"  data-hotkey="m" />
         </header>

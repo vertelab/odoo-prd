@@ -47,14 +47,15 @@
           <group col="2">
             <group id="c1">
               <field name="func_type" />
+              <field name="module_id" invisible="func_type.implementation_type != 'module'" required="func_type.implementation_type == 'module'" />
+              <field name="module_prd_id" invisible="func_type.implementation_type != 'prd'" required="func_type.implementation_type == 'prd'" />
               <field name="user_id" />
               <field name="prd_id" invisible="1" />
               <field name="odoo_view_ids" widget="many2many_tags" />
               <field name="category" widget="many2many_tags" />
             </group>
             <group id="c2">
-              <field name="module_id" invisible="func_type.implementation_type != 'module'" required="func_type.implementation_type == 'module'" />
-              <field name="module_prd_id" invisible="func_type.implementation_type != 'prd'" required="func_type.implementation_type == 'prd'" />
+
             </group>
           </group>
           <notebook>

@@ -32,11 +32,11 @@
         understanding of the product's goals, functionality, and priorities.
     """,
     'author': 'Vertel AB',
-    'website': 'https://vertel.se/apps/odoo-project/project_prd',
+    'website': 'https://vertel.se/apps/odoo-prd/prd_module',
     'license': 'AGPL-3',
     'contributor': '',
     'maintainer': 'Vertel AB',
-    'depends': ['project_prd',
+    'depends': ['prd',
     ],
     'data': [
         # ~ 'data/cron.xml',
