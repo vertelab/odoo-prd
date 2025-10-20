@@ -1,107 +1,107 @@
 <odoo>
-  <!-- Search View -->
-  <record id="view_prd_requirement_search" model="ir.ui.view">
-    <field name="name">prd.requirement.search</field>
-    <field name="model">prd.requirement</field>
-    <field name="arch" type="xml">
-      <search string="PRD Requirements">
-        <field name="name" />
-        <field name="priority" />
-        <field name="req_type" />
-        <field name="prd_id" />
-        <field name="partner_id" />
-        <field name="code" />
-        <field name="category" />
-        <filter string="Must" name="must" domain="[('priority','=','must')]" />
-        <filter string="Should" name="should" domain="[('priority','=','should')]" />
-        <filter string="Could" name="could" domain="[('priority','=','could')]" />
-        <filter string="Archived" name="archive" domain="[('active','=',False)]" />
-        <filter name="no_func" string="Requirement without function" domain="[('function_ids','=',False)]" groups="base.group_user" />
-        <group expand="1" string="Group By">
-          <filter string="State" name="group_by_state" context="{'group_by':'state'}" />
-          <filter string="Priority" name="group_by_priority" context="{'group_by':'priority'}" />
-          <filter string="Type" name="group_by_req_type" context="{'group_by':'req_type'}" />
-          <filter string="PRD Document" name="group_by_prd" context="{'group_by':'prd_id'}" />
-          <filter string="Stake Holder" name="group_by_partner" context="{'group_by':'partner_id'}" />
-        </group>
-      </search>
-    </field>
-  </record>
-  <!-- List View -->
-  <record id="view_prd_requirement_tree" model="ir.ui.view">
-    <field name="name">prd.requirement.tree</field>
-    <field name="model">prd.requirement</field>
-    <field name="arch" type="xml">
-      <list string="PRD Requirements">
-        <field name="sequence" widget="handle" />
-        <field name="code" optional="show" />
-        <field name="name" />
-        <field name="priority" optional="show" />
-        <field name="req_type" optional="show" />
-        <field name="state" optional="show" />
-        <field name="function_names" optional="show" />
-        <field name="prd_id" optional="hide" />
-        <field name="partner_id" optional="hide" />
-      </list>
-    </field>
-  </record>
-  <!-- Form View -->
-  <record id="view_prd_requirement_form" model="ir.ui.view">
-    <field name="name">prd.requirement.form</field>
-    <field name="model">prd.requirement</field>
-    <field name="arch" type="xml">
-      <form string="PRD Requirement">
-        <header>
-          <field name="state" widget="statusbar_duration" options="{'clickable': '1', 'fold_field': 'fold'}" />
-        </header>
-        <sheet>
-          <div class="oe_button_box" name="button_box" groups="base.group_user" />
-          <group>
-            <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
-            <div class="oe_title">
-              <h1 class="d-flex flex-row">
-                <field name="code" nolabel="1" class="me-2" placeholder=" 1.1" style="width: 5em; text-align: right;" />
-                <field name="name" options="{'line_breaks': False}" widget="text" class="flex-grow-1 o_text_overflow" placeholder="e.g. Requirement" />
-                <field name="priority" class="ms-3 text-end" style="width: 7em; font-size: 0.7em; line-height: 2;" />
-              </h1>
-            </div>
-          </group>
-          <group col="2">
-            <group id="c1">
-              <field name="category" widget="many2many_tags" />
-              <field name="req_type" />
-              <field name="partner_id" />
-              <field name="prd_id" invisible="1" />
-              <field name="object_id" />
-            </group>
-            <group id="c2" />
-          </group>
-          <notebook>
-            <page string="Description">
-              <field name="description" nolabel="1" />
-            </page>
-            <page string="Comment" id="note">
-              <field name="note" nolabel="1" />
-            </page>
-            <page string="Functions">
-              <field name="function_ids" context="{
+    <!-- Search View -->
+    <record id="view_prd_requirement_search" model="ir.ui.view">
+        <field name="name">prd.requirement.search</field>
+        <field name="model">prd.requirement</field>
+        <field name="arch" type="xml">
+            <search string="PRD Requirements">
+                <field name="name" />
+                <field name="priority" />
+                <field name="req_type" />
+                <field name="prd_id" />
+                <field name="partner_id" />
+                <field name="code" />
+                <field name="category" />
+                <filter string="Must" name="must" domain="[('priority','=','must')]" />
+                <filter string="Should" name="should" domain="[('priority','=','should')]" />
+                <filter string="Could" name="could" domain="[('priority','=','could')]" />
+                <filter string="Archived" name="archive" domain="[('active','=',False)]" />
+                <filter name="no_func" string="Requirement without function" domain="[('function_ids','=',False)]" groups="base.group_user" />
+                <group expand="1" string="Group By">
+                    <filter string="State" name="group_by_state" context="{'group_by':'state'}" />
+                    <filter string="Priority" name="group_by_priority" context="{'group_by':'priority'}" />
+                    <filter string="Type" name="group_by_req_type" context="{'group_by':'req_type'}" />
+                    <filter string="PRD Document" name="group_by_prd" context="{'group_by':'prd_id'}" />
+                    <filter string="Stake Holder" name="group_by_partner" context="{'group_by':'partner_id'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+    <!-- List View -->
+    <record id="view_prd_requirement_tree" model="ir.ui.view">
+        <field name="name">prd.requirement.tree</field>
+        <field name="model">prd.requirement</field>
+        <field name="arch" type="xml">
+            <list string="PRD Requirements">
+                <field name="sequence" widget="handle" />
+                <field name="code" optional="show" />
+                <field name="name" />
+                <field name="priority" optional="show" />
+                <field name="req_type" optional="show" />
+                <field name="state" optional="show" />
+                <field name="function_names" optional="show" />
+                <field name="prd_id" optional="hide" />
+                <field name="partner_id" optional="hide" />
+            </list>
+        </field>
+    </record>
+    <!-- Form View -->
+    <record id="view_prd_requirement_form" model="ir.ui.view">
+        <field name="name">prd.requirement.form</field>
+        <field name="model">prd.requirement</field>
+        <field name="arch" type="xml">
+            <form string="PRD Requirement">
+                <header>
+                    <field name="state" widget="statusbar_duration" options="{'clickable': '1', 'fold_field': 'fold'}" />
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box" groups="base.group_user" />
+                    <group>
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
+                        <div class="oe_title">
+                            <h1 class="d-flex flex-row">
+                                <field name="code" nolabel="1" class="me-2" placeholder=" 1.1" style="width: 5em; text-align: right;" />
+                                <field name="name" options="{'line_breaks': False}" widget="text" class="flex-grow-1 o_text_overflow" placeholder="e.g. Requirement" />
+                                <field name="priority" class="ms-3 text-end" style="width: 7em; font-size: 0.7em; line-height: 2;" />
+                            </h1>
+                        </div>
+                    </group>
+                    <group col="2">
+                        <group id="c1">
+                            <field name="category" widget="many2many_tags" />
+                            <field name="req_type" />
+                            <field name="partner_id" />
+                            <field name="prd_id" invisible="1" />
+                            <field name="object_id" />
+                        </group>
+                        <group id="c2" />
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" nolabel="1" />
+                        </page>
+                        <page string="Comment" id="note">
+                            <field name="note" nolabel="1" />
+                        </page>
+                        <page string="Functions">
+                            <field name="function_ids" context="{
     'default_req_id': id,
     'default_prd_id': prd_id
 }">
-                <list string="Functions" editable="bottom">
-                  <field name="sequence" widget="handle" />
-                  <field name="func_id" context="{
+                                <list string="Functions" editable="bottom">
+                                    <field name="sequence" widget="handle" />
+                                    <field name="func_id" context="{
     'default_prd_id': prd_id
 }" />
-                  <field name="func_type" />
-                  <field name="state" />
-                </list>
-              </field>
-            </page>
-          </notebook>
-        </sheet>
-        <chatter />
-      </form>
-    </field>
-  </record>
+                                    <field name="func_type" />
+                                    <field name="state" />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter />
+            </form>
+        </field>
+    </record>
 </odoo>
