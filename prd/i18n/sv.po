@@ -1,15 +1,1161 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
+# 	* prd
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0-20250826\n"
+"Project-Id-Version: Odoo Server 18.0-20251014\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-27 11:41+0000\n"
-"PO-Revision-Date: 2025-08-27 11:41+0000\n"
+"POT-Creation-Date: 2025-10-20 14:08+0000\n"
+"PO-Revision-Date: 2025-10-20 16:25+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: sv_SE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
-"Plural-Forms: \n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_form
+msgid "1.1"
+msgstr "1.1"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+msgid "<span class=\"o_stat_text\">Functions</span>"
+msgstr "<span class=\"o_stat_text\">Funktioner</span>"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+msgid "<span class=\"o_stat_text\">Requirements</span>"
+msgstr "<span class=\"o_stat_text\">Krav</span>"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__message_needaction
+#: model:ir.model.fields,field_description:prd.field_prd_function__message_needaction
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__message_needaction
+msgid "Action Needed"
+msgstr "Åtgärder krävs"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__active
+#: model:ir.model.fields,field_description:prd.field_prd_function__active
+#: model:ir.model.fields,field_description:prd.field_prd_function_category__active
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__active
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__active
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_category__active
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_type__active
+msgid "Active"
+msgstr "Aktiv"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__activity_ids
+#: model:ir.model.fields,field_description:prd.field_prd_function__activity_ids
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_ids
+msgid "Activities"
+msgstr "Aktiviteter"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__activity_exception_decoration
+#: model:ir.model.fields,field_description:prd.field_prd_function__activity_exception_decoration
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Aktivitet Undantag Dekoration"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__activity_state
+#: model:ir.model.fields,field_description:prd.field_prd_function__activity_state
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_state
+msgid "Activity State"
+msgstr "Aktivitet Stat"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__activity_type_icon
+#: model:ir.model.fields,field_description:prd.field_prd_function__activity_type_icon
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Aktivitetstyp Ikon"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__user_persona
+msgid "Användarbeskrivning"
+msgstr "Användarbeskrivning"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__use_cases
+msgid "Användningsfall"
+msgstr "Användningsfall"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_module__application
+msgid "Application"
+msgstr "Tillämpning"
+
+#. module: prd
+#: model:ir.model.fields.selection,name:prd.selection__prd_document__state__approved
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
+msgid "Approved"
+msgstr "Godkänd"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__approved_by_id
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
+msgid "Approved By"
+msgstr "Godkänd av"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_form
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_form
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
+msgid "Archived"
+msgstr "Arkiverad"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__message_attachment_count
+#: model:ir.model.fields,field_description:prd.field_prd_function__message_attachment_count
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__message_attachment_count
+msgid "Attachment Count"
+msgstr "Antal bifogade filer"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__author_id
+#: model:ir.model.fields,field_description:prd.field_prd_function__user_id
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
+msgid "Author"
+msgstr "Författaren"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_kanban
+msgid "Author:"
+msgstr "Författare:"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_function__category
+#: model:ir.model.fields,help:prd.field_prd_requirement__category
+msgid "Categories"
+msgstr "Kategorier"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_function_category__name
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_category__name
+msgid "Category"
+msgstr "Kategori"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__closed_functions_count
+msgid "Closed Functions"
+msgstr "Slutna funktioner"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__closed_requirements_count
+msgid "Closed Requirements"
+msgstr "Stängda krav"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__code
+msgid "Code"
+msgstr "Kod"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__note
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_form
+msgid "Comment"
+msgstr "Hur gör man"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__company_id
+msgid "Company"
+msgstr "Företag"
+
+#. module: prd
+#: model:ir.ui.menu,name:prd.menu_prd_configuration_root
+msgid "Configuration"
+msgstr "Konfiguration"
+
+#. module: prd
+#: model:ir.model.fields.selection,name:prd.selection__prd_requirement__priority__could
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
+msgid "Could"
+msgstr "Kan"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__create_uid
+#: model:ir.model.fields,field_description:prd.field_prd_function__create_uid
+#: model:ir.model.fields,field_description:prd.field_prd_function_category__create_uid
+#: model:ir.model.fields,field_description:prd.field_prd_function_type__create_uid
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_module__create_uid
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_repo__create_uid
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view__create_uid
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__create_uid
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__create_uid
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_category__create_uid
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_function__create_uid
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_type__create_uid
+msgid "Created by"
+msgstr "Skapad av"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__create_date
+#: model:ir.model.fields,field_description:prd.field_prd_function__create_date
+#: model:ir.model.fields,field_description:prd.field_prd_function_category__create_date
+#: model:ir.model.fields,field_description:prd.field_prd_function_type__create_date
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_module__create_date
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_repo__create_date
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view__create_date
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__create_date
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__create_date
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_category__create_date
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_function__create_date
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_type__create_date
+msgid "Created on"
+msgstr "Skapad den"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__date
+msgid "Date"
+msgstr "Datum"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_kanban
+msgid "Date:"
+msgstr "Datum:"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__dependencies
+msgid "Dependencies"
+msgstr "Beroenden"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__description
+#: model:ir.model.fields,field_description:prd.field_prd_function__description
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__description
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__description
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_type__description
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_form
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_form
+msgid "Description"
+msgstr "Beskrivning"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__mermaid_diagram
+#: model:ir.model.fields,field_description:prd.field_prd_function__mermaid_diagram
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+msgid "Diagram"
+msgstr "Diagram"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+msgid "Diagram Editor"
+msgstr "Diagramredigerare"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__display_name
+#: model:ir.model.fields,field_description:prd.field_prd_function__display_name
+#: model:ir.model.fields,field_description:prd.field_prd_function_category__display_name
+#: model:ir.model.fields,field_description:prd.field_prd_function_type__display_name
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_module__display_name
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_repo__display_name
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view__display_name
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__display_name
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__display_name
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_category__display_name
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_function__display_name
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_type__display_name
+msgid "Display Name"
+msgstr "Visningsnamn"
+
+#. module: prd
+#: model:ir.model.fields.selection,name:prd.selection__prd_function__state__done
+#: model:ir.model.fields.selection,name:prd.selection__prd_requirement__state__done
+#: model:ir.model.fields.selection,name:prd.selection__prd_requirement_function__state__done
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
+msgid "Done"
+msgstr "Klar"
+
+#. module: prd
+#: model:ir.model.fields.selection,name:prd.selection__prd_document__state__draft
+#: model:ir.model.fields.selection,name:prd.selection__prd_function__state__draft
+#: model:ir.model.fields.selection,name:prd.selection__prd_requirement__state__draft
+#: model:ir.model.fields.selection,name:prd.selection__prd_requirement_function__state__draft
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
+msgid "Draft"
+msgstr "Utkast"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__duration_tracking
+#: model:ir.model.fields,field_description:prd.field_prd_function__duration_tracking
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__duration_tracking
+msgid "Duration Tracking"
+msgstr "Uppföljning av varaktighet"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__mermaid_editor
+#: model:ir.model.fields,field_description:prd.field_prd_function__mermaid_editor
+msgid "Editor"
+msgstr "Redaktör"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view__filename
+msgid "Filename"
+msgstr "Filnamn"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_odoo_repo__path
+msgid "Filesystem path"
+msgstr "Filsystemets sökväg"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__message_follower_ids
+#: model:ir.model.fields,field_description:prd.field_prd_function__message_follower_ids
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__message_follower_ids
+msgid "Followers"
+msgstr "Följare"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__message_partner_ids
+#: model:ir.model.fields,field_description:prd.field_prd_function__message_partner_ids
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Följare (Partners)"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_document__activity_type_icon
+#: model:ir.model.fields,help:prd.field_prd_function__activity_type_icon
+#: model:ir.model.fields,help:prd.field_prd_requirement__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Font awesome-ikon, t.ex. fa-tasks"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__function_ids
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_function__func_id
+#: model:ir.ui.menu,name:prd.menu_prd_function
+msgid "Function"
+msgstr "Funktion"
+
+#. module: prd
+#: model:ir.actions.act_window,name:prd.action_prd_function_category
+#: model:ir.ui.menu,name:prd.menu_prd_function_categories
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_category_list
+msgid "Function Categories"
+msgstr "Funktion Kategorier"
+
+#. module: prd
+#: model:ir.model,name:prd.model_prd_function_category
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_category_form
+msgid "Function Category"
+msgstr "Funktion Kategori"
+
+#. module: prd
+#: model:ir.model,name:prd.model_prd_function_type
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_type_form
+msgid "Function Type"
+msgstr "Funktionstyp"
+
+#. module: prd
+#: model:ir.actions.act_window,name:prd.action_prd_function_type
+#: model:ir.ui.menu,name:prd.menu_prd_function_types
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_type_list
+msgid "Function Types"
+msgstr "Funktionstyper"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__function_ids
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__function_names
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_form
+msgid "Functions"
+msgstr "Funktioner"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__functions_percentage
+msgid "Functions Completion %"
+msgstr "Funktionsslutförande %"
+
+#. module: prd
+#: model:ir.actions.server,name:prd.server_action_get_modules
+msgid "Get Modules"
+msgstr "Hämta moduler"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_odoo_repo__url
+msgid "Github url"
+msgstr "Github webbadress"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__goals
+msgid "Goal"
+msgstr "Mål"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+msgid "Goals"
+msgstr "Mål"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
+msgid "Group By"
+msgstr "Gruppera efter"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__has_message
+#: model:ir.model.fields,field_description:prd.field_prd_function__has_message
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__has_message
+msgid "Has Message"
+msgstr "Har meddelande"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__id
+#: model:ir.model.fields,field_description:prd.field_prd_function__id
+#: model:ir.model.fields,field_description:prd.field_prd_function_category__id
+#: model:ir.model.fields,field_description:prd.field_prd_function_type__id
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_module__id
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_repo__id
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view__id
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__id
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__id
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_category__id
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_function__id
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_type__id
+msgid "ID"
+msgstr "ID"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__activity_exception_icon
+#: model:ir.model.fields,field_description:prd.field_prd_function__activity_exception_icon
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_exception_icon
+msgid "Icon"
+msgstr "Ikon"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_document__activity_exception_icon
+#: model:ir.model.fields,help:prd.field_prd_function__activity_exception_icon
+#: model:ir.model.fields,help:prd.field_prd_requirement__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Ikon för att indikera en undantagsaktivitet."
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_document__message_needaction
+#: model:ir.model.fields,help:prd.field_prd_function__message_needaction
+#: model:ir.model.fields,help:prd.field_prd_requirement__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Om den är markerad kräver nya meddelanden din uppmärksamhet."
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_document__message_has_error
+#: model:ir.model.fields,help:prd.field_prd_document__message_has_sms_error
+#: model:ir.model.fields,help:prd.field_prd_function__message_has_error
+#: model:ir.model.fields,help:prd.field_prd_function__message_has_sms_error
+#: model:ir.model.fields,help:prd.field_prd_requirement__message_has_error
+#: model:ir.model.fields,help:prd.field_prd_requirement__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Om kryssrutan är markerad får vissa meddelanden ett leveransfel."
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_function__implementation_type
+msgid "Implementation Type"
+msgstr "Typ av implementering"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_function__input_data
+msgid "Input"
+msgstr "Ingång"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_form
+msgid "Input Data"
+msgstr "Inmatningsdata"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__message_is_follower
+#: model:ir.model.fields,field_description:prd.field_prd_function__message_is_follower
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__message_is_follower
+msgid "Is Follower"
+msgstr "Är följare"
+
+#. module: prd
+#: model_terms:ir.actions.act_window,help:prd.action_prd_requirement_category
+msgid "Klicka här för att skapa en ny kravkategori."
+msgstr "Klicka här för att skapa en ny kravkategori."
+
+#. module: prd
+#: model_terms:ir.actions.act_window,help:prd.action_prd_requirement_type
+msgid "Klicka här för att skapa en ny kravtyp."
+msgstr "Klicka här för att skapa en ny kravtyp."
+
+#. module: prd
+#: model_terms:ir.actions.act_window,help:prd.action_prd_odoo_view_type
+msgid "Klicka här för att skapa en ny vytyp."
+msgstr "Klicka här för att skapa en ny vytyp."
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__write_uid
+#: model:ir.model.fields,field_description:prd.field_prd_function__write_uid
+#: model:ir.model.fields,field_description:prd.field_prd_function_category__write_uid
+#: model:ir.model.fields,field_description:prd.field_prd_function_type__write_uid
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_module__write_uid
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_repo__write_uid
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view__write_uid
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__write_uid
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__write_uid
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_category__write_uid
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_function__write_uid
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_type__write_uid
+msgid "Last Updated by"
+msgstr "Senast uppdaterad av"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__write_date
+#: model:ir.model.fields,field_description:prd.field_prd_function__write_date
+#: model:ir.model.fields,field_description:prd.field_prd_function_category__write_date
+#: model:ir.model.fields,field_description:prd.field_prd_function_type__write_date
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_module__write_date
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_repo__write_date
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view__write_date
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__write_date
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__write_date
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_category__write_date
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_function__write_date
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_type__write_date
+msgid "Last Updated on"
+msgstr "Senast uppdaterad den"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+msgid "Major Version"
+msgstr "Större version"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__message_has_error
+#: model:ir.model.fields,field_description:prd.field_prd_function__message_has_error
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__message_has_error
+msgid "Message Delivery error"
+msgstr "Fel vid leverans av meddelande"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__message_ids
+#: model:ir.model.fields,field_description:prd.field_prd_function__message_ids
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__message_ids
+msgid "Messages"
+msgstr "Meddelanden"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+msgid "Minor Version"
+msgstr "Mindre version"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
+msgid "Missing Requirement"
+msgstr "Saknat krav"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_module__module_id
+#: model:ir.model.fields.selection,name:prd.selection__prd_document__document_type__module
+#: model:ir.model.fields.selection,name:prd.selection__prd_function_type__implementation_type__module
+msgid "Module"
+msgstr "Modul"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_repo__module_ids
+#: model_terms:ir.ui.view,arch_db:prd.view_odoo_repo_form
+msgid "Modules"
+msgstr "Moduler"
+
+#. module: prd
+#: model:ir.model.fields.selection,name:prd.selection__prd_requirement__priority__must
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
+msgid "Must"
+msgstr "Måste"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__my_activity_date_deadline
+#: model:ir.model.fields,field_description:prd.field_prd_function__my_activity_date_deadline
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Min aktivitet Deadline"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
+msgid "My Documents"
+msgstr "Mina dokument"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
+msgid "My Functions"
+msgstr "Mina funktioner"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_function__name
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_module__name
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_repo__name
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__name
+msgid "Name"
+msgstr "Namn"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__activity_calendar_event_id
+#: model:ir.model.fields,field_description:prd.field_prd_function__activity_calendar_event_id
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Nästa aktivitet i aktivitetskalendern"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__activity_date_deadline
+#: model:ir.model.fields,field_description:prd.field_prd_function__activity_date_deadline
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Deadline för nästa aktivitet"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__activity_summary
+#: model:ir.model.fields,field_description:prd.field_prd_function__activity_summary
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_summary
+msgid "Next Activity Summary"
+msgstr "Nästa aktivitetsöversikt"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__activity_type_id
+#: model:ir.model.fields,field_description:prd.field_prd_function__activity_type_id
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_type_id
+msgid "Next Activity Type"
+msgstr "Nästa aktivitetstyp"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__non_conformity_ids
+#: model:ir.model.fields,field_description:prd.field_prd_function__non_conformity_ids
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__non_conformity_ids
+msgid "Non Conformity"
+msgstr "Icke-överensstämmelse"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__non_conformity_count
+#: model:ir.model.fields,field_description:prd.field_prd_function__non_conformity_count
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__non_conformity_count
+msgid "Non Conformity Count"
+msgstr "Antal avvikelser"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__message_needaction_counter
+#: model:ir.model.fields,field_description:prd.field_prd_function__message_needaction_counter
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Antal åtgärder"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__message_has_error_counter
+#: model:ir.model.fields,field_description:prd.field_prd_function__message_has_error_counter
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__message_has_error_counter
+msgid "Number of errors"
+msgstr "Antal fel"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_document__message_needaction_counter
+#: model:ir.model.fields,help:prd.field_prd_function__message_needaction_counter
+#: model:ir.model.fields,help:prd.field_prd_requirement__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Antal meddelanden som kräver åtgärder"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_document__message_has_error_counter
+#: model:ir.model.fields,help:prd.field_prd_function__message_has_error_counter
+#: model:ir.model.fields,help:prd.field_prd_requirement__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Antal meddelanden med leveransfel"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__object_id
+msgid "Object"
+msgstr "Objekt"
+
+#. module: prd
+#: model:ir.model,name:prd.model_prd_odoo_module
+#: model:ir.model.fields,field_description:prd.field_prd_function__module_id
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_odoo_module_form
+msgid "Odoo Module"
+msgstr "Odoo-modul"
+
+#. module: prd
+#: model:ir.actions.act_window,name:prd.action_prd_odoo_module
+#: model:ir.ui.menu,name:prd.menu_prd_odoo_modules
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_odoo_module_list
+msgid "Odoo Modules"
+msgstr "Odoo Moduler"
+
+#. module: prd
+#: model:ir.actions.act_window,name:prd.action_odoo_repo
+#: model_terms:ir.ui.view,arch_db:prd.view_odoo_repo_list
+msgid "Odoo Repositories"
+msgstr "Odoo Förråd"
+
+#. module: prd
+#: model:ir.model,name:prd.model_prd_odoo_repo
+#: model:ir.ui.menu,name:prd.menu_prd_odoo_repo_root
+#: model_terms:ir.ui.view,arch_db:prd.view_odoo_repo_form
+msgid "Odoo Repository"
+msgstr "Odoo-förvaret"
+
+#. module: prd
+#: model:ir.model,name:prd.model_prd_odoo_view
+msgid "Odoo View"
+msgstr "Odoo vy"
+
+#. module: prd
+#: model:ir.model,name:prd.model_prd_odoo_view_type
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_odoo_view_type_form
+msgid "Odoo View Type"
+msgstr "Odoo Visa typ"
+
+#. module: prd
+#: model:ir.actions.act_window,name:prd.action_prd_odoo_view_type
+#: model:ir.ui.menu,name:prd.menu_prd_odoo_view_types
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_odoo_view_type_tree
+msgid "Odoo View Types"
+msgstr "Odoo Visa typer"
+
+#. module: prd
+#: model:ir.model.fields.selection,name:prd.selection__prd_function__state__ongoing
+#: model:ir.model.fields.selection,name:prd.selection__prd_requirement__state__ongoing
+#: model:ir.model.fields.selection,name:prd.selection__prd_requirement_function__state__ongoing
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
+msgid "Ongoing"
+msgstr "Pågående"
+
+#. module: prd
+#: model:ir.model.fields.selection,name:prd.selection__prd_document__document_type__other
+#: model:ir.model.fields.selection,name:prd.selection__prd_function_type__implementation_type__other
+msgid "Other"
+msgstr "Övriga"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_function__output_data
+msgid "Output"
+msgstr "Utgång"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_form
+msgid "Output Data"
+msgstr "Utdata"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_function__prd_id
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view__func_id
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__prd_id
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+msgid "PRD"
+msgstr "PRD"
+
+#. module: prd
+#: model:res.groups,name:prd.group_prd_manager
+msgid "PRD Administrator"
+msgstr "PRD-administratör"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
+msgid "PRD Document"
+msgstr "PRD-dokument"
+
+#. module: prd
+#: model:ir.actions.act_window,name:prd.action_prd_document
+msgid "PRD Documents"
+msgstr "PRD-dokument"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_form
+msgid "PRD Function"
+msgstr "PRD-funktion"
+
+#. module: prd
+#: model:ir.actions.act_window,name:prd.action_functions
+#: model:ir.model,name:prd.model_prd_function
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_tree
+msgid "PRD Functions"
+msgstr "PRD-funktioner"
+
+#. module: prd
+#: model:ir.model,name:prd.model_prd_requirement_function
+msgid "PRD Request Function"
+msgstr "Funktion för PRD-begäran"
+
+#. module: prd
+#: model:ir.model,name:prd.model_prd_requirement
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_form
+msgid "PRD Requirement"
+msgstr "PRD-krav"
+
+#. module: prd
+#: model:ir.actions.act_window,name:prd.action_requirements
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_tree
+msgid "PRD Requirements"
+msgstr "PRD-krav"
+
+#. module: prd
+#: model:res.groups,name:prd.group_prd_user
+msgid "PRD User"
+msgstr "PRD-användare"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
+msgid "Parent Document"
+msgstr "Föräldradokument"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__parent_id
+msgid "Parent PRD"
+msgstr "Förälder PRD"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_repo__path
+msgid "Path"
+msgstr "Väg"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_function__prd_id
+msgid "Prd"
+msgstr "Prd"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__priority
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
+msgid "Priority"
+msgstr "Prioritet"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_function__process_data
+msgid "Process"
+msgstr "Process"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_form
+msgid "Process Data"
+msgstr "Processdata"
+
+#. module: prd
+#: model:ir.model.fields.selection,name:prd.selection__prd_document__document_type__procurement
+msgid "Procurement/call-off"
+msgstr "Upphandling/avrop"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__product_owner_id
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
+msgid "Product Owner"
+msgstr "Produktägare"
+
+#. module: prd
+#: model:ir.model,name:prd.model_prd_document
+#: model:ir.model.fields,field_description:prd.field_prd_function__module_prd_id
+#: model:ir.model.fields.selection,name:prd.selection__prd_function_type__implementation_type__prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+msgid "Product Requirement Document"
+msgstr "Dokument för produktkrav"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_calendar
+msgid "Product Requirement Document Calendar"
+msgstr "Dokument för produktkrav Kalender"
+
+#. module: prd
+#: model:ir.ui.menu,name:prd.menu_prd_document
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_tree
+msgid "Product Requirement Documents"
+msgstr "Dokument med produktkrav"
+
+#. module: prd
+#: model:ir.ui.menu,name:prd.menu_prd_document_root
+msgid "Product Requirements Docs"
+msgstr "Dokument om produktkrav"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
+msgid "Product Requirements Documents"
+msgstr "Dokument för produktkrav"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view__prompt
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__prompt
+msgid "Prompt"
+msgstr "Frågeställning"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_document__description
+msgid "Purpuse"
+msgstr "Syfte"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__rating_ids
+#: model:ir.model.fields,field_description:prd.field_prd_function__rating_ids
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__rating_ids
+msgid "Ratings"
+msgstr "Betyg"
+
+#. module: prd
+#: model:ir.model.fields.selection,name:prd.selection__prd_document__state__rejected
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
+msgid "Rejected"
+msgstr "Avvisad"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_module__repo_id
+msgid "Repo"
+msgstr "Återköp"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_function__req_id
+msgid "Req"
+msgstr "Req"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_function__requirement_ids
+#: model:ir.ui.menu,name:prd.menu_prd_requirement
+msgid "Requirement"
+msgstr "Krav"
+
+#. module: prd
+#: model:ir.actions.act_window,name:prd.action_prd_requirement_category
+#: model:ir.ui.menu,name:prd.menu_prd_requirement_categories
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_category_tree
+msgid "Requirement Categories"
+msgstr "Kravkategorier"
+
+#. module: prd
+#: model:ir.model,name:prd.model_prd_requirement_category
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_category_form
+msgid "Requirement Category"
+msgstr "Krav Kategori"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_requirement__code
+msgid "Requirement Number, unique ID"
+msgstr "Kravnummer, unikt ID"
+
+#. module: prd
+#: model:ir.model,name:prd.model_prd_requirement_type
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_type_form
+msgid "Requirement Type"
+msgstr "Typ av krav"
+
+#. module: prd
+#: model:ir.actions.act_window,name:prd.action_prd_requirement_type
+#: model:ir.ui.menu,name:prd.menu_prd_requirement_types
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_type_tree
+msgid "Requirement Types"
+msgstr "Typer av krav"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_requirement__object_id
+msgid "Requirement from this object"
+msgstr "Krav från detta objekt"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
+msgid "Requirement without function"
+msgstr "Krav utan funktion"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__requirement_ids
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_form
+msgid "Requirements"
+msgstr "Krav och önskemål"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__requirements_percentage
+msgid "Requirements Completion %"
+msgstr "Kravuppfyllelse %"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
+msgid "Responsible"
+msgstr "Ansvarig"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__activity_user_id
+#: model:ir.model.fields,field_description:prd.field_prd_function__activity_user_id
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_user_id
+msgid "Responsible User"
+msgstr "Ansvarig användare"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__risks
+msgid "Risks"
+msgstr "Risker"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__message_has_sms_error
+#: model:ir.model.fields,field_description:prd.field_prd_function__message_has_sms_error
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Fel vid leverans av SMS"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_function__sequence
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__sequence
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_function__sequence
+msgid "Sequence"
+msgstr "Sekvens"
+
+#. module: prd
+#: model:ir.model.fields.selection,name:prd.selection__prd_requirement__priority__should
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
+msgid "Should"
+msgstr "Bör"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view__source_code
+msgid "Source Code"
+msgstr "Källkod"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__partner_id
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
+msgid "Stake Holder"
+msgstr "Intressent"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__state
+#: model:ir.model.fields,field_description:prd.field_prd_function__state
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__state
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_function__state
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
+msgid "State"
+msgstr "Stat"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_document__activity_state
+#: model:ir.model.fields,help:prd.field_prd_function__activity_state
+#: model:ir.model.fields,help:prd.field_prd_requirement__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Status baserad på aktiviteter\n"
+"Försenad: Förfallodatumet har redan passerats\n"
+"Idag: Aktivitetsdatumet är idag\n"
+"Planerad: Framtida aktiviteter."
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+msgid "Success Criteras/Risks"
+msgstr "Framgång Kriterier/Risker"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__success_criteria
+msgid "Success Criteria"
+msgstr "Kriterier för framgång"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_function__category
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__category
+msgid "Tags"
+msgstr "Etiketter"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_module__technical_name
+msgid "Technical Name"
+msgstr "Tekniskt namn"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__tender_id
+msgid "Tender ID"
+msgstr "Anbuds-ID"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__name
+msgid "Titel"
+msgstr "Titel"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__functions_count
+msgid "Total Functions"
+msgstr "Funktioner totalt"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__requirements_count
+msgid "Total Requirements"
+msgstr "Totala krav"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__document_type
+#: model:ir.model.fields,field_description:prd.field_prd_function__func_type
+#: model:ir.model.fields,field_description:prd.field_prd_function_type__implementation_type
+#: model:ir.model.fields,field_description:prd.field_prd_function_type__name
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__req_type
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_function__func_type
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
+msgid "Type"
+msgstr "Typ"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_document__activity_exception_decoration
+#: model:ir.model.fields,help:prd.field_prd_function__activity_exception_decoration
+#: model:ir.model.fields,help:prd.field_prd_requirement__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Typ av undantagsaktivitet som registreras."
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_repo__url
+msgid "URL"
+msgstr "URL"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__version
+msgid "Version"
+msgstr "Version"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view__view_type_id
+msgid "View Type"
+msgstr "Visa typ"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__code
+msgid "View Type Code"
+msgstr "Visa Typ Kod"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__name
+#: model:ir.model.fields,field_description:prd.field_prd_requirement_type__name
+msgid "View Type Name"
+msgstr "Vy Typ Namn"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_function__odoo_view_ids
+msgid "View Types"
+msgstr "Visa typer"
+
+#. module: prd
+#: model:ir.model.fields,field_description:prd.field_prd_document__website_message_ids
+#: model:ir.model.fields,field_description:prd.field_prd_function__website_message_ids
+#: model:ir.model.fields,field_description:prd.field_prd_requirement__website_message_ids
+msgid "Website Messages"
+msgstr "Webbplatsmeddelanden"
+
+#. module: prd
+#: model:ir.model.fields,help:prd.field_prd_document__website_message_ids
+#: model:ir.model.fields,help:prd.field_prd_function__website_message_ids
+#: model:ir.model.fields,help:prd.field_prd_requirement__website_message_ids
+msgid "Website communication history"
+msgstr "Webbplatsens kommunikationshistorik"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
+msgid "e.g. Office Party"
+msgstr "t.ex. Office Party"
+
+#. module: prd
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_function_form
+#: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_form
+msgid "e.g. Requirement"
+msgstr "t.ex. Krav"
