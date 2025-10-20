@@ -35,9 +35,9 @@
     'license': 'AGPL-3',
     'contributor': '',
     'maintainer': 'Vertel AB',
-    'depends': ['mail',
-            'web_widget_mermaid_field' # https://github.com/VictorHachard/odoo-modules/tree/17.0/web_widget_mermaid_field,
-
+    'depends': [
+        'mail',
+        'web_mermaid'
     ],
     'data': [
         # ~ 'data/cron.xml',

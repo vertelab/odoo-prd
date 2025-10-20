@@ -55,9 +55,7 @@
               <field name="odoo_view_ids" widget="many2many_tags" />
               <field name="category" widget="many2many_tags" />
             </group>
-            <group id="c2">
-
-            </group>
+            <group id="c2" />
           </group>
           <notebook>
             <page string="Description">
