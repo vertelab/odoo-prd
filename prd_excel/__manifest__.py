@@ -36,11 +36,11 @@
     'license': 'AGPL-3',
     'contributor': '',
     'maintainer': 'Vertel AB',
-    'depends': ['prd',
-    ],
+    'depends': ['prd'],
     'data': [
         'security/ir.model.access.csv',
         'views/prd_views.xml',
+        'wizard/excel_wizard_views.xml',
     ],
     'application': False,
 }
