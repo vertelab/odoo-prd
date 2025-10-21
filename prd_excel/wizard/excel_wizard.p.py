@@ -69,7 +69,7 @@ class ExcelWizard(models.TransientModel):
             # if current_page != "2. Redovisning":
             #     continue
 
-            for row in sheet.iter_rows(values_only=True):
+            for row in sheet.iter_rows(values_only=True,max_col=20,max_row=1000):
                 if not row or not row[0]:
                     continue
 
@@ -79,7 +79,6 @@ class ExcelWizard(models.TransientModel):
                 
                 if first_cell and any(c.isdigit() for c in first_cell):
                     
-
                     is_category = self.check_row_len(row,row_index=2,max_len=9999,min_len=26)
                     code = first_cell
                     desc = self.get_description(row,is_category)
@@ -98,7 +97,7 @@ class ExcelWizard(models.TransientModel):
                         'prd_id': prd_id,
                         'req_type': req_type.id if req_type else False
                     }
-                    # _logger.warning(f"{values=}")
+                    _logger.warning(f"{values=}")
                     
                     requirement_model.create(values)
 
