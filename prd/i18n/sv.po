@@ -871,7 +871,7 @@ msgstr "Dokument med produktkrav"
 #. module: prd
 #: model:ir.ui.menu,name:prd.menu_prd_document_root
 msgid "Product Requirements Docs"
-msgstr "Dokument om produktkrav"
+msgstr "Dokument för produktkrav"
 
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
