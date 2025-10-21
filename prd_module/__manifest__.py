@@ -48,6 +48,7 @@
         'security/ir.model.access.csv',
         'views/prd_views.xml',
         'views/prd_function_views.xml',
+        'views/prd_configuration_views.xml',
     ],
     'application': False,
 }

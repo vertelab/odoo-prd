@@ -36,17 +36,24 @@
         </header>
         <sheet>
           <div class="oe_button_box" name="button_box" groups="base.group_user" />
+<!--
           <group>
+-->
             <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
-            <field name="avatar_128" invisible="1" />
-            <field name="image_128" widget="image" class="oe_avatar" options="{'size': [90, 90], 'preview_image':'avatar_128'}" />
-                       
-            <div class="oe_title">
+<field name="icon_image" nolabel="1" widget="image" class="oe_avatar me-3"  style="width: 128px; height: 128px; flex: 0 0 auto;"/>  
+            <div class="oe_title flex-grow-1 w-80">
+                    <label for="name" string="Name"/>
               <h1 class="d-flex flex-row">
-                <field name="name" options="{'line_breaks': False}" widget="text" class="flex-grow-1 o_text_overflow" placeholder="e.g. Requirement" />
+                <field name="name" options="{'line_breaks': False}" widget="text" class="w-80 flex-grow-1 o_text_overflow" placeholder="e.g. Function" />
               </h1>
-            </div>
+            </div>            
+<!--
+            <field name="image_128" nolabel="1" widget="image" class="oe_avatar me-3"  style="width: 128px; height: 128px; flex: 0 0 auto;"/>  
+-->
+            
+<!--
           </group>
+-->
           <group col="2">
             <group id="c1">
               <field name="func_type" />
@@ -56,7 +63,7 @@
               <field name="user_id" />
               <field name="prd_id" invisible="1" />
               <field name="odoo_view_ids" widget="many2many_tags" />
-              <field name="category" widget="many2many_tags" />
+              <field name="category_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_edit_color': true}" />
             </group>
             <group id="c2">
               <field name="application" invisible="implementation_type != 'module'" />
@@ -130,60 +137,72 @@
         <field name="website" />
         <field name="application" />
         <field name="func_type" />
+        <field name="requirement_ids" />
+        <field name="requirement_names_ids" />
         <field name="implementation_type" />
         <field name="user_id" />
         <templates>
           <t t-name="menu">
-            <t t-set="itype" t-value="record.implementation_type and record.implementation_type.raw_value" />
-            <t t-set="installed" t-value="record.state.raw_value == 'installed'" />
+            <t t-if="record.implementation_type.raw_value">
+                 <t t-set="itype" t-value="record.implementation_type.raw_value" />
+            </t>
+            <t t-else="">
+                 <t t-set="itype" t-value="tom" />
+            </t>
+                             
             <a type="open" class="dropdown-item">Module Info</a>
             <a t-if="record.website.raw_value" role="menuitem" class="dropdown-item o-hidden-ios" t-att-href="record.website.raw_value" target="_blank">Learn More</a>
           </t>
           <t t-name="card" class="flex-row align-items-center">
             <aside>
-              <field name="icon" widget="image_url" options="{'size': [50, 50]}" alt="Icon" t-if="itype == 'module'"/>                              
-               <field name="avatar_128" alt="Contact image" widget="image" options="{'img_class': 'object-fit-cover'}" t-if="itype != 'module'" />
+              <field name="icon" widget="image_url" options="{'size': [50, 50]}" alt="Icon" t-if="record.implementation_type.raw_value == 'module'"/>                              
+               <field name="avatar_128" alt="Contact image" widget="image" options="{'img_class': 'object-fit-cover'}" t-if="record.implementation_type.raw_value != 'module'" />
             </aside>
+<!--
             <main class="me-4" t-att-title="record.shortdesc.value">
-              <field class="fw-bold fs-5" name="shortdesc" /><span> (<field name="func_type" />)</span>
+-->
+            <main class="me-4" >
+                
+      <widget name="web_ribbon" title="Done"
+              bg_color="bg-success" icon="fa-times"
+              invisible="state != 'done'"/>
+      
+      <widget name="web_ribbon" title="Ongoing"
+              bg_color="bg-warning" icon="fa-file-text"
+              invisible="state != 'ongoing'"/>
+      
+      <widget name="web_ribbon" title="Draft"
+              bg_color="bg-danger" icon="fa-times"
+              invisible="state != 'draft'"/>
+
+                
+              <field class="fw-bold fs-5" name="name" />
               <p class="text-muted small my-0 lh-sm">
-                <field name="summary" />
-                <code>
-                  <field name="name" />
-                </code>
     
                 <div>
-                  <field name="user_id" />
+                  <field name="category_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_edit_color': true}" />
+                  <field name="requirement_names_ids" widget="many2many_tags"  />
+                                    
                 </div>
-                <div>
-                  <field name="state" />
-                </div>
+              
               </p>
               <footer class="w-100 justify-content-between">
-                <!--
-                     <button type="object" class="btn btn-primary btn-sm" name="button_immediate_install" invisible="state != 'uninstalled'" t-if="! record.to_buy.raw_value" groups="base.group_system">Activate</button>
-                -->
+                    
+        <field name="user_id" widget="many2one_avatar_user" />
+        <field name="func_type" />
+<!--
+        <field name="state" widget="label_selection"/>
+-->
                 <a t-att-href="record.website.raw_value" target="_blank" invisible="website in (False, '')" class="btn btn-sm btn-secondary float-end o-hidden-ios" role="button">Learn More</a>
+<!--
                 <a type="edit" class="btn btn-secondary btn-sm float-end" role="button" invisible="website != ''">Module Info</a>
+-->
+                 <field name="activity_ids" class="float-end" widget="kanban_activity"/>
+                
               </footer>
             </main>
           </t>
-          <t t-name="kanban-box">
-            <div class="oe_kanban_card">
-              <strong>
-                <field name="name" />
-              </strong>
-              <div>
-                <field name="func_type" />
-              </div>
-              <div>
-                <field name="user_id" />
-              </div>
-              <div>
-                <field name="state" />
-              </div>
-            </div>
-          </t>
+
         </templates>
       </kanban>
     </field>

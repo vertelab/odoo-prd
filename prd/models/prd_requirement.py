@@ -53,6 +53,13 @@ class PrdRequirement(models.Model):
     duration_tracking = fields.Float(string='Duration Tracking')
     function_ids = fields.One2many(comodel_name='prd.requirement.function', inverse_name='req_id')
     function_names = fields.Char(string="Functions", compute='_compute_function_names')
+    function_names_ids = fields.Many2many(comodel_name='prd.function',string="Function",compute='_compute_function_names_ids') 
+    @api.depends('function_ids.func_id')
+    def _compute_function_names_ids(self):
+        for record in self:
+            record.function_names_ids = record.function_ids.mapped('func_id')
+
+    
     name = fields.Char(string="Name", required=True)
     note = fields.Text(string="Comment")
     object_id = fields.Reference(string='Object', selection=lambda m: [(model.model, model.name) for model in
