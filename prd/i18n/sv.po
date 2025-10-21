@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 18.0-20251014\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-20 14:08+0000\n"
-"PO-Revision-Date: 2025-10-20 16:25+0200\n"
+"PO-Revision-Date: 2025-10-21 09:24+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv_SE\n"
@@ -69,14 +69,14 @@ msgstr "Aktivitet Undantag Dekoration"
 #: model:ir.model.fields,field_description:prd.field_prd_function__activity_state
 #: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_state
 msgid "Activity State"
-msgstr "Aktivitet Stat"
+msgstr "Aktivitetsläge"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__activity_type_icon
 #: model:ir.model.fields,field_description:prd.field_prd_function__activity_type_icon
 #: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_type_icon
 msgid "Activity Type Icon"
-msgstr "Aktivitetstyp Ikon"
+msgstr "AktivitetstypsIkon"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__user_persona
@@ -126,7 +126,7 @@ msgstr "Antal bifogade filer"
 #: model:ir.model.fields,field_description:prd.field_prd_function__user_id
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
 msgid "Author"
-msgstr "Författaren"
+msgstr "Författare"
 
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_kanban
@@ -148,12 +148,12 @@ msgstr "Kategori"
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__closed_functions_count
 msgid "Closed Functions"
-msgstr "Slutna funktioner"
+msgstr "Avslutade funktioner"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__closed_requirements_count
 msgid "Closed Requirements"
-msgstr "Stängda krav"
+msgstr "Avslutade krav"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_requirement__code
@@ -164,12 +164,12 @@ msgstr "Kod"
 #: model:ir.model.fields,field_description:prd.field_prd_requirement__note
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_form
 msgid "Comment"
-msgstr "Hur gör man"
+msgstr "Kommentar"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__company_id
 msgid "Company"
-msgstr "Företag"
+msgstr "Bolag"
 
 #. module: prd
 #: model:ir.ui.menu,name:prd.menu_prd_configuration_root
@@ -384,7 +384,7 @@ msgstr "Hämta moduler"
 #. module: prd
 #: model:ir.model.fields,help:prd.field_prd_odoo_repo__url
 msgid "Github url"
-msgstr "Github webbadress"
+msgstr "Github url"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__goals
@@ -445,7 +445,7 @@ msgstr "Ikon för att indikera en undantagsaktivitet."
 #: model:ir.model.fields,help:prd.field_prd_function__message_needaction
 #: model:ir.model.fields,help:prd.field_prd_requirement__message_needaction
 msgid "If checked, new messages require your attention."
-msgstr "Om den är markerad kräver nya meddelanden din uppmärksamhet."
+msgstr "Om markerad, nya meddelanden kräver din uppmärksamhet."
 
 #. module: prd
 #: model:ir.model.fields,help:prd.field_prd_document__message_has_error
@@ -455,7 +455,7 @@ msgstr "Om den är markerad kräver nya meddelanden din uppmärksamhet."
 #: model:ir.model.fields,help:prd.field_prd_requirement__message_has_error
 #: model:ir.model.fields,help:prd.field_prd_requirement__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
-msgstr "Om kryssrutan är markerad får vissa meddelanden ett leveransfel."
+msgstr "Om markerad, några meddelanden har ett leveransfel."
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_function__implementation_type
@@ -529,7 +529,7 @@ msgstr "Senast uppdaterad den"
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
 msgid "Major Version"
-msgstr "Större version"
+msgstr "Högre version"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__message_has_error
@@ -572,14 +572,14 @@ msgstr "Moduler"
 #: model:ir.model.fields.selection,name:prd.selection__prd_requirement__priority__must
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
 msgid "Must"
-msgstr "Måste"
+msgstr "Ska"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__my_activity_date_deadline
 #: model:ir.model.fields,field_description:prd.field_prd_function__my_activity_date_deadline
 #: model:ir.model.fields,field_description:prd.field_prd_requirement__my_activity_date_deadline
 msgid "My Activity Deadline"
-msgstr "Min aktivitet Deadline"
+msgstr "Min aktivitets tidsfrist"
 
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
@@ -611,14 +611,14 @@ msgstr "Nästa aktivitet i aktivitetskalendern"
 #: model:ir.model.fields,field_description:prd.field_prd_function__activity_date_deadline
 #: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_date_deadline
 msgid "Next Activity Deadline"
-msgstr "Deadline för nästa aktivitet"
+msgstr "Tidsfrist för nästa aktivitet"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__activity_summary
 #: model:ir.model.fields,field_description:prd.field_prd_function__activity_summary
 #: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_summary
 msgid "Next Activity Summary"
-msgstr "Nästa aktivitetsöversikt"
+msgstr "Nästa aktivitetssammanfattning"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__activity_type_id
@@ -692,14 +692,14 @@ msgstr "Odoo Moduler"
 #: model:ir.actions.act_window,name:prd.action_odoo_repo
 #: model_terms:ir.ui.view,arch_db:prd.view_odoo_repo_list
 msgid "Odoo Repositories"
-msgstr "Odoo Förråd"
+msgstr "Odoo repositories"
 
 #. module: prd
 #: model:ir.model,name:prd.model_prd_odoo_repo
 #: model:ir.ui.menu,name:prd.menu_prd_odoo_repo_root
 #: model_terms:ir.ui.view,arch_db:prd.view_odoo_repo_form
 msgid "Odoo Repository"
-msgstr "Odoo-förvaret"
+msgstr "OdooRepository"
 
 #. module: prd
 #: model:ir.model,name:prd.model_prd_odoo_view
@@ -710,14 +710,14 @@ msgstr "Odoo vy"
 #: model:ir.model,name:prd.model_prd_odoo_view_type
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_odoo_view_type_form
 msgid "Odoo View Type"
-msgstr "Odoo Visa typ"
+msgstr "Odoo Vytyp"
 
 #. module: prd
 #: model:ir.actions.act_window,name:prd.action_prd_odoo_view_type
 #: model:ir.ui.menu,name:prd.menu_prd_odoo_view_types
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_odoo_view_type_tree
 msgid "Odoo View Types"
-msgstr "Odoo Visa typer"
+msgstr "Odoo Vytyper"
 
 #. module: prd
 #: model:ir.model.fields.selection,name:prd.selection__prd_function__state__ongoing
@@ -805,12 +805,12 @@ msgstr "PRD-användare"
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
 msgid "Parent Document"
-msgstr "Föräldradokument"
+msgstr "Överliggande dokument"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__parent_id
 msgid "Parent PRD"
-msgstr "Förälder PRD"
+msgstr "Överliggande PRD"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_odoo_repo__path
@@ -871,7 +871,7 @@ msgstr "Dokument med produktkrav"
 #. module: prd
 #: model:ir.ui.menu,name:prd.menu_prd_document_root
 msgid "Product Requirements Docs"
-msgstr "Dokument om produktkrav"
+msgstr "Dokument för produktkrav"
 
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
@@ -940,14 +940,14 @@ msgstr "Kravnummer, unikt ID"
 #: model:ir.model,name:prd.model_prd_requirement_type
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_type_form
 msgid "Requirement Type"
-msgstr "Typ av krav"
+msgstr "Kravtyp"
 
 #. module: prd
 #: model:ir.actions.act_window,name:prd.action_prd_requirement_type
 #: model:ir.ui.menu,name:prd.menu_prd_requirement_types
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_type_tree
 msgid "Requirement Types"
-msgstr "Typer av krav"
+msgstr "Kravstyper"
 
 #. module: prd
 #: model:ir.model.fields,help:prd.field_prd_requirement__object_id
@@ -963,7 +963,7 @@ msgstr "Krav utan funktion"
 #: model:ir.model.fields,field_description:prd.field_prd_document__requirement_ids
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_function_form
 msgid "Requirements"
-msgstr "Krav och önskemål"
+msgstr "Krav"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__requirements_percentage
@@ -1027,7 +1027,7 @@ msgstr "Intressent"
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
 msgid "State"
-msgstr "Stat"
+msgstr "Läge"
 
 #. module: prd
 #: model:ir.model.fields,help:prd.field_prd_document__activity_state
@@ -1117,23 +1117,23 @@ msgstr "Version"
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_odoo_view__view_type_id
 msgid "View Type"
-msgstr "Visa typ"
+msgstr "Vytyp"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__code
 msgid "View Type Code"
-msgstr "Visa Typ Kod"
+msgstr "Vytypskod"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_odoo_view_type__name
 #: model:ir.model.fields,field_description:prd.field_prd_requirement_type__name
 msgid "View Type Name"
-msgstr "Vy Typ Namn"
+msgstr "Vytypsnamn"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_function__odoo_view_ids
 msgid "View Types"
-msgstr "Visa typer"
+msgstr "Vytyper"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__website_message_ids

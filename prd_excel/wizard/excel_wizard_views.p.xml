@@ -1,0 +1,19 @@
+<odoo>
+
+    <record id="excel_wizard_view" model="ir.ui.view">
+        <field name="name">prd.excel.wizard.view</field>
+        <field name="model">prd.excel.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Warning">
+                <group>
+                    <field name="file" />
+                </group>
+                <footer>
+                    <button name="import_excel" string="Import" type="object" class="oe_highlight" />
+                    <button name="cancel" string="Cancel" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
