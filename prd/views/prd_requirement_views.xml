@@ -42,6 +42,7 @@
                 <field name="function_names" optional="show" />
                 <field name="prd_id" optional="hide" />
                 <field name="partner_id" optional="hide" />
+                <button name="set_state_done" class="btn-primary" type="object" string="Done"/>
             </list>
         </field>
     </record>

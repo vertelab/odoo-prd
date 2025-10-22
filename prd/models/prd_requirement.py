@@ -89,6 +89,9 @@ class PrdRequirement(models.Model):
         ('done', 'Done')
     ], string="State", default='draft')
 
+    def set_state_done(self):
+        self.state = "done"
+
 class RequirementType(models.Model):
     _name = 'prd.requirement_type'
     _description = 'Requirement Type'
