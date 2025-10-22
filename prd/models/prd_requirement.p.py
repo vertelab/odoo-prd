@@ -61,7 +61,7 @@ class PrdRequirement(models.Model):
 
     
     name = fields.Char(string="Name", required=True)
-    note = fields.Text(string="Comment")
+    note = fields.Html(string="Comment")
     object_id = fields.Reference(string='Object', selection=lambda m: [(model.model, model.name) for model in
                                                                                  m.env['ir.model'].sudo().search([])],
                                help="Requirement from this object")
