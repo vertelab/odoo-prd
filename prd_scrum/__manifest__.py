@@ -35,8 +35,7 @@
     'license': 'AGPL-3',
     'contributor': '',
     'maintainer': 'Vertel AB',
-    'depends': ['prd', 'project_scrum',
-    ],
+    'depends': ['prd', 'project_scrum'],
     'data': [
         'data/prd_function_types.xml',
         'views/prd_views.xml',
