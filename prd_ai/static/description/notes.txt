@@ -1,4 +1,4 @@
-odoo-prd / prd-excel
+odoo-prd / prd-ai
 2025-10-23
 
 

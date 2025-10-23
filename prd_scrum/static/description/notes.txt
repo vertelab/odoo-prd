@@ -1,5 +1,5 @@
-odoo-account / account_admin_rights
-2023-06-20
+odoo-prd / prd-module
+2025-10-23
 
 
 Be aware of these!
@@ -7,9 +7,8 @@ Be aware of these!
 [project]/[module]/static/description/icon.png
 
 
-Icon: "coins"
-Icons may be found at: https://fontawesome.com/v5/cheatsheet
-
+Icon: "fa-clock-o"
+Icons may be found at: https://fontawesome.com/v4/icon/clock-o
 
 Odoo banner: 560 x 280
 Odoo icon: 140 x 140
