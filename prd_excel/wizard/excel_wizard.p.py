@@ -146,12 +146,11 @@ class ExcelWizard(models.TransientModel):
     def create_req_type(self,curent_page,desc):
         req_type = self.env["prd.requirement_type"]
 
-        req_type_id = req_type.search([("name", "=", curent_page),("description", "=", desc)],limit=1)
+        req_type_id = req_type.search([("name", "ilike", curent_page)],limit=1)
 
         if not req_type_id:
             req_type_id = req_type.create({
                 "name": curent_page,
-                "description": desc
             })
         return req_type_id
 
