@@ -107,24 +107,32 @@ class ProductRequirementDocument(models.Model):
             record.date = fields.Date.today()
 
     def action_functions(self):
-      return {
+        action = {
           'type': 'ir.actions.act_window',
           'name': 'Functions',
           'res_model': 'prd.function',
           'domain': [('prd_id', '=', self.id)],
           'context': {'default_prd_id': self.id},
-          'view_mode': 'kanban,list,form', # if self.functions_count > 0 else 'form,list,kanban',
           'target': 'current',
-      }
+        }
+        if self.functions_count > 0:
+            action.update({'view_mode': 'list,form,kanban'})
+        else:
+            action.update({'view_mode': 'form,list,kanban'})
+        return action
+
 
     def action_requirements(self):
-      return {
+        action = {
           'type': 'ir.actions.act_window',
           'name': 'Requirements',
           'res_model': 'prd.requirement',
           'domain': [('prd_id', '=', self.id)],
           'context': {'default_prd_id': self.id},
-           'view_mode': 'list,form',
-           # ~ 'view_mode': 'list,form' if self.requirements_count > 0 else 'form,list',
           'target': 'current',
-      }
+        }
+        if self.requirements_count > 0:
+            action.update({'view_mode': 'list,form'})
+        else:
+            action.update({'view_mode': 'form,list'})
+        return action

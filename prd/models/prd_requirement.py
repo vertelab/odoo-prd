@@ -4,22 +4,6 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
-class PRDRequirementFunction(models.Model):
-    _name = 'prd.requirement.function'
-    _description = 'PRD Request Function'
-    _order = "sequence asc"
-
-    func_id = fields.Many2one(comodel_name='prd.function', string="Function", help="", ondelete='cascade')
-    req_id = fields.Many2one(comodel_name='prd.requirement', string="", help="", ondelete='cascade')
-    prd_id = fields.Many2one(comodel_name='prd.document', string="", help="", ondelete='cascade')
-    func_type = fields.Many2one(comodel_name='prd.function_type', string="Type", help="" , ondelete='cascade')
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('ongoing', 'Ongoing'),
-        ('done', 'Done')
-    ], string="State", default='draft')    
-    sequence = fields.Integer(string='Sequence')
-
 class PrdRequirement(models.Model):
     _name = 'prd.requirement'
     _inherit = ['mail.thread', 'mail.activity.mixin']
@@ -88,9 +72,26 @@ class PrdRequirement(models.Model):
         ('ongoing', 'Ongoing'),
         ('done', 'Done')
     ], string="State", default='draft')
+    to_check = fields.Boolean()
 
     def set_state_done(self):
         self.state = "done"
+
+class PRDRequirementFunction(models.Model):
+    _name = 'prd.requirement.function'
+    _description = 'PRD Request Function'
+    _order = "sequence asc"
+
+    func_id = fields.Many2one(comodel_name='prd.function', string="Function", help="", ondelete='cascade')
+    req_id = fields.Many2one(comodel_name='prd.requirement', string="", help="", ondelete='cascade')
+    prd_id = fields.Many2one(comodel_name='prd.document', string="", help="", ondelete='cascade')
+    func_type = fields.Many2one(comodel_name='prd.function_type', string="Type", help="" , ondelete='cascade')
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('ongoing', 'Ongoing'),
+        ('done', 'Done')
+    ], string="State", default='draft')    
+    sequence = fields.Integer(string='Sequence')
 
 class RequirementType(models.Model):
     _name = 'prd.requirement_type'

@@ -12,11 +12,13 @@
                 <field name="partner_id" />
                 <field name="code" />
                 <field name="category" />
+                <field name="to_check" />
                 <filter string="Must" name="must" domain="[('priority','=','must')]" />
                 <filter string="Should" name="should" domain="[('priority','=','should')]" />
                 <filter string="Could" name="could" domain="[('priority','=','could')]" />
                 <filter string="Archived" name="archive" domain="[('active','=',False)]" />
                 <filter name="no_func" string="Requirement without function" domain="[('function_ids','=',False)]" groups="base.group_user" />
+                <filter name="to_check" string="To Check" domain="[('to_check','=',True)]" groups="base.group_user" />
                 <group expand="1" string="Group By">
                     <filter string="State" name="group_by_state" context="{'group_by':'state'}" />
                     <filter string="Priority" name="group_by_priority" context="{'group_by':'priority'}" />
@@ -32,7 +34,7 @@
         <field name="name">prd.requirement.tree</field>
         <field name="model">prd.requirement</field>
         <field name="arch" type="xml">
-            <list string="PRD Requirements">
+            <list string="PRD Requirements" decoration-warning="to_check">
                 <field name="sequence" widget="handle" />
                 <field name="code" optional="show" />
                 <field name="name" />
@@ -42,6 +44,7 @@
                 <field name="function_names" optional="show" />
                 <field name="prd_id" optional="hide" />
                 <field name="partner_id" optional="hide" />
+                <field name="to_check" optional="hide" />
                 <button name="set_state_done" class="btn-primary" type="object" string="Done"/>
             </list>
         </field>
@@ -74,6 +77,7 @@
                             <field name="partner_id" />
                             <field name="prd_id" invisible="1" />
                             <field name="object_id" />
+                            <field name="to_check" widget="boolean_toggle" />
                         </group>
                         <group id="c2" />
                     </group>
