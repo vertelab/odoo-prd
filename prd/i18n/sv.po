@@ -37,7 +37,7 @@ msgstr "<span class=\"o_stat_text\">Krav</span>"
 #: model:ir.model.fields,field_description:prd.field_prd_function__message_needaction
 #: model:ir.model.fields,field_description:prd.field_prd_requirement__message_needaction
 msgid "Action Needed"
-msgstr "Åtgärder krävs"
+msgstr "Åtgärd krävs"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__active
@@ -855,28 +855,28 @@ msgstr "Produktägare"
 #: model:ir.model.fields.selection,name:prd.selection__prd_function_type__implementation_type__prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
 msgid "Product Requirement Document"
-msgstr "Dokument för produktkrav"
+msgstr "Produktkravdokument"
 
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_calendar
 msgid "Product Requirement Document Calendar"
-msgstr "Dokument för produktkrav Kalender"
+msgstr "Produktkravdokument Kalender"
 
 #. module: prd
 #: model:ir.ui.menu,name:prd.menu_prd_document
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_tree
 msgid "Product Requirement Documents"
-msgstr "Dokument med produktkrav"
+msgstr "Produktkravdokument"
 
 #. module: prd
 #: model:ir.ui.menu,name:prd.menu_prd_document_root
 msgid "Product Requirements Docs"
-msgstr "Dokument för produktkrav"
+msgstr "Produktkravdokument"
 
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_search
 msgid "Product Requirements Documents"
-msgstr "Dokument för produktkrav"
+msgstr "Produktkravdokument"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_odoo_view__prompt
@@ -905,12 +905,12 @@ msgstr "Avvisad"
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_odoo_module__repo_id
 msgid "Repo"
-msgstr "Återköp"
+msgstr "Repo"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_requirement_function__req_id
 msgid "Req"
-msgstr "Req"
+msgstr "Krav"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_function__requirement_ids
@@ -929,7 +929,7 @@ msgstr "Kravkategorier"
 #: model:ir.model,name:prd.model_prd_requirement_category
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_category_form
 msgid "Requirement Category"
-msgstr "Krav Kategori"
+msgstr "Kravkategori"
 
 #. module: prd
 #: model:ir.model.fields,help:prd.field_prd_requirement__code
@@ -957,7 +957,7 @@ msgstr "Krav från detta objekt"
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
 msgid "Requirement without function"
-msgstr "Krav utan funktion"
+msgstr "Omatchade krav"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__requirement_ids
@@ -1158,4 +1158,4 @@ msgstr "t.ex. Office Party"
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_function_form
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_form
 msgid "e.g. Requirement"
-msgstr "t.ex. Krav"
+msgstr "eg Krav"
