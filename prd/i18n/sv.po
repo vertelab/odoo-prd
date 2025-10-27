@@ -343,13 +343,13 @@ msgstr "Funktion"
 #: model:ir.ui.menu,name:prd.menu_prd_function_categories
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_function_category_list
 msgid "Function Categories"
-msgstr "Funktion Kategorier"
+msgstr "Funktionskategorier"
 
 #. module: prd
 #: model:ir.model,name:prd.model_prd_function_category
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_function_category_form
 msgid "Function Category"
-msgstr "Funktion Kategori"
+msgstr "Funktionskategori"
 
 #. module: prd
 #: model:ir.model,name:prd.model_prd_function_type
@@ -529,7 +529,7 @@ msgstr "Senast uppdaterad den"
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
 msgid "Major Version"
-msgstr "Större version"
+msgstr "Större versionsförändring"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__message_has_error
@@ -548,7 +548,7 @@ msgstr "Meddelanden"
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
 msgid "Minor Version"
-msgstr "Mindre version"
+msgstr "Mindre versionsförändring"
 
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
@@ -815,7 +815,7 @@ msgstr "Överliggande PRD"
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_odoo_repo__path
 msgid "Path"
-msgstr "Väg"
+msgstr "Sökväg"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_requirement_function__prd_id
