@@ -69,14 +69,14 @@ msgstr "Aktivitet Undantag Dekoration"
 #: model:ir.model.fields,field_description:prd.field_prd_function__activity_state
 #: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_state
 msgid "Activity State"
-msgstr "Aktivitetsläge"
+msgstr "Aktivitetsetapp"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__activity_type_icon
 #: model:ir.model.fields,field_description:prd.field_prd_function__activity_type_icon
 #: model:ir.model.fields,field_description:prd.field_prd_requirement__activity_type_icon
 msgid "Activity Type Icon"
-msgstr "AktivitetstypsIkon"
+msgstr "Aktivitetstypsikon"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__user_persona
@@ -91,7 +91,7 @@ msgstr "Användningsfall"
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_odoo_module__application
 msgid "Application"
-msgstr "Tillämpning"
+msgstr "Applikation"
 
 #. module: prd
 #: model:ir.model.fields.selection,name:prd.selection__prd_document__state__approved
@@ -529,7 +529,7 @@ msgstr "Senast uppdaterad den"
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
 msgid "Major Version"
-msgstr "Högre version"
+msgstr "Större version"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__message_has_error
@@ -679,45 +679,45 @@ msgstr "Objekt"
 #: model:ir.model.fields,field_description:prd.field_prd_function__module_id
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_odoo_module_form
 msgid "Odoo Module"
-msgstr "Odoo-modul"
+msgstr "Odoomodul"
 
 #. module: prd
 #: model:ir.actions.act_window,name:prd.action_prd_odoo_module
 #: model:ir.ui.menu,name:prd.menu_prd_odoo_modules
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_odoo_module_list
 msgid "Odoo Modules"
-msgstr "Odoo Moduler"
+msgstr "Odoomoduler"
 
 #. module: prd
 #: model:ir.actions.act_window,name:prd.action_odoo_repo
 #: model_terms:ir.ui.view,arch_db:prd.view_odoo_repo_list
 msgid "Odoo Repositories"
-msgstr "Odoo repositories"
+msgstr "Odoorepos"
 
 #. module: prd
 #: model:ir.model,name:prd.model_prd_odoo_repo
 #: model:ir.ui.menu,name:prd.menu_prd_odoo_repo_root
 #: model_terms:ir.ui.view,arch_db:prd.view_odoo_repo_form
 msgid "Odoo Repository"
-msgstr "OdooRepository"
+msgstr "Odoorepo"
 
 #. module: prd
 #: model:ir.model,name:prd.model_prd_odoo_view
 msgid "Odoo View"
-msgstr "Odoo vy"
+msgstr "Odoovy"
 
 #. module: prd
 #: model:ir.model,name:prd.model_prd_odoo_view_type
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_odoo_view_type_form
 msgid "Odoo View Type"
-msgstr "Odoo Vytyp"
+msgstr "Odoovytyp"
 
 #. module: prd
 #: model:ir.actions.act_window,name:prd.action_prd_odoo_view_type
 #: model:ir.ui.menu,name:prd.menu_prd_odoo_view_types
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_odoo_view_type_tree
 msgid "Odoo View Types"
-msgstr "Odoo Vytyper"
+msgstr "Odoovytyper"
 
 #. module: prd
 #: model:ir.model.fields.selection,name:prd.selection__prd_function__state__ongoing
@@ -759,7 +759,7 @@ msgstr "PRD-administratör"
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
 msgid "PRD Document"
-msgstr "PRD-dokument"
+msgstr "PRD Dokument"
 
 #. module: prd
 #: model:ir.actions.act_window,name:prd.action_prd_document
@@ -769,7 +769,7 @@ msgstr "PRD-dokument"
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_function_form
 msgid "PRD Function"
-msgstr "PRD-funktion"
+msgstr "PRD Ffunktion"
 
 #. module: prd
 #: model:ir.actions.act_window,name:prd.action_functions
@@ -1027,7 +1027,7 @@ msgstr "Intressent"
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_function_search
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_requirement_search
 msgid "State"
-msgstr "Läge"
+msgstr "Etapp"
 
 #. module: prd
 #: model:ir.model.fields,help:prd.field_prd_document__activity_state
@@ -1047,7 +1047,7 @@ msgstr ""
 #. module: prd
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_document_form
 msgid "Success Criteras/Risks"
-msgstr "Framgång Kriterier/Risker"
+msgstr "Framgångskriterier/risker"
 
 #. module: prd
 #: model:ir.model.fields,field_description:prd.field_prd_document__success_criteria
