@@ -13,17 +13,13 @@ access_prd_requirement_category_user,prd.requirement user,model_prd_requirement_
 access_prd_requirement_category_manager,prd.requirement manager,model_prd_requirement_category,base.group_system,1,1,1,1
 access_prd_requirement_type_user,prd.requirement user,model_prd_requirement_type,base.group_user,1,0,0,0
 access_prd_requirement_type_manager,prd.requirement manager,model_prd_requirement_type,base.group_system,1,1,1,1
-
 access_prd_requirement_function_user,prd.requirement user,model_prd_requirement_function,base.group_user,1,0,0,0
 access_prd_requirement_function_manager,prd.requirement manager,model_prd_requirement_function,base.group_system,1,1,1,1
-
-
 access_prd_odoo_module_user,prd.odoo_module user,model_prd_odoo_module,base.group_user,1,0,0,0
 access_prd_odoo_module_manager,prd.odoo_module manager,model_prd_odoo_module,base.group_system,1,1,1,1
 access_prd_function_category_user,prd.function user,model_prd_function_category,base.group_user,1,0,0,0
 access_prd_function_category_manager,prd.function manager,model_prd_function_category,base.group_system,1,1,1,1
 access_prd_function_type_user,prd.function user,model_prd_function_type,base.group_user,1,0,0,0
 access_prd_function_type_manager,prd.function manager,model_prd_function_type,base.group_system,1,1,1,1
-
 access_prd_odoo_repo_user,prd.odoo_repo user,model_prd_odoo_repo,base.group_user,1,0,0,0
 access_prd_odoo_repo_manager,prd.odoo_repo manager,model_prd_odoo_repo,base.group_system,1,1,1,1
