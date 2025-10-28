@@ -40,13 +40,15 @@
           <group>
 -->
             <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
-<field name="icon_image" nolabel="1" widget="image" class="oe_avatar me-3"  style="width: 128px; height: 128px; flex: 0 0 auto;"/>  
+<field name="icon_image" nolabel="1" widget="image" class="oe_avatar me-3"  style="width: 128px; height: 128px; flex: 0 0 auto;" invisible="implementation_type == 'odoo_module'"  />  
             <div class="oe_title flex-grow-1 w-80">
                     <label for="name" string="Name"/>
               <h1 class="d-flex flex-row">
                 <field name="name" options="{'line_breaks': False}" widget="text" class="w-80 flex-grow-1 o_text_overflow" placeholder="e.g. Function" />
               </h1>
-            </div>            
+            </div>    
+            <div name="options" />
+    
 <!--
             <field name="image_128" nolabel="1" widget="image" class="oe_avatar me-3"  style="width: 128px; height: 128px; flex: 0 0 auto;"/>  
 -->
@@ -58,37 +60,36 @@
             <group id="c1">
               <field name="func_type" />
               <field name="implementation_type" invisible="1" />
-              <field name="module_id" invisible="implementation_type != 'module'" required="implementation_type == 'module'" />
+              <field name="module_id" invisible="implementation_type != 'odoo_module'" required="implementation_type == 'odoo_module'" />
               <field name="module_prd_id" invisible="implementation_type != 'prd'" required="implementation_type == 'prd'" />
               <field name="user_id" />
               <field name="prd_id" invisible="1" />
-              <field name="odoo_view_ids" widget="many2many_tags" />
               <field name="category_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_edit_color': true}" />
             </group>
             <group id="c2">
-              <field name="application" invisible="implementation_type != 'module'" />
-              <field name="description" invisible="implementation_type != 'module'" />
-              <field name="description_html" invisible="implementation_type != 'module'" />
-              <field name="icon" invisible="implementation_type != 'module'" />
-              <field name="icon_image" invisible="implementation_type != 'module'" />
-              <field name="repo_id" invisible="implementation_type != 'module'" />
-              <field name="shortdesc" invisible="implementation_type != 'module'" />
-              <field name="technical_name" invisible="implementation_type != 'module'" />
-              <field name="website" invisible="implementation_type != 'module'" />
+              <field name="application" invisible="implementation_type != 'odoo_module'" />
+              <field name="description" invisible="implementation_type != 'odoo_module'" />
+              <field name="description_html" invisible="implementation_type != 'odoo_module'" />
+              <field name="icon" invisible="implementation_type != 'odoo_module'" />
+              <field name="icon_image" invisible="implementation_type != 'odoo_module'" />
+              <field name="repo_id" invisible="implementation_type != 'odoo_module'" />
+              <field name="shortdesc" invisible="implementation_type != 'odoo_module'" />
+              <field name="technical_name" invisible="implementation_type != 'odoo_module'" />
+              <field name="website" invisible="implementation_type != 'odoo_module'" />
             </group>
           </group>
           <notebook>
             <page string="Description">
               <field name="description" nolabel="1" />
             </page>
-            <page string="Input Data">
-              <field name="input_data" nolabel="1" />
+            <page string="Input Data" >
+              <field name="input_data" nolabel="1" invisible="implementation_type == 'module'"/>
             </page>
             <page string="Process Data">
-              <field name="process_data" nolabel="1" />
+              <field name="process_data" nolabel="1" invisible="implementation_type == 'module'" />
             </page>
             <page string="Output Data">
-              <field name="output_data" nolabel="1" />
+              <field name="output_data" nolabel="1" invisible="implementation_type == 'module'" />
             </page>
             <page string="Requirements">
               <field name="requirement_ids" context="{

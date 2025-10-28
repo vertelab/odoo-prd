@@ -2,6 +2,10 @@
 <odoo>
   <data noupdate="1">
     <record id="function_type_module" model="prd.function_type">
+      <field name="name">Odoo Module</field>
+      <field name="implementation_type">odoo_module</field>
+    </record>
+    <record id="function_type_module" model="prd.function_type">
       <field name="name">Module</field>
       <field name="implementation_type">module</field>
     </record>
