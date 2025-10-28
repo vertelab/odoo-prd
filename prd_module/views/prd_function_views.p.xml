@@ -1,140 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    
-    <!-- Views and actions for prd.odoo_branches -->
-    <record id="view_prd_odoo_branches_tree" model="ir.ui.view">
-      <field name="name">prd.odoo_branches.tree</field>
-      <field name="model">prd.odoo_branches</field>
-      <field name="arch" type="xml">
-        <list>
-          <field name="name" />
-          <field name="active" />
-        </list>
-      </field>
-    </record>
-    <record id="view_prd_odoo_branches_form" model="ir.ui.view">
-      <field name="name">prd.odoo_branches.form</field>
-      <field name="model">prd.odoo_branches</field>
-      <field name="arch" type="xml">
-        <form>
-          <sheet>
-            <group>
-              <field name="name" />
-              <field name="active" />
-            </group>
-          </sheet>
-        </form>
-      </field>
-    </record>
-    <record id="view_prd_odoo_branches_search" model="ir.ui.view">
-      <field name="name">prd.odoo_branches.search</field>
-      <field name="model">prd.odoo_branches</field>
-      <field name="arch" type="xml">
-        <search>
-          <field name="name" />
-          <filter name="active" string="Active" domain="[('active','=',True)]" />
-        </search>
-      </field>
-    </record>
-    <record id="action_prd_odoo_branches" model="ir.actions.act_window">
-      <field name="name">Odoo Branches</field>
-      <field name="res_model">prd.odoo_branches</field>
-      <field name="view_mode">list,form</field>
-      <field name="search_view_id" ref="view_prd_odoo_branches_search" />
-    </record>
-    <menuitem id="menu_prd_odoo_branches" name="Odoo Branches" parent="prd.menu_prd_configuration_root" action="action_prd_odoo_branches" sequence="1" />
-
-    <!-- Menu parent for Configuration -->
-
-    <!-- Odoo License views and action -->
-    <record id="view_prd_odoo_lincence_tree" model="ir.ui.view">
-      <field name="name">prd.odoo_lincence.tree</field>
-      <field name="model">prd.odoo_lincence</field>
-      <field name="arch" type="xml">
-        <list>
-          <field name="name" />
-          <field name="code" />
-          <field name="active" />
-        </list>
-      </field>
-    </record>
-    <record id="view_prd_odoo_lincence_form" model="ir.ui.view">
-      <field name="name">prd.odoo_lincence.form</field>
-      <field name="model">prd.odoo_lincence</field>
-      <field name="arch" type="xml">
-        <form>
-          <sheet>
-            <group>
-              <field name="name" />
-              <field name="code" />
-              <field name="description" />
-              <field name="active" />
-            </group>
-          </sheet>
-        </form>
-      </field>
-    </record>
-    <record id="view_prd_odoo_lincence_search" model="ir.ui.view">
-      <field name="name">prd.odoo_lincence.search</field>
-      <field name="model">prd.odoo_lincence</field>
-      <field name="arch" type="xml">
-        <search>
-          <field name="name" />
-          <filter string="Active" name="active" domain="[('active','=',True)]" />
-        </search>
-      </field>
-    </record>
-    <record id="action_prd_odoo_lincence" model="ir.actions.act_window">
-      <field name="name">[translate:Odoo Licences]</field>
-      <field name="res_model">prd.odoo_lincence</field>
-      <field name="view_mode">list,form</field>
-      <field name="search_view_id" ref="view_prd_odoo_lincence_search" />
-    </record>
-    <menuitem id="menu_prd_odoo_lincence" name="Odoo Licences" parent="prd.menu_prd_configuration_root" action="action_prd_odoo_lincence" sequence="3" />
-
-    <!-- Odoo Library views and action -->
-    <record id="view_prd_odoo_library_tree" model="ir.ui.view">
-      <field name="name">prd.odoo_library.tree</field>
-      <field name="model">prd.odoo_library</field>
-      <field name="arch" type="xml">
-        <list>
-          <field name="name" />
-          <field name="active" />
-        </list>
-      </field>
-    </record>
-    <record id="view_prd_odoo_library_form" model="ir.ui.view">
-      <field name="name">prd.odoo_library.form</field>
-      <field name="model">prd.odoo_library</field>
-      <field name="arch" type="xml">
-        <form>
-          <sheet>
-            <group>
-              <field name="name" />
-              <field name="description" />
-              <field name="active" />
-            </group>
-          </sheet>
-        </form>
-      </field>
-    </record>
-    <record id="view_prd_odoo_library_search" model="ir.ui.view">
-      <field name="name">prd.odoo_library.search</field>
-      <field name="model">prd.odoo_library</field>
-      <field name="arch" type="xml">
-        <search>
-          <field name="name" />
-          <filter string="Active" name="active" domain="[('active','=',True)]" />
-        </search>
-      </field>
-    </record>
-    <record id="action_prd_odoo_library" model="ir.actions.act_window">
-      <field name="name">Odoo Libraries</field>
-      <field name="res_model">prd.odoo_library</field>
-      <field name="view_mode">list,form</field>
-      <field name="search_view_id" ref="view_prd_odoo_library_search" />
-    </record>
-    <menuitem id="menu_prd_odoo_library" name="Odoo Libraries" parent="prd.menu_prd_configuration_root" action="action_prd_odoo_library" sequence="5" />
-
-
+  <record id="view_prd_function_form" model="ir.ui.view">
+    <field name="name">prd.function.form.module</field>
+    <field name="model">prd.function</field>
+    <field name="inherit_id" ref="prd.view_prd_function_form" />
+    <field name="arch" type="xml">
+      <div name="options" position="inside">
+        <span class="d-inline-flex">
+          <field name="has_models" invisible="implementation_type != 'module'" />
+          <label for="has_models" />
+        </span>
+        <span class="d-inline-flex">
+          <field name="has_views" invisible="implementation_type != 'module'" />
+          <label for="has_views"  invisible="implementation_type != 'module'"/>
+        </span>
+        <span class="d-inline-flex">
+          <field name="has_data" invisible="implementation_type != 'module'" />
+          <label for="has_data" invisible="implementation_type != 'module'"/>
+        </span>
+        <span class="d-inline-flex">
+          <field name="has_controller" invisible="implementation_type != 'module'" />
+          <label for="has_controller" invisible="implementation_type != 'module'"/>
+        </span>
+      </div>
+      <notebook position="inside">
+        <page id="models" string="Models" invisible="not (implementation_type == 'module' and has_models)">
+          <group>
+            <field name="models_filename" />
+            <field name="models_src" />
+          </group>
+        </page>
+        <page id="views" string="Views" invisible="not (implementation_type == 'module' and has_views)">
+          <group>
+            <field name="odoo_view_ids" widget="many2many_tags" />
+            <field name="views_filename" placeholder="views.xml"/>
+            <field name="views_src" nolabel="1" placeholder="&lt;odoo&gt; ... &lt;/odoo&gt;"/>
+          </group>
+        </page>
+        <page id="data" string="Data" invisible="not (implementation_type == 'module' and has_data)">
+          <group>
+            <field name="data_filename" />
+            <field name="data_xml" />
+          </group>
+        </page>
+        <page id="controller" string="Controller" invisible="not (implementation_type == 'module' and has_controller)">
+          <group>
+            <field name="controller_filename" />
+            <field name="controller_src" />
+          </group>
+        </page>
+      </notebook>
+    </field>
+  </record>
 </odoo>

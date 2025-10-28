@@ -8,18 +8,30 @@ _logger = logging.getLogger(__name__)
 class PrdFunction(models.Model):
     _inherit = 'prd.function'
 
-    models_filename = fields.Char(string="Models")
-    models = fields.Text(string="Models")
+    models_filename = fields.Char(string="Filename")
+    models_inherit = fields.Char(string="Inherit")
+    models_src = fields.Text(string="Models")
     data_filename = fields.Char(string="Data")
-    controller_filename = fields.Char(string="Controller")
-    controller = fields.Text(string="Controller")
-    data = fields.Text(string="Data")
+    controller_filename = fields.Char(string="Filename")
+    controller_src = fields.Text(string="Controller")
+    data_xml = fields.Text(string="Data")
     security = fields.Text(string="Security")
     security_filename = fields.Char(string="Security XML")
     security_xml = fields.Text(string="Security XML")
-    views_filename = fields.Char(string="Views")
-    views = fields.Text(string="Views")
+    views_filename = fields.Char(string="Filename")
+    views_src = fields.Text(string="Views")
     summary = fields.Char(string='Summary', )
+    
+    
+    has_controller = fields.Boolean(string='Controller')
+    has_data = fields.Boolean(string='Data')
+    has_models = fields.Boolean(string='Models')
+    has_views = fields.Boolean(string='Views')
+    has_security = fields.Boolean(string='Security')
+    is_inherit = fields.Boolean(string='Inherits')
+    
+    library_ids = fields.Many2many(comodel_name='prd.odoo_library',string='Libraries',help="")
+    
     
 class OdooBranches(models.Model):
     _name = 'prd.odoo_branches'
@@ -81,4 +93,12 @@ class OdooLibrary(models.Model):
 
     name = fields.Char(string='Name', required=True)
     description = fields.Text(string='Description')
+    active = fields.Boolean(string='Active', default=True)
+
+   
+class OdooModels(models.Model):
+    _name = 'prd.odoo_models'
+    _description = 'Odoo Models'
+
+    name = fields.Char(string='Name', required=True)
     active = fields.Boolean(string='Active', default=True)
