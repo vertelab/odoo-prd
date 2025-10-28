@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0-20251014\n"
+"Project-Id-Version: Odoo Server 18.0-20251022\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-21 09:21+0000\n"
-"PO-Revision-Date: 2025-10-21 11:32+0200\n"
+"POT-Creation-Date: 2025-10-28 10:29+0000\n"
+"PO-Revision-Date: 2025-10-28 11:34+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv\n"
@@ -35,54 +35,54 @@ msgstr "App-banner"
 #. module: prd_module
 #: model_terms:ir.ui.view,arch_db:prd_module.view_prd_document_search
 msgid "App Category"
-msgstr "App-kategori"
+msgstr "App kategori"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_document__app_description
 msgid "App Description"
-msgstr "Appbeskrivning"
+msgstr "App beskrivning"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_document__app_index
 msgid "App Index"
-msgstr "App-index"
+msgstr "App index"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_document__app_license
 #: model_terms:ir.ui.view,arch_db:prd_module.view_prd_document_search
 msgid "App License"
-msgstr "App-licens"
+msgstr "App licens"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_document__app_manifest
 msgid "App Manifest"
-msgstr "App-manifest"
+msgstr "App manifest"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_document__app_module
 msgid "App Module"
-msgstr "App-modul"
+msgstr "App modul"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_document__app_project
 #: model_terms:ir.ui.view,arch_db:prd_module.view_prd_document_search
 msgid "App Project"
-msgstr "App-projekt"
+msgstr "App projekt"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_document__app_summary
 msgid "App Summary"
-msgstr "Appsammanfattning"
+msgstr "App sammanfattning"
 
 #. module: prd_module
 #: model_terms:ir.ui.view,arch_db:prd_module.view_prd_document_search
 msgid "App Tree"
-msgstr "App-träd"
+msgstr "App träd"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_document__app_tree
 msgid "Branch Tree"
-msgstr "Gren träd"
+msgstr "Branch träd"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_document__app_category
@@ -185,7 +185,7 @@ msgstr "Licensnummer"
 #: model:ir.model.fields,field_description:prd_module.field_prd_function__models
 #: model:ir.model.fields,field_description:prd_module.field_prd_function__models_filename
 msgid "Models"
-msgstr "Models"
+msgstr "Modeller"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_library__name
@@ -198,14 +198,14 @@ msgstr "Namn"
 #: code:addons/prd_module/models/prd.p.py:0
 #: code:addons/prd_module/models/prd.py:0
 msgid "No Git Project was specified"
-msgstr "Inget Git-projekt angavs"
+msgstr "Inget Git-projekt har angetts"
 
 #. module: prd_module
 #. odoo-python
 #: code:addons/prd_module/models/prd.p.py:0
 #: code:addons/prd_module/models/prd.py:0
 msgid "No Git Project was specified %s"
-msgstr "Inget Git-projekt var angiven %s"
+msgstr "Inget Git-projekt var angivet %s"
 
 #. module: prd_module
 #. odoo-python
@@ -234,23 +234,23 @@ msgstr "Ingen modul har angetts %s"
 #: model:ir.model,name:prd_module.model_prd_odoo_lincence
 #: model:ir.ui.menu,name:prd_module.menu_prd_odoo_branches
 msgid "Odoo Branches"
-msgstr "Odoo-grenar"
+msgstr "Odoo Brancher"
 
 #. module: prd_module
 #: model:ir.actions.act_window,name:prd_module.action_prd_odoo_library
 #: model:ir.ui.menu,name:prd_module.menu_prd_odoo_library
 msgid "Odoo Libraries"
-msgstr "Odoo-bibliotek"
+msgstr "Odoo bibliotek"
 
 #. module: prd_module
 #: model:ir.model,name:prd_module.model_prd_odoo_library
 msgid "Odoo Library"
-msgstr "Odoo-bibliotek"
+msgstr "Odoo bibliotek"
 
 #. module: prd_module
 #: model:ir.ui.menu,name:prd_module.menu_prd_odoo_lincence
 msgid "Odoo Licences"
-msgstr "Odoo-licenser"
+msgstr "Odoo licenser"
 
 #. module: prd_module
 #: model:ir.model,name:prd_module.model_prd_function
@@ -260,7 +260,7 @@ msgstr "PRD-funktioner"
 #. module: prd_module
 #: model:ir.model,name:prd_module.model_prd_document
 msgid "Product Requirement Document"
-msgstr "Dokument för produktkrav"
+msgstr "Produktkravdokument"
 
 #. module: prd_module
 #. odoo-python
@@ -294,7 +294,7 @@ msgstr "Vy typnamn"
 #: model:ir.model.fields,field_description:prd_module.field_prd_function__views
 #: model:ir.model.fields,field_description:prd_module.field_prd_function__views_filename
 msgid "Views"
-msgstr "Vy"
+msgstr "Vyer"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_document__app_url
