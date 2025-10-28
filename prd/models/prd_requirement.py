@@ -27,6 +27,7 @@ class PrdRequirement(models.Model):
         comodel_name='prd.requirement_category',
         string='Tags',
         help="Categories"
+    )
     code = fields.Char(
         string='Code',
         size=6,trim=True,
@@ -73,9 +74,7 @@ class PrdRequirement(models.Model):
         ('done', 'Done')
     ], string="State", default='draft')
     to_check = fields.Boolean()
-
-    def set_state_done(self):
-        self.state = "done"
+    user_id = fields.Many2one(comodel_name="res.users",string="Responsible")
 
     @api.depends("code")
     def _compute_parent_id(self):
@@ -92,6 +91,20 @@ class PrdRequirement(models.Model):
                     record.write({"parent_id": parent_id.id})
             else:
                 record.parent_id = False
+
+    def set_state_done(self):
+        self.state = "done"
+
+    def action_set_responsible(self):
+        _logger.error(f"{self=}")
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Set Responsible User',
+            'res_model': "prd.requirement.wizard",
+            'view_mode': 'form',
+            'target': 'new',
+            'context': { "default_requirement_ids": self.ids }
+        }
 
 class PRDRequirementFunction(models.Model):
     _name = 'prd.requirement.function'
