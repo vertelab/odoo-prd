@@ -367,13 +367,13 @@ msgstr "Funktion"
 #: model:ir.ui.menu,name:prd.menu_prd_function_categories
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_function_category_list
 msgid "Function Categories"
-msgstr "Funktion Kategorier"
+msgstr "Funktionskategorier"
 
 #. module: prd
 #: model:ir.model,name:prd.model_prd_function_category
 #: model_terms:ir.ui.view,arch_db:prd.view_prd_function_category_form
 msgid "Function Category"
-msgstr "Funktion Kategori"
+msgstr "Funktionskategori"
 
 #. module: prd
 #: model:ir.model,name:prd.model_prd_function_type
