@@ -26,9 +26,13 @@
                     <filter string="PRD Document" name="group_by_prd" context="{'group_by':'prd_id'}" />
                     <filter string="Stake Holder" name="group_by_partner" context="{'group_by':'partner_id'}" />
                 </group>
+                <searchpanel>
+                    <field name="parent_id" icon="fa-folder" string="Code" enable_counters="1" /> <!-- enable_counters="1" select="multi" -->
+                </searchpanel>
             </search>
         </field>
     </record>
+    
     <!-- List View -->
     <record id="view_prd_requirement_tree" model="ir.ui.view">
         <field name="name">prd.requirement.tree</field>
@@ -49,6 +53,7 @@
             </list>
         </field>
     </record>
+    
     <!-- Form View -->
     <record id="view_prd_requirement_form" model="ir.ui.view">
         <field name="name">prd.requirement.form</field>
@@ -77,6 +82,7 @@
                             <field name="partner_id" />
                             <field name="prd_id" invisible="1" />
                             <field name="object_id" />
+                            <field name="code_id" string="Code" />
                             <field name="to_check" widget="boolean_toggle" />
                         </group>
                         <group id="c2" />
@@ -109,4 +115,16 @@
             </form>
         </field>
     </record>
+
+    <record id="prd_requirement_code_sync" model="ir.actions.server">
+        <field name="name">Product Requirement Code Sync</field>
+        <field name="model_id" ref="prd.model_prd_requirement"/>
+        <field name="binding_model_id" ref="prd.model_prd_requirement"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+            action = records._compute_code_id()
+        </field>
+    </record>
+    
 </odoo>

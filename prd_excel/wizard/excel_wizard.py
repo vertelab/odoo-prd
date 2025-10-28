@@ -16,36 +16,6 @@ class ExcelWizard(models.TransientModel):
     _description = 'Load Requirements from Excel'
 
     file = fields.Binary(string="File", required=True)
- 
-    # def import_excel(self):
-    #     """
-    #     Läser en excel-fil (kravspecifikation) och skapar krav i prd.requirement.
-    #     """
-    #     try:
-    #         wb = openpyxl.load_workbook(filename=BytesIO(base64.b64decode(self.file)),data_only=True)
-    #     except Exception as e:
-    #         raise UserError(_("Kunde inte läsa Excel-filen: %s") % e)
-
-    #     requirement_model = self.env['prd.requirement']
-    #     created_count = 0
-
-    #     prd_id = self.env.context['active_id']
-
-    #     # Gå igenom varje blad i boken
-    #     for sheet in wb.worksheets:
-    #         _logger.warning(f"{sheet=}")
-    #         current_page = sheet.title.strip()
-    #         self.get_ids(sheet)
-    #         for row in sheet.iter_cols(values_only=True,max_row=1):
-                
-    #             if not row or not row[0]:
-    #                 continue
-            
-    # def get_ids(self,sheet):
-    #     for test in sheet.iter_cols(values_only=True,max_col=0):
-    #         _logger.error(f"{test=}")
-        # _logger.error(sheet.iter_rows(values_only=True).values)
-         
 
     def import_excel(self):
         """
@@ -53,7 +23,6 @@ class ExcelWizard(models.TransientModel):
         """
         try:
             wb = openpyxl.load_workbook(filename=BytesIO(base64.b64decode(self.file)),data_only=True)
-            # ~ wb = openpyxl.load_workbook(self.file, data_only=True)
         except Exception as e:
             raise UserError(_("Kunde inte läsa Excel-filen: %s") % e)
 
@@ -157,42 +126,3 @@ class ExcelWizard(models.TransientModel):
     def check_row_len(self,row,row_index,max_len,min_len):
         check = str(row[row_index]).strip() if len(row) > row_index and row[row_index] and len(row[row_index]) <= max_len and len(row[row_index]) >= min_len else False
         return check
-
-    def Ximport_excel(self):
-
-            wb = openpyxl.load_workbook(filename=BytesIO(base64.b64decode(self.file)))
-            
-            # ~ raise UserError(f"{wb.sheetnames=}")
-            for ws in wb.sheetnames:
-                activews = wb[ws]
-                record = {}                
-                for row in range(1, activews.max_row + 1):
-                    value = activews.cell(row=row,column=1).value
-                    if value and any(c.isdigit() for c in str(value)): # Has numbers
-                        record = {
-                            'page': ws,
-                            'no': activews.cell(row=row,column=1),
-                             'category':  activews.cell(row=row,column=2).value if len(activews.cell(row=row,column=2).value) < 25 else '',
-                             'name': activews.cell(row=row,column=2) if len(activews.cell(row=row,column=2).value) > 25 else activews.cell(row=row,column=3).value ,
-                            'prd_id': self.env.context['active_id'],
-                        
-                        }
-                        self.env['prd.requirement'].create(record)
-
-                    # ~ if activews.cell(row=row,column=1) != None:
-                        # ~ for col in range(1, 13):
-                            # ~ record_value = activews.cell(row=row, column=col).value
-                            # ~ if record_value != None:
-                                # ~ record_value = str(record_value).strip()
-                                # ~ record_value = record_value.lower()
-                                # ~ if record_value == "monerary":
-                                    # ~ record_value = "monetary"
-                                # ~ if "percentage" in record_value:
-                                    # ~ record_value = record_value.replace("percentage", "percent")
-                            # ~ record[self.field_keys[col-1]] = record_value
-                        # ~ record['csrd_sheet_name'] = ws
-                        # ~ self.create_record(record)
-            # ~ return {
-                # ~ 'type': 'ir.actions.client',
-                # ~ 'tag': 'reload',
-            # ~ }
