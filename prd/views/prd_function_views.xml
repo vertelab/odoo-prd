@@ -17,6 +17,7 @@
         <filter name="my_functions" string="My Functions" domain="[('user_id','=',uid)]" groups="base.group_user" />
         <filter name="no_req" string="Missing Requirement" domain="[('requirement_ids','=',False)]" groups="base.group_user" />
         <filter string="Archived" name="archive" domain="[('active','=',False)]" />
+        <filter name="to_check" string="To Check" domain="[('to_check','=',True)]" />
         <group expand="1" string="Group By">
           <filter string="Responsible" name="group_by_user" context="{'group_by':'user_id'}" />
           <filter string="Type" name="group_by_func_type" context="{'group_by':'func_type'}" />
@@ -64,6 +65,7 @@
               <field name="prd_id" invisible="1" />
               <field name="odoo_view_ids" widget="many2many_tags" />
               <field name="category_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_edit_color': true}" />
+              <field name="to_check" widget="boolean_toggle" />
             </group>
             <group id="c2">
               <field name="application" invisible="implementation_type != 'module'" />
@@ -111,20 +113,23 @@
       </form>
     </field>
   </record>
+  
   <!-- List View -->
   <record id="view_prd_function_tree" model="ir.ui.view">
     <field name="name">prd.function.tree</field>
     <field name="model">prd.function</field>
     <field name="arch" type="xml">
-      <list string="PRD Functions">
+      <list string="PRD Functions" decoration-warning="to_check">
         <field name="sequence" widget="handle" />
         <field name="name" />
         <field name="func_type" optional="show" />
         <field name="user_id" optional="show" />
         <field name="state" optional="show" />
+        <field name="to_check" optional="hide" />
       </list>
     </field>
   </record>
+  
   <!-- Kanban View -->
   <record id="view_prd_function_kanban" model="ir.ui.view">
     <field name="name">prd.function.kanban</field>
@@ -175,6 +180,9 @@
               bg_color="bg-danger" icon="fa-times"
               invisible="state != 'draft'"/>
 
+      <widget name="web_ribbon" title="To Check"
+              bg_color="bg-warning" icon="fa-file-text"
+              invisible="to_check == False"/>
                 
               <field class="fw-bold fs-5" name="name" />
               <p class="text-muted small my-0 lh-sm">

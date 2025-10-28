@@ -167,6 +167,7 @@ class PrdFunction(models.Model):
         ('ongoing', 'Ongoing'),
         ('done', 'Done')
     ], string="State", default='draft')
+    to_check = fields.Boolean()
     user_id = fields.Many2one(comodel_name='res.users', string="Author", help="")
     implementation_type = fields.Selection(
         related="func_type.implementation_type",
