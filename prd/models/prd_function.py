@@ -131,17 +131,29 @@ class PrdFunction(models.Model):
 
     # models / data / sequrity / sequirity.xml / views / 
     active = fields.Boolean(string='Active', default=True)
+    avatar_128 = fields.Image("Avatar", max_width=128, max_height=128, compute='_compute_avatar_128')
     category_ids = fields.Many2many(
         comodel_name='prd.function_category',
         string='Tags',
         help="Categories"
     )
+    controller_file = fields.Char()
+    controller_src = fields.Text()
+    data_file = fields.Char()
+    data_xml = fields.Text()
     description = fields.Text(string="Description")
     duration_tracking = fields.Float(string='Duration Tracking')
     func_type = fields.Many2one(comodel_name='prd.function_type', string="Type", help="")
+    has_models = fields.Boolean()
+    has_views = fields.Boolean()
+    has_data = fields.Boolean()
+    has_controller = fields.Boolean()
+    has_security = fields.Boolean()
     input_data = fields.Text(string="Input")
     # ~ module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Odoo Module",help="")
     module_prd_id = fields.Many2one(comodel_name='prd.document',string="Product Requirement Document",help="")
+    models_file = fields.Char()
+    models_src = fields.Text()
     name = fields.Char(string="Name", required=True)
     odoo_view_ids = fields.Many2many(
         comodel_name='prd.odoo_view_type',
@@ -167,13 +179,16 @@ class PrdFunction(models.Model):
         ('ongoing', 'Ongoing'),
         ('done', 'Done')
     ], string="State", default='draft')
+    security_file = fields.Char() 
+    security_src = fields.Text()
+    security_xml = fields.Text()
     to_check = fields.Boolean()
     user_id = fields.Many2one(comodel_name='res.users', string="Author", help="")
     implementation_type = fields.Selection(
         related="func_type.implementation_type",
         string="Implementation Type",
         readonly=True,
-        store=True,
+        store=False,
     )
     color = fields.Integer(default=lambda self: randint(1, 11))
     image_128 = fields.Image("Image", max_width=128, max_height=128)
@@ -182,7 +197,8 @@ class PrdFunction(models.Model):
         return ''.join(choice('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ23456789') for _i in range(10))
 
     uuid = fields.Char('UUID', size=50, default=_generate_random_token, copy=False)
-
+    views_file = fields.Char()
+    views_src = fields.Text()
     @api.depends('image_128', 'uuid')
     def _compute_avatar_128(self):
         for record in self:
@@ -193,9 +209,10 @@ class PrdFunction(models.Model):
         bgcolor = get_hsl_from_seed(self.uuid)
         avatar = avatar.replace('fill="#875a7b"', f'fill="{bgcolor}"')
         return base64.b64encode(function_icon.encode())
-    avatar_128 = fields.Image("Avatar", max_width=128, max_height=128, compute='_compute_avatar_128')
+   
+   
+   
   
-
 
 class OdooView(models.Model):
     _name = 'prd.odoo_view'
