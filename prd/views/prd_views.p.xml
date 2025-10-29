@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <odoo>
+
         <!-- Search View -->
         <record id="view_prd_document_search" model="ir.ui.view">
             <field name="name">prd.document.search</field>
@@ -25,6 +26,7 @@
                 </search>
             </field>
         </record>
+
         <!-- Form View -->
         <record id="view_prd_document_form" model="ir.ui.view">
             <field name="name">prd.document.form</field>
@@ -130,6 +132,7 @@
                 </form>
             </field>
         </record>
+
         <!-- List (Tree) View -->
         <record id="view_prd_document_tree" model="ir.ui.view">
             <field name="name">prd.document.tree</field>
@@ -146,6 +149,7 @@
                 </list>
             </field>
         </record>
+
         <!-- Kanban View -->
         <record id="view_prd_document_kanban" model="ir.ui.view">
             <field name="name">prd.document.kanban</field>
@@ -184,6 +188,7 @@
                 </kanban>
             </field>
         </record>
+
         <!-- Calendar View -->
         <record id="view_prd_document_calendar" model="ir.ui.view">
             <field name="name">prd.document.calendar</field>
@@ -195,13 +200,16 @@
                 </calendar>
             </field>
         </record>
+
         <record id="action_prd_document" model="ir.actions.act_window">
             <field name="name">PRD Documents</field>
             <field name="res_model">prd.document</field>
             <field name="view_mode">kanban,list,form,calendar</field>
             <field name="view_id" ref="view_prd_document_kanban" />
         </record>
+
         <menuitem id="menu_prd_document_root" name="Product Requirements Docs" sequence="10" />
         <menuitem id="menu_prd_document" name="Product Requirement Documents" parent="menu_prd_document_root" action="action_prd_document" sequence="20" />
+        
     </odoo>
 </odoo>

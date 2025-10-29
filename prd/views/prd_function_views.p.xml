@@ -38,9 +38,6 @@
         </header>
         <sheet>
           <div class="oe_button_box" name="button_box" groups="base.group_user" />
-          <!--
-          <group>
--->
           <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
           <field name="icon_image" nolabel="1" widget="image" class="oe_avatar me-3" style="width: 128px; height: 128px; flex: 0 0 auto;" invisible="implementation_type == 'odoo_module'" />
           <div class="oe_title flex-grow-1 w-80">
@@ -50,14 +47,6 @@
             </h1>
           </div>
           <div name="options" />
-
-          <!--
-            <field name="image_128" nolabel="1" widget="image" class="oe_avatar me-3" style="width: 128px; height: 128px; flex: 0 0 auto;"/>  
--->
-
-          <!--
-          </group>
--->
           <group col="2">
             <group id="c1">
               <field name="func_type" />
@@ -93,37 +82,6 @@
             </page>
             <page string="Output Data"  invisible="implementation_type == 'module'">
               <field name="output_data" nolabel="1" />
-            </page>
-            <page string="Models" invisible="not has_models">
-              <group>
-                <field name="models_file" />
-              </group>
-              <field name="models_src" />
-            </page>
-            <page string="Views" invisible="not has_views">
-              <group>
-                <field name="views_file" />
-              </group>
-              <field name="views_src" />
-            </page>
-            <page string="Data" invisible="not has_data">
-              <group>
-                <field name="data_file" />
-              </group>
-              <field name="data_xml" />
-            </page>
-            <page string="Controller" invisible="not has_controller">
-              <group>
-                <field name="controller_file" />
-              </group>
-              <field name="controller_src" />
-            </page>
-            <page string="Security" invisible="not has_security">
-              <field name="security_src" />
-              <group>
-                <field name="security_file" />
-              </group>
-              <field name="security_xml" />
             </page>
             <page string="Requirements">
               <field name="requirement_ids" context="{
