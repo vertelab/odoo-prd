@@ -19,8 +19,8 @@
           <label for="has_data" invisible="implementation_type != 'module'"/>
         </span>
         <span class="d-inline-flex">
-          <field name="has_controller" invisible="implementation_type != 'module'" />
-          <label for="has_controller" invisible="implementation_type != 'module'"/>
+          <field name="has_controllers" invisible="implementation_type != 'module'" />
+          <label for="has_controllers" invisible="implementation_type != 'module'"/>
         </span>
       </div>
       <notebook position="inside">
@@ -34,7 +34,7 @@
           <group>
             <field name="odoo_view_ids" widget="many2many_tags" />
             <field name="views_filename" placeholder="views.xml"/>
-            <field name="views_src" nolabel="1" placeholder="&lt;odoo&gt; ... &lt;/odoo&gt;"/>
+            <field name="views_xml" nolabel="1" placeholder="&lt;odoo&gt; ... &lt;/odoo&gt;"/>
           </group>
         </page>
         <page id="data" string="Data" invisible="not (implementation_type == 'module' and has_data)">
@@ -43,10 +43,10 @@
             <field name="data_xml" />
           </group>
         </page>
-        <page id="controller" string="Controller" invisible="not (implementation_type == 'module' and has_controller)">
+        <page id="controllers" string="Controllers" invisible="not (implementation_type == 'module' and has_controllers)">
           <group>
-            <field name="controller_filename" />
-            <field name="controller_src" />
+            <field name="controllers_filename" />
+            <field name="controllers_src" />
           </group>
         </page>
       </notebook>

@@ -1,10 +1,15 @@
-from datetime import datetime, timedelta 
+import logging
+import os
+import tarfile
+import io
+import time
+import base64
+import paramiko
+
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError, AccessError
-import logging
 
 _logger = logging.getLogger(__name__)
-
 
 class ProductRequirementDocument(models.Model):
     _inherit = 'prd.document'
@@ -24,19 +29,161 @@ class ProductRequirementDocument(models.Model):
     app_index = fields.Html(string="App Index", )
     app_depends = fields.Many2many(comodel_name='prd.odoo_module',string='Dependensies',help="") # relation|column1|column2
 
-    def button_export_module(self):
-        for prd in self:
-            pass
-
 
     @api.depends('app_module','app_project')
     def _get_app_url(self):	 
         pass
         for b in self:
-            if b.app_module:
+            if b.app_module and b.app_project:
                b.app_url = "https://vertel.se/apps/"+b.app_project.name+"/"+b.app_module.name
             else:
                 b.app_url = False
+
+    def button_export_module(self):
+        
+        module_path = f"{self.app_module.name}/"
+        tar_file = io.BytesIO()
+        with tarfile.open(fileobj=tar_file, mode='w:gz') as tar:
+    
+            for function in self.function_ids:
+                views_dir = ""
+                models_dir = ""
+                data_dir = ""
+                controllers_dir = ""
+                if function.has_views and function.views_filename:
+                    views_dir = f"{module_path}views/"
+                    self.add_file_to_tar(
+                        tar,
+                        views_dir,
+                        function.views_filename,
+                        function.views_xml
+                        )
+                if function.has_models and function.models_filename:
+                    models_dir = f"{module_path}models/"
+                    self.add_file_to_tar(
+                        tar,
+                        models_dir,
+                        function.models_filename,
+                        function.models_src
+                        )
+                    
+                if function.has_data and function.data_filename:
+                    data_dir = f"{module_path}data/"
+                    self.add_file_to_tar(
+                        tar,
+                        data_dir,
+                        function.data_filename,
+                        function.data_xml
+                        )
+                    
+                if function.has_controllers and function.controllers_filename:
+                    controllers_dir = f"{module_path}controllers/"
+                    self.add_file_to_tar(
+                        tar,
+                        controllers_dir,
+                        function.controllers_filename,
+                        function.controllers_src
+                        )
+        tar_file.seek(0)
+        return base64.b64encode(tar_file.read()).decode('ascii')
+
+    def add_file_to_tar(self,tar,dir_path,filename,content):
+        arcname = f"{dir_path}{filename}"
+        content = content if content else "" 
+        data = content.encode('utf-8')  # Encode string to bytes
+        fileobj = io.BytesIO(data)       # Create BytesIO stream from bytes
+        tarinfo = tarfile.TarInfo(name=arcname)
+        tarinfo.size = len(data)
+        tarinfo.mtime = time.time()
+        tar.addfile(tarinfo, fileobj=fileobj)
+
+    def action_redirect_to_url(self):
+        # '/web/content/%s?download=true' % attachment.id,
+        _logger.error("TEST"*10)
+        url = f"/prd_module/download_code/{self.id}"
+        return {
+            "type": "ir.actions.act_url",
+            "url": url,
+            "target": "self",
+        }
+
+    def sftp_upload(self):
+
+        hostname = self.env.user.sftp_hostname
+        port = self.env.user.sftp_port
+        username = self.env.user.sftp_username
+
+        if not hostname or not port or not username:
+            raise UserError(f"One of the following values are not set on the user {self.env.user.name}\n\nHostname: {hostname}\nPort: {port}\nUsername: {username}")
+
+        module_path = f"/tmp/{self.app_module.name}/"
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(hostname, username=username, port=port)
+
+        # Open SFTP client
+        sftp = ssh.open_sftp()
+
+        self.mkdir_safe(sftp,module_path)
+
+        for function in self.function_ids:
+            views_dir = ""
+            models_dir = ""
+            data_dir = ""
+            controllers_dir = ""
+            if function.has_views and function.views_filename:
+                views_dir = f"{module_path}views/"
+                self.file_write(
+                    sftp,
+                    views_dir,
+                    function.views_filename,
+                    function.views_xml
+                    )
+            if function.has_models and function.models_filename:
+                models_dir = f"{module_path}models/"
+                self.file_write(
+                    sftp,
+                    models_dir,
+                    function.models_filename,
+                    function.models_src
+                    )
+                
+            if function.has_data and function.data_filename:
+                data_dir = f"{module_path}data/"
+                self.file_write(
+                    sftp,
+                    data_dir,
+                    function.data_filename,
+                    function.data_xml
+                    )
+                
+            if function.has_controllers and function.controllers_filename:
+                controllers_dir = f"{module_path}controllers/"
+                self.file_write(
+                    sftp,
+                    controllers_dir,
+                    function.controllers_filename,
+                    function.controllers_src
+                    )
+
+
+    def file_write(self,sftp,path,filename,content):
+        self.mkdir_safe(sftp,path)
+        file_path = f"{path}{filename}"
+        with sftp.file(file_path, 'w+') as remote_file:
+            remote_file.write(content if content else "")
+            remote_file.close()
+
+    def mkdir_safe(self,sftp,dir,mode=0o775):
+        try:
+            sftp.mkdir(dir,mode)
+        except IOError as e:
+            # errno 17 = File exists (on Unix)
+            if e.errno == 17 or 'File exists' in str(e):
+                pass  # Directory already exists, ignore error
+            else:
+                pass  # re-raise if other error
 
     def sync_module(self):
         git_url = self.env['ir.config_parameter'].sudo().get_param('GitHubBaseUrl')
