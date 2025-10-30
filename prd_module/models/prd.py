@@ -140,7 +140,7 @@ class ProductRequirementDocument(models.Model):
             use_logged_in_user = True
 
         if not use_logged_in_user:
-            uid = stderr_uid.readline()
+            uid = stdout_uid.readline()
             gid = stdout_gid.readline()
 
         # Open SFTP client
