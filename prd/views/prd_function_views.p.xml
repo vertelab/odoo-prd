@@ -26,6 +26,7 @@
       </search>
     </field>
   </record>
+
   <!-- Form View -->
   <record id="view_prd_function_form" model="ir.ui.view">
     <field name="name">prd.function.form</field>
@@ -37,26 +38,15 @@
         </header>
         <sheet>
           <div class="oe_button_box" name="button_box" groups="base.group_user" />
-<!--
-          <group>
--->
-            <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
-<field name="icon_image" nolabel="1" widget="image" class="oe_avatar me-3"  style="width: 128px; height: 128px; flex: 0 0 auto;" invisible="implementation_type == 'odoo_module'"  />  
-            <div class="oe_title flex-grow-1 w-80">
-                    <label for="name" string="Name"/>
-              <h1 class="d-flex flex-row">
-                <field name="name" options="{'line_breaks': False}" widget="text" class="w-80 flex-grow-1 o_text_overflow" placeholder="e.g. Function" />
-              </h1>
-            </div>    
-            <div name="options" />
-    
-<!--
-            <field name="image_128" nolabel="1" widget="image" class="oe_avatar me-3"  style="width: 128px; height: 128px; flex: 0 0 auto;"/>  
--->
-            
-<!--
-          </group>
--->
+          <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
+          <field name="icon_image" nolabel="1" widget="image" class="oe_avatar me-3" style="width: 128px; height: 128px; flex: 0 0 auto;" invisible="implementation_type == 'odoo_module'" />
+          <div class="oe_title flex-grow-1 w-80">
+            <label for="name" string="Name"/>
+            <h1 class="d-flex flex-row">
+              <field name="name" options="{'line_breaks': False}" widget="text" class="w-80 flex-grow-1 o_text_overflow" placeholder="e.g. Function" />
+            </h1>
+          </div>
+          <div name="options" />
           <group col="2">
             <group id="c1">
               <field name="func_type" />
@@ -84,14 +74,14 @@
             <page string="Description">
               <field name="description" nolabel="1" />
             </page>
-            <page string="Input Data" >
-              <field name="input_data" nolabel="1" invisible="implementation_type == 'module'"/>
+            <page string="Input Data" invisible="implementation_type == 'module'">
+              <field name="input_data" nolabel="1" />
             </page>
-            <page string="Process Data">
-              <field name="process_data" nolabel="1" invisible="implementation_type == 'module'" />
+            <page string="Process Data" invisible="implementation_type == 'module'">
+              <field name="process_data" nolabel="1"  />
             </page>
-            <page string="Output Data">
-              <field name="output_data" nolabel="1" invisible="implementation_type == 'module'" />
+            <page string="Output Data"  invisible="implementation_type == 'module'">
+              <field name="output_data" nolabel="1" />
             </page>
             <page string="Requirements">
               <field name="requirement_ids" context="{
@@ -114,7 +104,7 @@
       </form>
     </field>
   </record>
-  
+
   <!-- List View -->
   <record id="view_prd_function_tree" model="ir.ui.view">
     <field name="name">prd.function.tree</field>
@@ -130,7 +120,7 @@
       </list>
     </field>
   </record>
-  
+
   <!-- Kanban View -->
   <record id="view_prd_function_kanban" model="ir.ui.view">
     <field name="name">prd.function.kanban</field>
@@ -150,64 +140,56 @@
         <templates>
           <t t-name="menu">
             <t t-if="record.implementation_type.raw_value">
-                 <t t-set="itype" t-value="record.implementation_type.raw_value" />
+              <t t-set="itype" t-value="record.implementation_type.raw_value" />
             </t>
             <t t-else="">
-                 <t t-set="itype" t-value="tom" />
+              <t t-set="itype" t-value="tom" />
             </t>
-                             
+
             <a type="open" class="dropdown-item">Module Info</a>
             <a t-if="record.website.raw_value" role="menuitem" class="dropdown-item o-hidden-ios" t-att-href="record.website.raw_value" target="_blank">Learn More</a>
           </t>
           <t t-name="card" class="flex-row align-items-center">
             <aside>
-              <field name="icon" widget="image_url" options="{'size': [50, 50]}" alt="Icon" t-if="record.implementation_type.raw_value == 'module'"/>                              
-               <field name="avatar_128" alt="Contact image" widget="image" options="{'img_class': 'object-fit-cover'}" t-if="record.implementation_type.raw_value != 'module'" />
+              <field name="icon" widget="image_url" options="{'size': [50, 50]}" alt="Icon" t-if="record.implementation_type.raw_value == 'module'"/>
+              <field name="avatar_128" alt="Contact image" widget="image" options="{'img_class': 'object-fit-cover'}" t-if="record.implementation_type.raw_value != 'module'" />
             </aside>
-<!--
+            <!--
             <main class="me-4" t-att-title="record.shortdesc.value">
 -->
-            <main class="me-4" >
-                
-      <widget name="web_ribbon" title="Done"
-              bg_color="bg-success" icon="fa-times"
-              invisible="state != 'done'"/>
-      
-      <widget name="web_ribbon" title="Ongoing"
-              bg_color="bg-warning" icon="fa-file-text"
-              invisible="state != 'ongoing'"/>
-      
-      <widget name="web_ribbon" title="Draft"
-              bg_color="bg-danger" icon="fa-times"
-              invisible="state != 'draft'"/>
+            <main class="me-4">
 
-      <widget name="web_ribbon" title="To Check"
-              bg_color="bg-warning" icon="fa-file-text"
-              invisible="to_check == False"/>
-                
+              <widget name="web_ribbon" title="Done" bg_color="bg-success" icon="fa-times" invisible="state != 'done'"/>
+
+              <widget name="web_ribbon" title="Ongoing" bg_color="bg-warning" icon="fa-file-text" invisible="state != 'ongoing'"/>
+
+              <widget name="web_ribbon" title="Draft" bg_color="bg-danger" icon="fa-times" invisible="state != 'draft'"/>
+
+              <widget name="web_ribbon" title="To Check" bg_color="bg-warning" icon="fa-file-text" invisible="to_check == False"/>
+
               <field class="fw-bold fs-5" name="name" />
               <p class="text-muted small my-0 lh-sm">
-    
+
                 <div>
                   <field name="category_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_edit_color': true}" />
-                  <field name="requirement_names_ids" widget="many2many_tags"  />
-                                    
+                  <field name="requirement_names_ids" widget="many2many_tags" />
+
                 </div>
-              
+
               </p>
               <footer class="w-100 justify-content-between">
-                    
-        <field name="user_id" widget="many2one_avatar_user" />
-        <field name="func_type" />
-<!--
+
+                <field name="user_id" widget="many2one_avatar_user" />
+                <field name="func_type" />
+                <!--
         <field name="state" widget="label_selection"/>
 -->
                 <a t-att-href="record.website.raw_value" target="_blank" invisible="website in (False, '')" class="btn btn-sm btn-secondary float-end o-hidden-ios" role="button">Learn More</a>
-<!--
+                <!--
                 <a type="edit" class="btn btn-secondary btn-sm float-end" role="button" invisible="website != ''">Module Info</a>
 -->
-                 <field name="activity_ids" class="float-end" widget="kanban_activity"/>
-                
+                <field name="activity_ids" class="float-end" widget="kanban_activity"/>
+
               </footer>
             </main>
           </t>

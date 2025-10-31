@@ -19,12 +19,15 @@
         <filter string="Archived" name="archive" domain="[('active','=',False)]" />
         <filter name="no_func" string="Requirement without function" domain="[('function_ids','=',False)]" groups="base.group_user" />
         <filter name="to_check" string="To Check" domain="[('to_check','=',True)]" groups="base.group_user" />
+        <filter name="no_responsible" string="No Responsible" domain="[('user_id','=',False)]" />
+        <filter name="my_requirements" string="My Requirements" domain="[('user_id','=',uid)]" />
         <group expand="1" string="Group By">
           <filter string="State" name="group_by_state" context="{'group_by':'state'}" />
           <filter string="Priority" name="group_by_priority" context="{'group_by':'priority'}" />
           <filter string="Type" name="group_by_req_type" context="{'group_by':'req_type'}" />
           <filter string="PRD Document" name="group_by_prd" context="{'group_by':'prd_id'}" />
           <filter string="Stake Holder" name="group_by_partner" context="{'group_by':'partner_id'}" />
+          <filter string="Responsible" name="group_by_responsibel" context="{'group_by':'user_id'}" />
         </group>
       </search>
     </field>
@@ -45,7 +48,7 @@
         <field name="prd_id" optional="hide" />
         <field name="partner_id" optional="hide" />
         <field name="to_check" optional="hide" />
-        <button name="set_state_done" class="btn-primary" type="object" icon="fa-check"  invisible="state == 'done'" />
+        <button name="set_state_done" class="btn-primary" type="object" icon="fa-check" invisible="state == 'done'" />
       </list>
     </field>
   </record>
@@ -77,6 +80,7 @@
               <field name="partner_id" />
               <field name="prd_id" invisible="1" />
               <field name="object_id" />
+              <field name="user_id" widget="many2one_avatar_user" />
               <field name="to_check" widget="boolean_toggle" />
             </group>
             <group id="c2" />
@@ -108,5 +112,21 @@
         <chatter />
       </form>
     </field>
+  </record>
+  <record id="prd_requirement_set_responsible" model="ir.actions.server">
+    <field name="name">Set Responsible</field>
+    <field name="model_id" ref="prd.model_prd_requirement" />
+    <field name="binding_model_id" ref="prd.model_prd_requirement" />
+    <field name="binding_view_types">list,form</field>
+    <field name="state">code</field>
+    <field name="code">action = records.action_set_responsible()</field>
+  </record>
+  <record id="prd_requirement_code_sync" model="ir.actions.server">
+    <field name="name">Sync Codes</field>
+    <field name="model_id" ref="prd.model_prd_requirement" />
+    <field name="binding_model_id" ref="prd.model_prd_requirement" />
+    <field name="binding_view_types">list,form</field>
+    <field name="state">code</field>
+    <field name="code">action = records._compute_parent_id()</field>
   </record>
 </odoo>

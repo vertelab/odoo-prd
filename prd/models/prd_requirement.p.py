@@ -29,8 +29,8 @@ class PrdRequirement(models.Model):
         help="Categories"
     )
     code = fields.Char(
-        string='Code', size=6,
-        trim=True,
+        string='Code',
+        size=6,trim=True,
         help="Requirement Number, unique ID"
     )
     description = fields.Text(string="Description")
@@ -49,6 +49,7 @@ class PrdRequirement(models.Model):
     object_id = fields.Reference(string='Object', selection=lambda m: [(model.model, model.name) for model in
                                                                                  m.env['ir.model'].sudo().search([])],
                                help="Requirement from this object")
+    parent_id = fields.Many2one(comodel_name='prd.requirement',compute="_compute_parent_id",store=True)
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string="Stake Holder",
@@ -73,9 +74,37 @@ class PrdRequirement(models.Model):
         ('done', 'Done')
     ], string="State", default='draft')
     to_check = fields.Boolean()
+    user_id = fields.Many2one(comodel_name="res.users",string="Responsible")
+
+    @api.depends("code")
+    def _compute_parent_id(self):
+        for record in self:
+            if record.code:
+                code = record.code
+                
+                parent_code_list = record.code.split(".") if "." in record.code else False  
+                parent = ".".join(parent_code_list[:len(parent_code_list) - 1]) if parent_code_list else False
+                
+                parent_id = record.search([("code", "=", parent),("prd_id", "=", record.prd_id.id)],limit=1)
+
+                if parent_id:
+                    record.write({"parent_id": parent_id.id})
+            else:
+                record.parent_id = False
 
     def set_state_done(self):
         self.state = "done"
+
+    def action_set_responsible(self):
+        _logger.error(f"{self=}")
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Set Responsible User',
+            'res_model': "prd.requirement.wizard",
+            'view_mode': 'form',
+            'target': 'new',
+            'context': { "default_requirement_ids": self.ids }
+        }
 
 class PRDRequirementFunction(models.Model):
     _name = 'prd.requirement.function'

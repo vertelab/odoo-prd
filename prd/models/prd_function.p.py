@@ -131,6 +131,7 @@ class PrdFunction(models.Model):
 
     # models / data / sequrity / sequirity.xml / views / 
     active = fields.Boolean(string='Active', default=True)
+    avatar_128 = fields.Image("Avatar", max_width=128, max_height=128, compute='_compute_avatar_128')
     category_ids = fields.Many2many(
         comodel_name='prd.function_category',
         string='Tags',
@@ -173,7 +174,7 @@ class PrdFunction(models.Model):
         related="func_type.implementation_type",
         string="Implementation Type",
         readonly=True,
-        store=True,
+        store=False,
     )
     color = fields.Integer(default=lambda self: randint(1, 11))
     image_128 = fields.Image("Image", max_width=128, max_height=128)
@@ -182,7 +183,6 @@ class PrdFunction(models.Model):
         return ''.join(choice('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ23456789') for _i in range(10))
 
     uuid = fields.Char('UUID', size=50, default=_generate_random_token, copy=False)
-
     @api.depends('image_128', 'uuid')
     def _compute_avatar_128(self):
         for record in self:
@@ -193,9 +193,10 @@ class PrdFunction(models.Model):
         bgcolor = get_hsl_from_seed(self.uuid)
         avatar = avatar.replace('fill="#875a7b"', f'fill="{bgcolor}"')
         return base64.b64encode(function_icon.encode())
-    avatar_128 = fields.Image("Avatar", max_width=128, max_height=128, compute='_compute_avatar_128')
+   
+   
+   
   
-
 
 class OdooView(models.Model):
     _name = 'prd.odoo_view'

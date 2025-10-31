@@ -30,7 +30,8 @@
       <field name="inherit_id" ref="prd.view_prd_document_form" />
       <field name="arch" type="xml">
         <header position="inside">
-          <button name="button_export_module" string="Export Module" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
+          <button name="action_redirect_to_url" string="Export Module" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
+          <button name="sftp_upload" string="SFTP Upload" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
         </header>
         <group id="c2" position="inside">
           <field name="sequence" />

@@ -1,1 +1,2 @@
 mermaid-python
+paramiko

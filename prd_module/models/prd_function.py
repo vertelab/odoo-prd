@@ -8,26 +8,22 @@ _logger = logging.getLogger(__name__)
 class PrdFunction(models.Model):
     _inherit = 'prd.function'
 
-    models_filename = fields.Char(string="Models")
+    models_filename = fields.Char(string="Filename")
     models_inherit = fields.Char(string="Inherit")
     models_src = fields.Text(string="Models")
-    data_filename = fields.Char(string="Data")
-    controller_filename = fields.Char(string="Controller")
-    controller_src = fields.Text(string="Controller")
+    controllers_filename = fields.Char(string="Filename")
+    controllers_src = fields.Text(string="Controllers")
+    data_filename = fields.Char(string="Filename")
     data_xml = fields.Text(string="Data")
-    security = fields.Text(string="Security")
-    security_filename = fields.Char(string="Security XML")
-    security_xml = fields.Text(string="Security XML")
-    views_filename = fields.Char(string="Views")
-    views_src = fields.Text(string="Views")
+    views_filename = fields.Char(string="Filename")
+    views_xml = fields.Text(string="Views")
     summary = fields.Char(string='Summary', )
     
     
-    has_controller = fields.Boolean(string='Controller')
+    has_controllers = fields.Boolean(string='Controllers')
     has_data = fields.Boolean(string='Data')
     has_models = fields.Boolean(string='Models')
     has_views = fields.Boolean(string='Views')
-    has_security = fields.Boolean(string='Security')
     is_inherit = fields.Boolean(string='Inherits')
     
     library_ids = fields.Many2many(comodel_name='prd.odoo_library',string='Libraries',help="")
