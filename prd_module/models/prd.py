@@ -146,7 +146,7 @@ class ProductRequirementDocument(models.Model):
         # Open SFTP client
         sftp = ssh.open_sftp()
 
-        self.mkdir_safe(sftp,module_path)
+        self.mkdir_safe(sftp,module_path,uid,gid)
 
         views_dir = ""
         models_dir = ""
@@ -161,7 +161,9 @@ class ProductRequirementDocument(models.Model):
                     sftp,
                     views_dir,
                     function.views_filename,
-                    function.views_xml
+                    function.views_xml,
+                    uid,
+                    gid,
                     )
                 data.append(function.views_filename)
             if function.has_models and function.models_filename:
@@ -170,7 +172,9 @@ class ProductRequirementDocument(models.Model):
                     sftp,
                     models_dir,
                     function.models_filename,
-                    function.models_src
+                    function.models_src,
+                    uid,
+                    gid,
                     )
                 split_filename = function.models_filename.split(".")[0]
                 models_init.append(f"from . import {split_filename}")
@@ -180,7 +184,9 @@ class ProductRequirementDocument(models.Model):
                     sftp,
                     data_dir,
                     function.data_filename,
-                    function.data_xml
+                    function.data_xml,
+                    uid,
+                    gid,
                     )
                 data.append(function.data_filename)
             if function.has_controllers and function.controllers_filename:
@@ -189,7 +195,9 @@ class ProductRequirementDocument(models.Model):
                     sftp,
                     controllers_dir,
                     function.controllers_filename,
-                    function.controllers_src
+                    function.controllers_src,
+                    uid,
+                    gid,
                     )
                
                 split_filename = function.controllers_filename.split(".")[0]
@@ -197,21 +205,21 @@ class ProductRequirementDocument(models.Model):
 
         if models_dir:
             content = ",\n".join(models_init)
-            self.file_write(sftp,models_dir,"__init__.py",content)
+            self.file_write(sftp,models_dir,"__init__.py",content,uid,gid)
             main_init.append("from . import models")
 
         if controllers_dir:
             content = ",\n".join(controllers_init)
-            self.file_write(sftp,controllers_dir,"__init__.py",content)
+            self.file_write(sftp,controllers_dir,"__init__.py",content,uid,gid)
             main_init.append("from . import controllers")
 
         main_init_content = "\n".join(main_init)
-        self.file_write(sftp,module_path,"__init__.py",main_init_content)
+        self.file_write(sftp,module_path,"__init__.py",main_init_content,uid,gid)
         
-        self.file_write(sftp,module_path,"__manifest__.py",self.create_manifest(data))
+        self.file_write(sftp,module_path,"__manifest__.py",self.create_manifest(data),uid,gid)
 
     def file_write(self,sftp,path,filename,content,uid,gid):
-        self.mkdir_safe(sftp,path)
+        self.mkdir_safe(sftp,path,uid,gid,)
         file_path = f"{path}{filename}"
         with sftp.file(file_path, 'w+') as remote_file:
             remote_file.write(content if content else "")
