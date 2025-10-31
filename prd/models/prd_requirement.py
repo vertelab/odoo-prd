@@ -83,15 +83,19 @@ class PRDRequirementFunction(models.Model):
     _order = "sequence asc"
 
     func_id = fields.Many2one(comodel_name='prd.function', string="Function", help="", ondelete='cascade')
-    req_id = fields.Many2one(comodel_name='prd.requirement', string="", help="", ondelete='cascade')
+    func_state = fields.Selection(related="func_id.state", string='State')
+    func_type = fields.Many2one(comodel_name='prd.function_type', string="Type", related="func_id.func_type")
     prd_id = fields.Many2one(comodel_name='prd.document', string="", help="", ondelete='cascade')
-    func_type = fields.Many2one(comodel_name='prd.function_type', string="Type", help="" , ondelete='cascade')
+    req_id = fields.Many2one(comodel_name='prd.requirement', string="", help="", ondelete='cascade')
+    req_state = fields.Selection(related="req_id.state", string='State')
+    req_type = fields.Many2one(comodel_name='prd.requirement_type', string="Type", related="req_id.req_type")
+    sequence = fields.Integer(string='Sequence')
     state = fields.Selection([
         ('draft', 'Draft'),
         ('ongoing', 'Ongoing'),
         ('done', 'Done')
-    ], string="State", default='draft')    
-    sequence = fields.Integer(string='Sequence')
+    ], string="State", default='draft')
+
 
 class RequirementType(models.Model):
     _name = 'prd.requirement_type'

@@ -103,8 +103,8 @@
                   <field name="req_id" context="{
     'default_prd_id': prd_id
 }" />
-                  <field name="func_type" />
-                  <field name="state" />
+                  <field name="req_type" />
+                  <field name="req_state" />
                 </list>
               </field>
             </page>
