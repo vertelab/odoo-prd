@@ -24,8 +24,8 @@
       </filter>
     </field>
   </record>
-
   <!-- Form View -->
+
   <record id="view_prd_document_form" model="ir.ui.view">
     <field name="name">prd.document.form</field>
     <field name="model">prd.document</field>
@@ -104,5 +104,5 @@
       </list>
     </field>
   </record>
-
+  
 </odoo>
