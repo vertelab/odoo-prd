@@ -6,6 +6,7 @@ import time
 import base64
 import paramiko
 import json
+import urllib
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError, AccessError
@@ -29,7 +30,8 @@ class ProductRequirementDocument(models.Model):
     # ~ app_index = fields.Html(string="App Index", translate=html_translate, sanitize_attributes=False,sanitize_form=False, default=_default_description)
     app_index = fields.Html(string="App Index", )
     app_depends = fields.Many2many(comodel_name='prd.odoo_module',string='Dependensies',help="") # relation|column1|column2
-
+    model_access_ids = fields.One2many(comodel_name="prd.model.access",inverse_name="prd_id")
+    rule_ids = fields.One2many(comodel_name="prd.rule",inverse_name="prd_id")
 
     @api.depends('app_module','app_project')
     def _get_app_url(self):	 
@@ -41,7 +43,11 @@ class ProductRequirementDocument(models.Model):
                 b.app_url = False
 
     def button_export_module(self):
-        
+        data = []
+        models_init = []
+        controllers_init = []
+        main_init = []
+
         module_path = f"{self.app_module.name}/"
         tar_file = io.BytesIO()
         with tarfile.open(fileobj=tar_file, mode='w:gz') as tar:
@@ -59,6 +65,7 @@ class ProductRequirementDocument(models.Model):
                         function.views_filename,
                         function.views_xml
                         )
+                    data.append(function.views_filename)
                 if function.has_models and function.models_filename:
                     models_dir = f"{module_path}models/"
                     self.add_file_to_tar(
@@ -67,7 +74,8 @@ class ProductRequirementDocument(models.Model):
                         function.models_filename,
                         function.models_src
                         )
-                    
+                    split_filename = function.models_filename.split(".")[0]
+                    models_init.append(f"from . import {split_filename}")
                 if function.has_data and function.data_filename:
                     data_dir = f"{module_path}data/"
                     self.add_file_to_tar(
@@ -76,7 +84,7 @@ class ProductRequirementDocument(models.Model):
                         function.data_filename,
                         function.data_xml
                         )
-                    
+                    data.append(function.data_filename)
                 if function.has_controllers and function.controllers_filename:
                     controllers_dir = f"{module_path}controllers/"
                     self.add_file_to_tar(
@@ -85,8 +93,37 @@ class ProductRequirementDocument(models.Model):
                         function.controllers_filename,
                         function.controllers_src
                         )
+                    split_filename = function.controllers_filename.split(".")[0]
+                    controllers_init.append(f"from . import {split_filename}")
+        
+            if models_dir:
+                content = "\n".join(models_init)
+                self.add_file_to_tar(tar,models_dir,"__init__.py",content)
+                main_init.append("from . import models")
+
+            if controllers_dir:
+                content = "\n".join(controllers_init)
+                self.add_file_to_tar(tar,controllers_dir,"__init__.py",content)
+                main_init.append("from . import controllers")
+
+            main_init_content = "\n".join(main_init)
+            self.add_file_to_tar(tar,module_path,"__init__.py",main_init_content)
+            self.add_file_to_tar(tar,module_path,"__manifest__.py",self.create_manifest(data))
+        
         tar_file.seek(0)
-        return base64.b64encode(tar_file.read()).decode('ascii')
+        ir_att_id = self.env["ir.attachment"].create({
+            "name": f"{self.name}",
+            "type": "binary",
+            "datas": base64.b64encode(tar_file.read()),
+            "res_model": self._name,
+            "res_id": self.id,
+        })
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/?model={ir_att_id._name}&id={ir_att_id.id}&filename={ir_att_id.name}&download=true',
+            'target': 'self',
+        }
+        
 
     def add_file_to_tar(self,tar,dir_path,filename,content):
         arcname = f"{dir_path}{filename}"
@@ -98,18 +135,7 @@ class ProductRequirementDocument(models.Model):
         tarinfo.mtime = time.time()
         tar.addfile(tarinfo, fileobj=fileobj)
 
-    def action_redirect_to_url(self):
-        # '/web/content/%s?download=true' % attachment.id,
-        _logger.error("TEST"*10)
-        url = f"/prd_module/download_code/{self.id}"
-        return {
-            "type": "ir.actions.act_url",
-            "url": url,
-            "target": "self",
-        }
-
     def sftp_upload(self):
-
         hostname = self.env.user.sftp_hostname
         port = self.env.user.sftp_port
         username = self.env.user.sftp_username
@@ -199,17 +225,16 @@ class ProductRequirementDocument(models.Model):
                     uid,
                     gid,
                     )
-               
                 split_filename = function.controllers_filename.split(".")[0]
                 controllers_init.append(f"from . import {split_filename}")
 
         if models_dir:
-            content = ",\n".join(models_init)
+            content = "\n".join(models_init)
             self.file_write(sftp,models_dir,"__init__.py",content,uid,gid)
             main_init.append("from . import models")
 
         if controllers_dir:
-            content = ",\n".join(controllers_init)
+            content = "\n".join(controllers_init)
             self.file_write(sftp,controllers_dir,"__init__.py",content,uid,gid)
             main_init.append("from . import controllers")
 
@@ -308,6 +333,13 @@ class ProductRequirementDocument(models.Model):
 
     def _create_attachment(self, datas, name):
         return base64.encodebytes(datas.read())
+
+    def create_ir_model_access(self):
+        content = "id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink"
+        for access in self.model_access_ids:
+            ext_group_id = self.env["ir.model.data"].search([("model", "=", access.group_id._name),("res_id", "=", access.group_id.id)],limit=1)
+            ext_group = f'{ext_group_id.module}.{ext_group_id.name}'
+            content += f"\naccess_{access.name},{access.name},model_{access.model_id._name.replace(".","_")},{ext_group},{int(access.perm_read)},{int(access.perm_write)},{int(access.perm_create)},{int(access.perm_unlink)}"
 
     def create_manifest(self,data=[]):
         manifest_vals = {
