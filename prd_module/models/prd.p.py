@@ -65,7 +65,7 @@ class ProductRequirementDocument(models.Model):
                         function.views_filename,
                         function.views_xml
                         )
-                    data.append(function.views_filename)
+                    data.append(f"views/{function.views_filename}")
                 if function.has_models and function.models_filename:
                     models_dir = f"{module_path}models/"
                     self.add_file_to_tar(
@@ -84,7 +84,7 @@ class ProductRequirementDocument(models.Model):
                         function.data_filename,
                         function.data_xml
                         )
-                    data.append(function.data_filename)
+                    data.append(f"data/{function.data_filename}")
                 if function.has_controllers and function.controllers_filename:
                     controllers_dir = f"{module_path}controllers/"
                     self.add_file_to_tar(
@@ -105,6 +105,12 @@ class ProductRequirementDocument(models.Model):
                 content = "\n".join(controllers_init)
                 self.add_file_to_tar(tar,controllers_dir,"__init__.py",content)
                 main_init.append("from . import controllers")
+
+            security_dir = f"{module_path}security/"
+            self.add_file_to_tar(tar,security_dir,"ir.model.access.csv",self.create_ir_model_access())
+            rec_rule = self.add_file_to_tar(tar,security_dir,f"{self.app_module.name}_record_rules.xml",self.create_record_rules())
+            rec_rule = "/".join(rec_rule.split("/")[1:])
+            data.append(rec_rule)
 
             main_init_content = "\n".join(main_init)
             self.add_file_to_tar(tar,module_path,"__init__.py",main_init_content)
@@ -134,6 +140,7 @@ class ProductRequirementDocument(models.Model):
         tarinfo.size = len(data)
         tarinfo.mtime = time.time()
         tar.addfile(tarinfo, fileobj=fileobj)
+        return arcname
 
     def sftp_upload(self):
         hostname = self.env.user.sftp_hostname
@@ -191,7 +198,7 @@ class ProductRequirementDocument(models.Model):
                     uid,
                     gid,
                     )
-                data.append(function.views_filename)
+                data.append(f"views/{function.views_filename}")
             if function.has_models and function.models_filename:
                 models_dir = f"{module_path}models/"
                 self.file_write(
@@ -214,7 +221,7 @@ class ProductRequirementDocument(models.Model):
                     uid,
                     gid,
                     )
-                data.append(function.data_filename)
+                data.append(f"data/{function.data_filename}")
             if function.has_controllers and function.controllers_filename:
                 controllers_dir = f"{module_path}controllers/"
                 self.file_write(
@@ -238,6 +245,10 @@ class ProductRequirementDocument(models.Model):
             self.file_write(sftp,controllers_dir,"__init__.py",content,uid,gid)
             main_init.append("from . import controllers")
 
+        security_dir = f"{module_path}security/"
+        self.mkdir_safe(sftp,security_dir,uid,gid)
+        self.file_write(sftp,security_dir,"ir.model.access.csv",self.create_ir_model_access(),uid,gid)
+
         main_init_content = "\n".join(main_init)
         self.file_write(sftp,module_path,"__init__.py",main_init_content,uid,gid)
         
@@ -251,6 +262,7 @@ class ProductRequirementDocument(models.Model):
             remote_file.close()
         if uid and gid:
             sftp.chown(file_path,uid,gid)
+        return file_path
 
     def mkdir_safe(self,sftp,dir,uid,gid,mode=0o775):
         try:
@@ -334,12 +346,43 @@ class ProductRequirementDocument(models.Model):
     def _create_attachment(self, datas, name):
         return base64.encodebytes(datas.read())
 
+    def create_record_rules(self):
+        content = "<odoo>\n"
+        for rule in self.rule_ids:
+            group_string = self.create_groups_string(rule)
+            first_module = rule.model_id.modules.split(",")[0]
+            ext_model = f"{first_module}.{rule.model_id.model.replace(".","_")}"
+            content += f"\
+    <record id='{rule.name}_record_rule' model='ir.rule'>\n \
+        <field name='name'>{rule.name}</field>\n \
+        <field name='model_id' ref='{ext_model}'/>\n \
+        <field name='domain_force'>{rule.domain_force}</field>\n \
+        <field name='groups' eval='{group_string}'/>\n \
+        <field name='perm_read' eval='{int(rule.perm_create)}'/>\n \
+        <field name='perm_write' eval='{int(rule.perm_write)}'/>\n \
+        <field name='perm_create' eval='{int(rule.perm_create)}'/>\n \
+        <field name='perm_unlink' eval='{int(rule.perm_unlink)}'/>\n \
+    </record>\n"
+        content += "</odoo>" 
+        return content
+
+    def create_groups_string(self,rule):
+        if not rule.groups:
+            return ""
+        group_string = "["
+        for group in rule.groups:
+            ext_group_id = self.env["ir.model.data"].search([("model", "=", group.groups_id._name),("res_id", "=", group.groups_id.id)],limit=1)
+            group_string += f'(4, ref("{ext_group_id.complete_name}")),'
+        group_string += "]"
+        return group_string
+
     def create_ir_model_access(self):
         content = "id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink"
         for access in self.model_access_ids:
             ext_group_id = self.env["ir.model.data"].search([("model", "=", access.group_id._name),("res_id", "=", access.group_id.id)],limit=1)
-            ext_group = f'{ext_group_id.module}.{ext_group_id.name}'
-            content += f"\naccess_{access.name},{access.name},model_{access.model_id._name.replace(".","_")},{ext_group},{int(access.perm_read)},{int(access.perm_write)},{int(access.perm_create)},{int(access.perm_unlink)}"
+            first_module = access.model_id.modules.split(",")[0]
+            content += f"\naccess_{access.name},{access.name},{first_module}.model_{access.model_id.model.replace(".","_")},{ext_group_id.complete_name},{int(access.perm_read)},{int(access.perm_write)},{int(access.perm_create)},{int(access.perm_unlink)}"
+        return content
 
     def create_manifest(self,data=[]):
         manifest_vals = {
