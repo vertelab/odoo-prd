@@ -17,13 +17,18 @@ class ProductRequirementDocument(models.Model):
         string='User Stories',
         store=False
     )
+
     @api.depends('function_ids.scrum_us_ids')  
     def _compute_scrum_us_ids(self):
         for doc in self:
-            doc.scrum_us_ids = doc.env['project.scrum.us'].search([
+            scrum_us_ids = doc.env['project.scrum.us'].search([
                 ('func_id.prd_id', '=', doc.id)
             ])
-    
+            if scrum_us_ids:
+                doc.scrum_us_ids = scrum_us_ids
+            else:
+                doc.scrum_us_ids = False
+
     scrum_us_count = fields.Integer(compute = '_scrum_us_count', string="User Stories")
     def _scrum_us_count(self):
         for p in self:
