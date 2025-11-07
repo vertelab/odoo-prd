@@ -160,26 +160,10 @@ class ProductRequirementDocument(models.Model):
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(hostname, username=username, port=port)
 
-        use_logged_in_user = False
-
-        stdin, stdout_uid, stderr_uid = ssh.exec_command("id -u odoo")
-        stdin, stdout_gid, stderr_gid = ssh.exec_command("id -g odoo")
-
-        uid = ""
-        gid = ""
-
-        if stderr_gid or stderr_uid:
-            _logger.error(f"The user or group odoo does not seem to exist on the target machine. Will default to logged in user {username}")
-            use_logged_in_user = True
-
-        if not use_logged_in_user:
-            uid = stdout_uid.readline()
-            gid = stdout_gid.readline()
-
         # Open SFTP client
         sftp = ssh.open_sftp()
 
-        self.mkdir_safe(sftp,module_path,uid,gid)
+        self.mkdir_safe(sftp,module_path)
 
         views_dir = ""
         models_dir = ""
@@ -195,8 +179,6 @@ class ProductRequirementDocument(models.Model):
                     views_dir,
                     function.views_filename,
                     function.views_xml,
-                    uid,
-                    gid,
                     )
                 data.append(f"views/{function.views_filename}")
             if function.has_models and function.models_filename:
@@ -206,8 +188,6 @@ class ProductRequirementDocument(models.Model):
                     models_dir,
                     function.models_filename,
                     function.models_src,
-                    uid,
-                    gid,
                     )
                 split_filename = function.models_filename.split(".")[0]
                 models_init.append(f"from . import {split_filename}")
@@ -218,8 +198,6 @@ class ProductRequirementDocument(models.Model):
                     data_dir,
                     function.data_filename,
                     function.data_xml,
-                    uid,
-                    gid,
                     )
                 data.append(f"data/{function.data_filename}")
             if function.has_controllers and function.controllers_filename:
@@ -229,46 +207,43 @@ class ProductRequirementDocument(models.Model):
                     controllers_dir,
                     function.controllers_filename,
                     function.controllers_src,
-                    uid,
-                    gid,
                     )
                 split_filename = function.controllers_filename.split(".")[0]
                 controllers_init.append(f"from . import {split_filename}")
 
         if models_dir:
             content = "\n".join(models_init)
-            self.file_write(sftp,models_dir,"__init__.py",content,uid,gid)
+            self.file_write(sftp,models_dir,"__init__.py",content)
             main_init.append("from . import models")
 
         if controllers_dir:
             content = "\n".join(controllers_init)
-            self.file_write(sftp,controllers_dir,"__init__.py",content,uid,gid)
+            self.file_write(sftp,controllers_dir,"__init__.py",content)
             main_init.append("from . import controllers")
 
         security_dir = f"{module_path}security/"
-        self.mkdir_safe(sftp,security_dir,uid,gid)
-        self.file_write(sftp,security_dir,"ir.model.access.csv",self.create_ir_model_access(),uid,gid)
+        self.mkdir_safe(sftp,security_dir)
+        self.file_write(sftp,security_dir,"ir.model.access.csv",self.create_ir_model_access())
+        rec_rule = self.file_write(sftp,security_dir,f"{self.app_module.name}_record_rules.xml",self.create_record_rules())
+        rec_rule = "/".join(rec_rule.split("/")[1:])
+        data.append(rec_rule)
 
         main_init_content = "\n".join(main_init)
-        self.file_write(sftp,module_path,"__init__.py",main_init_content,uid,gid)
+        self.file_write(sftp,module_path,"__init__.py",main_init_content)
         
-        self.file_write(sftp,module_path,"__manifest__.py",self.create_manifest(data),uid,gid)
+        self.file_write(sftp,module_path,"__manifest__.py",self.create_manifest(data))
 
-    def file_write(self,sftp,path,filename,content,uid,gid):
-        self.mkdir_safe(sftp,path,uid,gid,)
+    def file_write(self,sftp,path,filename,content):
+        self.mkdir_safe(sftp,path)
         file_path = f"{path}{filename}"
         with sftp.file(file_path, 'w+') as remote_file:
             remote_file.write(content if content else "")
             remote_file.close()
-        if uid and gid:
-            sftp.chown(file_path,uid,gid)
         return file_path
 
-    def mkdir_safe(self,sftp,dir,uid,gid,mode=0o775):
+    def mkdir_safe(self,sftp,dir,mode=0o775):
         try:
             sftp.mkdir(dir,mode)
-            if uid and gid:
-                sftp.chown(dir,uid,gid)
         except IOError as e:
             _logger.warning(f"Got this error {e} when making directory with sftp on remote host.\nIt is likely that the directory already exists, will skip creating it.")
                 
