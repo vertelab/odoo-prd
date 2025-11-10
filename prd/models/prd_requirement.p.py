@@ -30,7 +30,7 @@ class PrdRequirement(models.Model):
     )
     code = fields.Char(
         string='Code',
-        size=6,trim=True,
+        size=8,trim=True,
         help="Requirement Number, unique ID"
     )
     description = fields.Text(string="Description")
