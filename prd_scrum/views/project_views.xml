@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="project.view_task_form2" />
         <field name="arch" type="xml">
             <div name="button_box" position="inside">
-                <button class="oe_stat_button" type="object" name="action_get_funcs" icon="fa-cogs">
+                <button class="oe_stat_button" type="object" name="action_get_funcs" icon="fa-cogs" invisible="func_count == 0">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">Functions</span>
                         <span class="o_stat_value">
@@ -14,7 +14,7 @@
                         </span>
                     </div>
                 </button>
-                <button class="oe_stat_button" type="object" name="action_get_reqs" icon="fa-check">
+                <button class="oe_stat_button" type="object" name="action_get_reqs" icon="fa-check" invisible="req_count == 0">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">Requirements</span>
                         <span class="o_stat_value">
