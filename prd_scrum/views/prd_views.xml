@@ -26,6 +26,7 @@
       </div>
     </field>
   </record>
+
   <record id="view_prd_function_form" model="ir.ui.view">
     <field name="name">prd.function.form.us</field>
     <field name="model">prd.function</field>
@@ -50,4 +51,5 @@
       </notebook>
     </field>
   </record>
+  
 </odoo>

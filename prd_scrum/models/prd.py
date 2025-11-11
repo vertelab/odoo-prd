@@ -1,10 +1,8 @@
-from datetime import datetime, timedelta 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError, AccessError
 import logging
 
 _logger = logging.getLogger(__name__)
-
 
 class ProductRequirementDocument(models.Model):
     _inherit = 'prd.document'
@@ -12,7 +10,7 @@ class ProductRequirementDocument(models.Model):
     project_id = fields.Many2one(comodel_name='project.project',string="Project",help="In this project functions may have tasks") 
     scrum_us_ids = fields.One2many(
         comodel_name='project.scrum.us',
-        inverse_name="doc_id",
+        # inverse_name="doc_id",
         compute='_compute_scrum_us_ids',
         string='User Stories',
         store=False
@@ -89,15 +87,4 @@ class FunctionTypes(models.Model):
     
     implementation_type = fields.Selection(selection_add=[('task','Task'),],ondelete={'task': 'cascade', })
 
-
-class ProjectUserStories(models.Model):
-    _inherit = 'project.scrum.us'
-    
-    doc_id = fields.Many2one(comodel_name="prd.document")
-    func_id = fields.Many2one(comodel_name='prd.function',string="Function",help="")
-
-class ProjectTask(models.Model):
-    _inherit = 'project.task'
-
-    func_id = fields.Many2one(comodel_name='prd.function',string="Function",help="")
 
