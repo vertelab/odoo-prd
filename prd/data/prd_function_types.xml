@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <data noupdate="1">
-    <record id="function_type_module" model="prd.function_type">
-      <field name="name">Odoo Module</field>
-      <field name="implementation_type">odoo_module</field>
-    </record>
-    <record id="function_type_module" model="prd.function_type">
-      <field name="name">Module</field>
-      <field name="implementation_type">module</field>
-    </record>
-    <record id="function_type_prd" model="prd.function_type">
-      <field name="name">Product Requirement Document</field>
-      <field name="implementation_type">prd</field>
-    </record>
-    <record id="function_type_other" model="prd.function_type">
-      <field name="name">Other</field>
-      <field name="implementation_type">other</field>
-    </record>
-  </data>
+    <data noupdate="1">
+        <record id="function_type_odoo_module" model="prd.function_type">
+            <field name="name">Odoo Module</field>
+            <field name="implementation_type">odoo_module</field>
+        </record>
+        <record id="function_type_module" model="prd.function_type">
+            <field name="name">Module</field>
+            <field name="implementation_type">module</field>
+        </record>
+        <record id="function_type_prd" model="prd.function_type">
+            <field name="name">Product Requirement Document</field>
+            <field name="implementation_type">prd</field>
+        </record>
+        <record id="function_type_other" model="prd.function_type">
+            <field name="name">Other</field>
+            <field name="implementation_type">other</field>
+        </record>
+    </data>
 </odoo>
