@@ -144,7 +144,10 @@ class ProductRequirementDocument(models.Model):
                 f"Hostname: {hostname}\nPort: {port}\nUsername: {username}"
             )
 
-        module_path = f"/usr/share/{self.app_module.name}/"
+        if self.app_module.repo_id:
+            module_path = f"/usr/share/{self.app_module.repo_id.name}/{self.app_module.technical_name}/"
+        else:
+            module_path = f"/usr/share/{self.name}/{self.app_module.technical_name}/"
 
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())

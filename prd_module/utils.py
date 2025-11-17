@@ -50,10 +50,34 @@ class SFTPFileWriter(FileWriter):
         return file_path
 
     def _mkdir_safe(self, dir_path, mode=0o775):
+        """Recursively create directories"""
+        if not dir_path or dir_path == '/':
+            return
+
+        # Remove trailing slash
+        dir_path = dir_path.rstrip('/')
+
+        # Check if directory already exists
+        try:
+            self.sftp.stat(dir_path)
+            return  # Directory exists
+        except IOError:
+            pass  # Directory doesn't exist, continue to create it
+
+        # Get parent directory
+        parent = dir_path.rsplit('/', 1)[0]
+        if parent and parent != '/':
+            # Recursively create parent directory
+            self._mkdir_safe(parent, mode)
+
+        # Create this directory
         try:
             self.sftp.mkdir(dir_path, mode)
         except IOError as e:
-            _logger.warning(
-                f"Got this error {e} when making directory with sftp on remote host.\n"
-                f"It is likely that the directory already exists, will skip creating it."
-            )
+            # Ignore if directory was created by another process
+            try:
+                self.sftp.stat(dir_path)
+            except IOError:
+                _logger.warning(
+                    f"Got error {e} when making directory {dir_path} with sftp on remote host."
+                )
