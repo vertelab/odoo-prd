@@ -1,20 +1,19 @@
 import re
+import json
+import urllib
 import ast
 import logging
 import traceback
 import os
 import tarfile
 import io
-import time
 import base64
-import paramiko
-import json
-import urllib
+
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError, AccessError
 
-from odoo.addons.prd_module.utils import TarFileWriter, SFTPFileWriter
+from odoo.addons.prd_module.utils import TarFileWriter, SFTPFileWriter # pyright: ignore[reportMissingImports]
 
 _logger = logging.getLogger(__name__)
 
@@ -111,11 +110,11 @@ class ProductRequirementDocument(models.Model):
     def button_export_module(self):
         """Export module as a downloadable tar.gz file"""
         module_path = f"{self.app_module.name}/"
-        tar_file = io.BytesIO()
+       
+        writer = TarFileWriter(module_path)  
+        self._build_module_structure(writer)
 
-        with tarfile.open(fileobj=tar_file, mode='w:gz') as tar:
-            writer = TarFileWriter(tar, module_path)
-            self._build_module_structure(writer)
+        tar_file = writer.tar_file
 
         tar_file.seek(0)
         ir_att_id = self.env["ir.attachment"].create({
@@ -125,6 +124,8 @@ class ProductRequirementDocument(models.Model):
             "res_model": self._name,
             "res_id": self.id,
         })
+
+        writer.close()
 
         return {
             'type': 'ir.actions.act_url',
@@ -149,17 +150,9 @@ class ProductRequirementDocument(models.Model):
         else:
             module_path = f"/usr/share/{self.name}/{self.app_module.technical_name}/"
 
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostname, username=username, port=port)
-
-        try:
-            sftp = ssh.open_sftp()
-            writer = SFTPFileWriter(sftp, module_path)
-            self._build_module_structure(writer)
-        finally:
-            sftp.close()
-            ssh.close()
+        writer = SFTPFileWriter(hostname=hostname,port=port,username=username,module_path=module_path)
+        self._build_module_structure(writer)
+        writer.close()
 
     def sync_module(self):
         git_url = self.env['ir.config_parameter'].sudo().get_param('GitHubBaseUrl')
