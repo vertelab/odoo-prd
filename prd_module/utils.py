@@ -2,6 +2,7 @@ import io
 import time
 import tarfile
 import logging
+import paramiko
 
 _logger = logging.getLogger(__name__)
 
@@ -12,13 +13,19 @@ class FileWriter:
         """Write a file and return its path"""
         raise NotImplementedError
 
+    def close(self):
+        raise NotImplementedError
 
 class TarFileWriter(FileWriter):
     """Writer that adds files to a tar archive"""
 
-    def __init__(self, tar, module_path):
-        self.tar = tar
-        self.module_path = module_path
+    def __init__(self, module_path):
+        self.tar_file = io.BytesIO()
+        self.tar = tarfile.open(fileobj=self.tar_file, mode='w:gz')
+        self.module_path = module_path        
+
+    def get_writer(self):
+        return self.tar
 
     def write_file(self, dir_path, filename, content):
         full_dir = f"{self.module_path}{dir_path}"
@@ -32,13 +39,26 @@ class TarFileWriter(FileWriter):
         self.tar.addfile(tarinfo, fileobj=fileobj)
         return arcname
 
+    def close(self):
+        self.tar.close()
+        self.tar_file.close()
 
 class SFTPFileWriter(FileWriter):
     """Writer that uploads files via SFTP"""
 
-    def __init__(self, sftp, module_path):
-        self.sftp = sftp
+    def __init__(self, username,hostname,port,module_path):
+        self.username = username
+        self.hostname = hostname
+        self.port = port
         self.module_path = module_path
+        self.ssh = paramiko.SSHClient()
+        self.sftp = self._setup_paramiko()
+
+    def _setup_paramiko(self):
+        self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.ssh.connect(hostname=self.hostname, username=self.username, port=self.port)
+        sftp = self.ssh.open_sftp()
+        return sftp
 
     def write_file(self, dir_path, filename, content):
         full_path = f"{self.module_path}{dir_path}"
@@ -81,3 +101,7 @@ class SFTPFileWriter(FileWriter):
                 _logger.warning(
                     f"Got error {e} when making directory {dir_path} with sftp on remote host."
                 )
+
+    def close(self):
+        self.sftp.close()
+        self.ssh.close()
