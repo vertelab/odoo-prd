@@ -22,6 +22,7 @@
       </filter>
     </field>
   </record>
+
   <!-- Form View -->
   <record id="view_prd_document_form" model="ir.ui.view">
     <field name="name">prd.document.form</field>
@@ -29,11 +30,10 @@
     <field name="inherit_id" ref="prd.view_prd_document_form" />
     <field name="arch" type="xml">
       <header position="inside">
-        <button name="action_redirect_to_url" string="Export Module" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" invisible="not document_type == 'module'" />
-        <button name="sftp_upload" string="SFTP Upload" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" invisible="not document_type == 'module'" />
+        <button name="button_export_module" string="Export Module" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
+        <button name="sftp_upload" string="SFTP Upload" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
       </header>
       <group id="c2" position="inside">
-
         <field name="application" invisible="not document_type == 'module'"/>
         <field name="description" invisible="not document_type == 'module'"/>
         <field name="app_category" invisible="not document_type == 'module'"/>
@@ -50,10 +50,57 @@
       <notebook position="inside">
         <page string="Index-file" id="index" invisible="not document_type == 'module'">
           <field name="description_html" />
+        <field name="sequence" />
+        <field name="app_module" />
+        <field name="app_tree" />
+        <field name="app_icon" />
+        <field name="app_url" />
+        <field name="app_banner" />
+        <field name="app_summary" />
+        <field name="app_category" />
+        <field name="app_description" />
+        <field name="app_manifest" />
+        <field name="app_license" />
+        <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" />
+        <field name="user_persona" />
+        <field name="use_cases" />
+        <field name="dependencies" />
+      </group>
+      <notebook position="inside">
+        <page string="Index-file" id="index">
+          <field name="app_index" />
+        </page>
+        <page string="Access Rights" id="access_rights">
+          <field name="model_access_ids">
+            <list string="Access Rights" editable="top">
+              <field name="name"/>
+              <field name="model_id"/>
+              <field name="group_id"/>
+              <field name="perm_read"/>
+              <field name="perm_write"/>
+              <field name="perm_create"/>
+              <field name="perm_unlink"/>
+            </list>
+          </field>
+        </page>
+        <page string="Record Rules" name="record_rules">
+          <field name="rule_ids">
+            <list string="Record Rules" editable="top">
+              <field name="name"/>
+              <field name="model_id"/>
+              <field name="domain_force"/>
+              <field name="groups" widget="many2many_tags"/>
+              <field name="perm_read"/>
+              <field name="perm_write"/>
+              <field name="perm_create"/>
+              <field name="perm_unlink"/>
+            </list>
+          </field>
         </page>
       </notebook>
     </field>
   </record>
+
   <!-- List (Tree) View -->
   <record id="view_prd_document_tree" model="ir.ui.view">
     <field name="name">prd.document.module</field>
@@ -75,4 +122,5 @@
       </list>
     </field>
   </record>
+  
 </odoo>

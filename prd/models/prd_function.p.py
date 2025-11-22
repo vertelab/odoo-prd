@@ -273,7 +273,7 @@ class FunctionTypes(models.Model):
     _description = 'Function Type'
 
     name = fields.Char(string='Type', required=True)
-    implementation_type = fields.Selection(selection=[('module','Module'),('prd','Product Requirement Document'),('other','Other')],string='Type',default="module",required=True)
+    implementation_type = fields.Selection(selection=[('module','Module'),('odoo_module','Odoo Module'),('prd','Product Requirement Document'),('other','Other')],string='Type',default="other",required=True)
 
 class FunctionCategory(models.Model):
     _name = 'prd.function_category'

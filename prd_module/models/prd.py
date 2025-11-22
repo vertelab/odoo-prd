@@ -1,62 +1,63 @@
+import re
+import json
+import urllib
+import ast
 import logging
+import traceback
 import os
 import tarfile
 import io
-import time
 import base64
-import paramiko
-import json
+
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError, AccessError
 
+from odoo.addons.prd_module.utils import TarFileWriter, SFTPFileWriter # pyright: ignore[reportMissingImports]
+
 _logger = logging.getLogger(__name__)
 
+
 class ProductRequirementDocument(models.Model):
+
     _name = "prd.document"
     _inherit = ['prd.document','prd.odoo_module.mixin']
     
-    # ~ app_module = fields.Many2one(comodel_name="prd.odoo_module",string="App Module",)
-    # ~ app_project = fields.Many2one(comodel_name='prd.odoo_repo',string="App Project",help="")
-    # ~ app_tree = fields.Char(string="Branch Tree", default="14.0")
-    # ~ app_icon = fields.Image(string="Icon")    
-    # ~ app_url = fields.Char(string="Website", compute="_get_app_url", default="vertel")
-    # ~ app_banner = fields.Image(string="App Banner")
-    # ~ app_summary = fields.Char(string="App Summary")
-    # ~ app_category = fields.Many2one('ir.module.category', string="Category", default=1)
-    # ~ app_description = fields.Text(string="App Description", default="The module description goes here.")
-    # ~ app_manifest = fields.Char(string="App Manifest")
-    # ~ app_license = fields.Char(string="App License", default="LGPL-3")
-    # ~ app_index = fields.Html(string="App Index", translate=html_translate, sanitize_attributes=False,sanitize_form=False, default=_default_description)
-    # ~ app_index = fields.Html(string="App Index", )
-    # ~ app_depends = fields.Many2many(comodel_name='prd.odoo_module',string='Dependensies',help="") # relation|column1|column2
-
-
-    # ~ application = fields.Boolean(string='Application')
-    # ~ description = fields.Text(string='Description')
-    # ~ description_html = fields.Html(string='Index')
-    # ~ icon = fields.Char(string='Icon URL')
-    # ~ icon_image = fields.Image(string='Icon')
-    # ~ module_id = fields.Many2one(comodel_name='ir.module.module',string="Module",help="")
-    # ~ repo_id = fields.Many2one(comodel_name='prd.odoo_repo',string="Repo",help="")
-    # ~ summary = fields.Char(string='Summary')
-    # ~ shortdesc = fields.Char(string='ShortDesc')
-    # ~ technical_name = fields.Char(string='Technical Name')
-    # ~ website = fields.Char(string='Website',)
-
-
-
     @api.depends('moduile_id','repo_id')
     def _get_app_url(self):	 
         pass
         for b in self:
             if b.module_id and b.repo_id:
                b.website = f"{self.env.company.website}/apps/{b.repo_id.name}/{b.module_id.technical_name}"
+
+    app_module = fields.Many2one(comodel_name="prd.odoo_module", string="App Module", )
+    app_project = fields.Many2one(comodel_name='prd.odoo_repo', string="App Project", help="")
+    app_tree = fields.Char(string="Branch Tree", default="14.0")
+    app_icon = fields.Image(string="Icon")
+    app_url = fields.Char(string="Website", compute="_get_app_url", default="vertel")
+    app_banner = fields.Image(string="App Banner")
+    app_summary = fields.Char(string="App Summary")
+    app_category = fields.Many2one('ir.module.category', string="Category", default=1)
+    app_description = fields.Text(string="App Description", default="The module description goes here.")
+    app_manifest = fields.Char(string="App Manifest")
+    app_license = fields.Char(string="App License", default="LGPL-3")
+    # ~ app_index = fields.Html(string="App Index", translate=html_translate, sanitize_attributes=False,sanitize_form=False, default=_default_description)
+    app_index = fields.Html(string="App Index", )
+    app_depends = fields.Many2many(comodel_name='prd.odoo_module', string='Dependencies',
+                                   help="")  # relation|column1|column2
+    model_access_ids = fields.One2many(comodel_name="prd.model.access", inverse_name="prd_id")
+    rule_ids = fields.One2many(comodel_name="prd.rule", inverse_name="prd_id")
+
+    @api.depends('app_module', 'app_project')
+    def _get_app_url(self):
+        pass
+        for b in self:
+            if b.app_module and b.app_project:
+                b.app_url = "https://vertel.se/apps/" + b.app_project.name + "/" + b.app_module.name
             else:
                 b.website = False
 
     def button_export_module(self):
-        
         module_path = f"{self.module_id.name}/"
         tar_file = io.BytesIO()
         with tarfile.open(fileobj=tar_file, mode='w:gz') as tar:
@@ -124,7 +125,6 @@ class ProductRequirementDocument(models.Model):
         }
 
     def sftp_upload(self):
-
         hostname = self.env.user.sftp_hostname
         port = self.env.user.sftp_port
         username = self.env.user.sftp_username
@@ -133,125 +133,237 @@ class ProductRequirementDocument(models.Model):
             raise UserError(f"One of the following values are not set on the user {self.env.user.name}\n\nHostname: {hostname}\nPort: {port}\nUsername: {username}")
 
         module_path = f"/usr/share/{self.repo_id.name}/"
+
+    def _build_module_structure(self, writer):
         data = []
         models_init = []
         controllers_init = []
         main_init = []
 
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostname, username=username, port=port)
-
-        use_logged_in_user = False
-
-        stdin, stdout_uid, stderr_uid = ssh.exec_command("id -u odoo")
-        stdin, stdout_gid, stderr_gid = ssh.exec_command("id -g odoo")
-
-        uid = ""
-        gid = ""
-
-        if stderr_gid or stderr_uid:
-            _logger.error(f"The user or group odoo does not seem to exist on the target machine. Will default to logged in user {username}")
-            use_logged_in_user = True
-
-        if not use_logged_in_user:
-            uid = stdout_uid.readline()
-            gid = stdout_gid.readline()
-
-        # Open SFTP client
-        sftp = ssh.open_sftp()
-
-        self.mkdir_safe(sftp,module_path,uid,gid)
-
-        views_dir = ""
-        models_dir = ""
-        data_dir = ""
-        controllers_dir = ""
-
+        # Process all functions
         for function in self.function_ids:
-   
             if function.has_views and function.views_filename:
-                views_dir = f"{module_path}views/"
-                self.file_write(
-                    sftp,
-                    views_dir,
-                    function.views_filename,
-                    function.views_xml,
-                    uid,
-                    gid,
-                    )
-                data.append(function.views_filename)
+                writer.write_file("views/", function.views_filename, function.views_xml)
+                data.append(f"views/{function.views_filename}")
+
             if function.has_models and function.models_filename:
-                models_dir = f"{module_path}models/"
-                self.file_write(
-                    sftp,
-                    models_dir,
-                    function.models_filename,
-                    function.models_src,
-                    uid,
-                    gid,
-                    )
+                writer.write_file("models/", function.models_filename, function.models_src)
                 split_filename = function.models_filename.split(".")[0]
                 models_init.append(f"from . import {split_filename}")
+
             if function.has_data and function.data_filename:
-                data_dir = f"{module_path}data/"
-                self.file_write(
-                    sftp,
-                    data_dir,
-                    function.data_filename,
-                    function.data_xml,
-                    uid,
-                    gid,
-                    )
-                data.append(function.data_filename)
+                writer.write_file("data/", function.data_filename, function.data_xml)
+                data.append(f"data/{function.data_filename}")
+
             if function.has_controllers and function.controllers_filename:
-                controllers_dir = f"{module_path}controllers/"
-                self.file_write(
-                    sftp,
-                    controllers_dir,
-                    function.controllers_filename,
-                    function.controllers_src,
-                    uid,
-                    gid,
-                    )
-               
+                writer.write_file("controllers/", function.controllers_filename, function.controllers_src)
                 split_filename = function.controllers_filename.split(".")[0]
                 controllers_init.append(f"from . import {split_filename}")
 
-        if models_dir:
-            content = ",\n".join(models_init)
-            self.file_write(sftp,models_dir,"__init__.py",content,uid,gid)
+        # Create __init__.py files for models
+        if models_init:
+            content = "\n".join(models_init)
+            writer.write_file("models/", "__init__.py", content)
             main_init.append("from . import models")
 
-        if controllers_dir:
-            content = ",\n".join(controllers_init)
-            self.file_write(sftp,controllers_dir,"__init__.py",content,uid,gid)
+        # Create __init__.py files for controllers
+        if controllers_init:
+            content = "\n".join(controllers_init)
+            writer.write_file("controllers/", "__init__.py", content)
             main_init.append("from . import controllers")
 
+        # Create security files
+        writer.write_file("security/", "ir.model.access.csv", self.create_ir_model_access())
+
+        rec_rule_path = writer.write_file(
+            "security/",
+            f"{self.app_module.name}_record_rules.xml",
+            self.create_record_rules()
+        )
+        # Extract relative path for manifest (remove module path prefix)
+        rec_rule_relative = "/".join(rec_rule_path.split("/")[1:])
+        data.append(rec_rule_relative)
+
+        # Create main __init__.py
         main_init_content = "\n".join(main_init)
-        self.file_write(sftp,module_path,"__init__.py",main_init_content,uid,gid)
-        
-        self.file_write(sftp,module_path,"__manifest__.py",self.create_manifest(data),uid,gid)
+        writer.write_file("", "__init__.py", main_init_content)
 
-    def file_write(self,sftp,path,filename,content,uid,gid):
-        self.mkdir_safe(sftp,path,uid,gid,)
-        file_path = f"{path}{filename}"
-        with sftp.file(file_path, 'w+') as remote_file:
-            remote_file.write(content if content else "")
-            remote_file.close()
-        if uid and gid:
-            sftp.chown(file_path,uid,gid)
+        # Create manifest
+        writer.write_file("", "__manifest__.py", self.create_manifest(data))
 
-    def mkdir_safe(self,sftp,dir,uid,gid,mode=0o775):
+        return data
+
+    def button_export_module(self):
+        """Export module as a downloadable tar.gz file"""
+        module_path = f"{self.app_module.name}/"
+       
+        writer = TarFileWriter(module_path)  
+        self._build_module_structure(writer)
+
+        tar_file = writer.tar_file
+
+        tar_file.seek(0)
+        ir_att_id = self.env["ir.attachment"].create({
+            "name": f"{self.name}",
+            "type": "binary",
+            "datas": base64.b64encode(tar_file.read()),
+            "res_model": self._name,
+            "res_id": self.id,
+        })
+
+        writer.close()
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/?model={ir_att_id._name}&id={ir_att_id.id}&filename={ir_att_id.name}&download=true',
+            'target': 'self',
+        }
+
+    def sftp_upload(self):
+        """Upload module directly to server via SFTP"""
+        hostname = self.env.user.sftp_hostname
+        port = self.env.user.sftp_port
+        username = self.env.user.sftp_username
+
+        if not hostname or not port or not username:
+            raise UserError(
+                f"One of the following values are not set on the user {self.env.user.name}\n\n"
+                f"Hostname: {hostname}\nPort: {port}\nUsername: {username}"
+            )
+
+        if self.app_module.repo_id:
+            module_path = f"/usr/share/{self.app_module.repo_id.name}/{self.app_module.technical_name}/"
+        else:
+            module_path = f"/usr/share/{self.name}/{self.app_module.technical_name}/"
+
+        writer = SFTPFileWriter(hostname=hostname,port=port,username=username,module_path=module_path)
+        self._build_module_structure(writer)
+        writer.close()
+
+
+    def sync_module(self):
+        git_url = self.env['ir.config_parameter'].sudo().get_param('GitHubBaseUrl')
+        raw_git_url = self.env['ir.config_parameter'].sudo().get_param('RawGitHubBaseUrl')
+
+        if not raw_git_url:
+            raise UserError(_("Raw Git URL is not set"))
+        if not git_url:
+            raise UserError(_("Git URL is not set"))
+        if not self.app_project:
+            raise UserError(_("No Git Project was specified"))
+        if not self.app_module:
+            raise UserError(_("No Module was specified"))
+        for module in self:
+            if not module.app_project:
+                raise UserError(_("No Git Project was specified %s" % module.name))
+            if not module.app_module:
+                raise UserError(_("No Module was specified %s" % module.name))
+            if not module.app_tree:
+                raise UserError(_("No Module Tree was specified %s" % module.name))
+            if module.app_project and module.app_module:
+                module_url = f"{git_url}/{module.app_project}/tree/{module.app_tree}/{module.app_module}"
+                raw_module_url = f"{raw_git_url}/{module.app_project}/{module.app_tree}/{module.app_module}"
+                # get icon
+                _logger.warning("--------->> module_url: %s" % module_url)
+                _logger.warning("--------->> raw_module_url: %s" % raw_module_url)
+
+                icon_data, icon_name = module._wget_sync(f"{raw_module_url}/static/description/icon.png")
+                if icon_data and icon_name:
+                    module.app_icon = module._create_attachment(icon_data, icon_name)
+                # get banner
+                manifest_obj = urllib.request.urlopen(f"{raw_module_url}/__manifest__.py").read().decode('utf-8')
+                manifest = re.sub(r'(?m)^ *#.*\n?', '', manifest_obj)
+                if manifest:
+                    manifest = ast.literal_eval(manifest)
+                    manifest_images = manifest.get('images')
+                    if manifest_images:
+                        main_screenshot = [image for image in manifest_images if
+                                           image.endswith('_screenshot.png' or 'banner.png')]
+                        banner_data, banner_name = self._wget_sync(
+                            f"{raw_module_url}{main_screenshot[0] if main_screenshot else manifest_images[0]}"
+                        )
+                        if banner_data and banner_name:
+                            module.app_banner = module._create_attachment(banner_data, banner_name)
+
+                # manifest file
+                module._sync_manifest(f"{raw_module_url}/__manifest__.py")
+
+    def _sync_manifest(self, manifest_url):
         try:
-            sftp.mkdir(dir,mode)
-            if uid and gid:
-                sftp.chown(dir,uid,gid)
-        except IOError as e:
-            _logger.warning(f"Got this error {e} when making directory with sftp on remote host.\nIt is likely that the directory already exists, will skip creating it.")
-                
+            manifest_obj = urllib.request.urlopen(manifest_url).read().decode('utf-8')
+            manifest = re.sub(r'(?m)^ *#.*\n?', '', manifest_obj)
+            if manifest:
+                manifest = ast.literal_eval(manifest)
+                self.app_license = manifest.get('license')
+                self.app_summary = manifest.get('summary')
+        except Exception as e:
+            _logger.warning("".join(traceback.format_exc()))
+            return None, None
 
-    def create_manifest(self,data=[]):
+    def _wget_sync(self, url):
+        _logger.warning(f"{url=}")
+        try:
+            file_obj = urllib.request.urlopen(url)
+            _logger.warning(f"{file_obj=}")
+            file_name = os.path.basename(url)
+            _logger.warning(f"{file_name=}")
+            return file_obj, file_name
+        except Exception as e:
+            _logger.warning("".join(traceback.format_exc()))
+            return None, None
+
+    def _create_attachment(self, datas, name):
+        return base64.encodebytes(datas.read())
+
+    def create_record_rules(self):
+        content = "<odoo>\n"
+        for rule in self.rule_ids:
+            group_string = self.create_groups_string(rule)
+            first_module = rule.model_id.modules.split(",")[0]
+            ext_model = f"{first_module}.{rule.model_id.model.replace(".", "_")}"
+            content += f"\
+    <record id='{rule.name}_record_rule' model='ir.rule'>\n \
+        <field name='name'>{rule.name}</field>\n \
+        <field name='model_id' ref='{ext_model}'/>\n \
+        <field name='domain_force'>{rule.domain_force}</field>\n \
+        <field name='groups' eval='{group_string}'/>\n \
+        <field name='perm_read' eval='{int(rule.perm_create)}'/>\n \
+        <field name='perm_write' eval='{int(rule.perm_write)}'/>\n \
+        <field name='perm_create' eval='{int(rule.perm_create)}'/>\n \
+        <field name='perm_unlink' eval='{int(rule.perm_unlink)}'/>\n \
+    </record>\n"
+        content += "</odoo>"
+        return content
+
+    def create_groups_string(self, rule):
+        if not rule.groups:
+            return ""
+        group_string = "["
+        for group in rule.groups:
+            ext_group_id = self.env["ir.model.data"].search([
+                ("model", "=", group.groups_id._name), ("res_id", "=", group.groups_id.id)
+            ], limit=1)
+            group_string += f'(4, ref("{ext_group_id.complete_name}")),'
+        group_string += "]"
+        return group_string
+
+    def create_ir_model_access(self):
+        content = "id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink"
+        for access in self.model_access_ids:
+            ext_group_id = self.env["ir.model.data"].search([
+                ("model", "=", access.group_id._name), ("res_id", "=", access.group_id.id)
+            ], limit=1)
+            first_module = access.model_id.modules.split(",")[0]
+            content += (
+                f"\naccess_{access.name},{access.name},"
+                f"{first_module}.model_{access.model_id.model.replace('.', '_')},"
+                f"{ext_group_id.complete_name},"
+                f"{int(access.perm_read)},{int(access.perm_write)},"
+                f"{int(access.perm_create)},{int(access.perm_unlink)}"
+            )
+        return content
+
+    def create_manifest(self, data: list):
         manifest_vals = {
             'name': self.name,
             'version': f"{prd.major_version}.{prd.minor_version}",
@@ -267,7 +379,4 @@ class ProductRequirementDocument(models.Model):
             'application': True,
             'qweb': []
         }
-        json_str = json.dumps(manifest_vals, indent=2)
-        return json_str
-
-
+        return json.dumps(manifest_vals, indent=2)

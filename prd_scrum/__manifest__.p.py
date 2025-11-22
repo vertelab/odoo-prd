@@ -39,6 +39,7 @@
     'data': [
         'data/prd_function_types.xml',
         'views/prd_views.xml',
+        'views/project_views.xml'
     ],
     'application': False,
 }
