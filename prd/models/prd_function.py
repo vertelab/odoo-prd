@@ -86,6 +86,7 @@ function_icon ="""<svg height="800px" width="800px" version="1.1" id="图层_1" 
                     
 class OdooModuleMixin(models.AbstractModel):
     _name = 'prd.odoo_module.mixin'
+    # ~ _inherit = 'ir.module.module'
     _description = 'Odoo Module Mixin'
 
     application = fields.Boolean(string='Application')
@@ -99,6 +100,8 @@ class OdooModuleMixin(models.AbstractModel):
     shortdesc = fields.Char(string='ShortDesc')
     technical_name = fields.Char(string='Technical Name')
     website = fields.Char(string='Website',)
+    licence_id = fields.Many2one(comodel_name='prd.odoo_licence',string="Licence",help="")
+    app_category = fields.Many2one('ir.module.category', string="Category", default=1)
 
     @api.model
     def _module2dict(self,module):
@@ -118,8 +121,13 @@ class OdooModuleMixin(models.AbstractModel):
         
     @api.onchange('module_id')
     def _onchange_module_id(self):
+        
         for record in self:
-            if record.module_id:
+            
+            d = {field_name: record[field_name] for field_name in record.fields_get()}
+            raise UserError(f"{d}")
+            
+            if record.module_id and record._name != 'prd.document':
                 for key, value in self._module2dict(record.module_id).items():
                     setattr(record, key, value)
 

@@ -146,6 +146,7 @@
                     <field name="date" />
                     <field name="author_id" />
                     <field name="product_owner_id" />
+                    <field name="document_type" invisible="1" />
                 </list>
             </field>
         </record>
