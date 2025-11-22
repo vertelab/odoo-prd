@@ -6,6 +6,7 @@ from random import randint
 from odoo.addons.base.models.avatar_mixin import get_hsl_from_seed
 from secrets import choice
 import base64
+from odoo.tools.misc import topological_sort, get_flag
 
 _logger = logging.getLogger(__name__)
 
@@ -97,14 +98,37 @@ class OdooModuleMixin(models.AbstractModel):
     module_id = fields.Many2one(comodel_name='ir.module.module',string="Module",help="")
     repo_id = fields.Many2one(comodel_name='prd.odoo_repo',string="Repo",help="")
     summary = fields.Char(string='Summary')
-    shortdesc = fields.Char(string='ShortDesc')
+    # ~ shortdesc = fields.Char(string='Module Name')
     technical_name = fields.Char(string='Technical Name')
     website = fields.Char(string='Website',)
     licence_id = fields.Many2one(comodel_name='prd.odoo_licence',string="Licence",help="")
-    app_category = fields.Many2one('ir.module.category', string="Category", default=1)
+    app_category_id = fields.Many2one('ir.module.category', string="Category", )
+    author = fields.Char("Author", )
+    maintainer = fields.Char('Maintainer', )
+    contributors = fields.Text('Contributors', )
+
+    # ~ url = fields.Char('URL', readonly=True)
+    # ~ dependencies_id = fields.One2many('ir.module.module.dependency', 'module_id',
+                                       # ~ string='Dependencies', readonly=True)
+    # ~ country_ids = fields.Many2many('res.country', 'module_country', 'module_id', 'country_id')
+    auto_install = fields.Boolean('Automatic Installation',
+                                   help='An auto-installable module is automatically installed by the '
+                                        'system when all its dependencies are satisfied. '
+                                        'If the module has no dependency, it is always installed.')
+    # ~ menus_by_module = fields.Text(string='Menus', compute='_get_views', store=True)
+    # ~ reports_by_module = fields.Text(string='Reports', compute='_get_views', store=True)
+    # ~ views_by_module = fields.Text(string='Views', compute='_get_views', store=True)
+    icon_image = fields.Binary(string='Icon', compute='_get_icon_image')
+    icon_flag = fields.Char(string='Flag', compute='_get_icon_image')
+
+
+    
 
     @api.model
     def _module2dict(self,module):
+        name == technical_name
+        category_id == app_category_id
+        shortdesc == name
         return {
             'application':  module.application,
             'description':  module.description ,
@@ -130,6 +154,27 @@ class OdooModuleMixin(models.AbstractModel):
             if record.module_id and record._name != 'prd.document':
                 for key, value in self._module2dict(record.module_id).items():
                     setattr(record, key, value)
+
+    # ~ @api.depends('icon')
+    def _get_icon_image(self):
+        self.icon_image = ''
+        for module in self:
+            if not module.id:
+                continue
+            if module.icon:
+                path = os.path.join(module.icon.lstrip("/"))
+            else:
+                path = modules.module.get_module_icon_path(module)
+            if path:
+                try:
+                    with tools.file_open(path, 'rb', filter_ext=('.png', '.svg', '.gif', '.jpeg', '.jpg')) as image_file:
+                        module.icon_image = base64.b64encode(image_file.read())
+                except FileNotFoundError:
+                    module.icon_image = ''
+            countries = self.get_module_info(module.name).get('countries', [])
+            country_code = len(countries) == 1 and countries[0]
+            module.icon_flag = get_flag(country_code.upper()) if country_code else ''
+
 
 
 class PrdFunction(models.Model):
