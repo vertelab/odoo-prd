@@ -21,42 +21,9 @@ _logger = logging.getLogger(__name__)
 class ProductRequirementDocument(models.Model):
 
     _name = "prd.document"
-    _inherit = ['prd.document','prd.odoo_module.mixin']
+    # ~ _inherit = ['prd.document','prd.odoo_module.mixin',]
+    _inherit = ['prd.document','prd.odoo_module.mixin','prd.odoo_module.mixin']
     
-    @api.depends('moduile_id','repo_id')
-    def _get_app_url(self):	 
-        pass
-        for b in self:
-            if b.module_id and b.repo_id:
-               b.website = f"{self.env.company.website}/apps/{b.repo_id.name}/{b.module_id.technical_name}"
-
-    app_module = fields.Many2one(comodel_name="prd.odoo_module", string="App Module", )
-    app_project = fields.Many2one(comodel_name='prd.odoo_repo', string="App Project", help="")
-    app_tree = fields.Char(string="Branch Tree", default="14.0")
-    app_icon = fields.Image(string="Icon")
-    app_url = fields.Char(string="Website", compute="_get_app_url", default="vertel")
-    app_banner = fields.Image(string="App Banner")
-    app_summary = fields.Char(string="App Summary")
-    app_category = fields.Many2one('ir.module.category', string="Category", default=1)
-    app_description = fields.Text(string="App Description", default="The module description goes here.")
-    app_manifest = fields.Char(string="App Manifest")
-    app_license = fields.Char(string="App License", default="LGPL-3")
-    # ~ app_index = fields.Html(string="App Index", translate=html_translate, sanitize_attributes=False,sanitize_form=False, default=_default_description)
-    app_index = fields.Html(string="App Index", )
-    app_depends = fields.Many2many(comodel_name='prd.odoo_module', string='Dependencies',
-                                   help="")  # relation|column1|column2
-    model_access_ids = fields.One2many(comodel_name="prd.model.access", inverse_name="prd_id")
-    rule_ids = fields.One2many(comodel_name="prd.rule", inverse_name="prd_id")
-
-    @api.depends('app_module', 'app_project')
-    def _get_app_url(self):
-        pass
-        for b in self:
-            if b.app_module and b.app_project:
-                b.app_url = "https://vertel.se/apps/" + b.app_project.name + "/" + b.app_module.name
-            else:
-                b.website = False
-
     def button_export_module(self):
         module_path = f"{self.module_id.name}/"
         tar_file = io.BytesIO()
@@ -363,10 +330,10 @@ class ProductRequirementDocument(models.Model):
             )
         return content
 
-    def create_manifest(self, data: list):
+    def create_manifest(self,data):
         manifest_vals = {
             'name': self.name,
-            'version': f"{prd.major_version}.{prd.minor_version}",
+            'version': f"{self.major_version}.{self.minor_version}",
             'category': self.app_category.name,
             'website': self.website,
             'summary': self.summary,

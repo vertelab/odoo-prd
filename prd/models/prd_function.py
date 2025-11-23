@@ -6,6 +6,7 @@ from random import randint
 from odoo.addons.base.models.avatar_mixin import get_hsl_from_seed
 from secrets import choice
 import base64
+from odoo.tools.misc import topological_sort, get_flag
 
 _logger = logging.getLogger(__name__)
 
@@ -83,53 +84,6 @@ function_icon ="""<svg height="800px" width="800px" version="1.1" id="图层_1" 
 </g>
 </svg>"""
                     
-                    
-class OdooModuleMixin(models.AbstractModel):
-    _name = 'prd.odoo_module.mixin'
-    # ~ _inherit = 'ir.module.module'
-    _description = 'Odoo Module Mixin'
-
-    application = fields.Boolean(string='Application')
-    description = fields.Text(string='Description')
-    description_html = fields.Html(string='Index')
-    icon = fields.Char(string='Icon URL')
-    icon_image = fields.Image(string='Icon')
-    module_id = fields.Many2one(comodel_name='ir.module.module',string="Module",help="")
-    repo_id = fields.Many2one(comodel_name='prd.odoo_repo',string="Repo",help="")
-    summary = fields.Char(string='Summary')
-    shortdesc = fields.Char(string='ShortDesc')
-    technical_name = fields.Char(string='Technical Name')
-    website = fields.Char(string='Website',)
-    licence_id = fields.Many2one(comodel_name='prd.odoo_licence',string="Licence",help="")
-    app_category = fields.Many2one('ir.module.category', string="Category", default=1)
-
-    @api.model
-    def _module2dict(self,module):
-        return {
-            'application':  module.application,
-            'description':  module.description ,
-            'description_html': module.description_html,
-            'icon':         module.icon,
-            'icon_image':   module.icon_image,
-            'name':         module.shortdesc or module.name,
-            'repo_id': self.env.ref('prd.repo_odoo') if 'Odoo S.A.' in module.author else False,
-            'shortdesc':    module.shortdesc,
-            'summary':    module.summary,
-            'technical_name': module.name,
-            'website':      module.website,
-        }
-        
-    @api.onchange('module_id')
-    def _onchange_module_id(self):
-        
-        for record in self:
-            
-            d = {field_name: record[field_name] for field_name in record.fields_get()}
-            raise UserError(f"{d}")
-            
-            if record.module_id and record._name != 'prd.document':
-                for key, value in self._module2dict(record.module_id).items():
-                    setattr(record, key, value)
 
 
 class PrdFunction(models.Model):
@@ -194,7 +148,11 @@ class PrdFunction(models.Model):
     @api.depends('image_128', 'uuid')
     def _compute_avatar_128(self):
         for record in self:
-            record.avatar_128 = record.image_128 or record._generate_avatar()
+            if record.module_id and record.icon:
+                # ~ record.avatar_128 = base64.b64encode(record.icon_image)
+                record.avatar_128 = record.icon_image
+            else:
+                record.avatar_128 = record.image_128 or record._generate_avatar()
 
     def _generate_avatar(self):
         avatar = function_icon

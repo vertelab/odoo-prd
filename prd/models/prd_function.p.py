@@ -84,97 +84,6 @@ function_icon ="""<svg height="800px" width="800px" version="1.1" id="图层_1" 
 </g>
 </svg>"""
                     
-                    
-class OdooModuleMixin(models.AbstractModel):
-    _name = 'prd.odoo_module.mixin'
-    # ~ _inherit = 'ir.module.module'
-    _description = 'Odoo Module Mixin'
-
-    application = fields.Boolean(string='Application')
-    description = fields.Text(string='Description')
-    description_html = fields.Html(string='Index')
-    icon = fields.Char(string='Icon URL')
-    icon_image = fields.Image(string='Icon')
-    module_id = fields.Many2one(comodel_name='ir.module.module',string="Module",help="")
-    repo_id = fields.Many2one(comodel_name='prd.odoo_repo',string="Repo",help="")
-    summary = fields.Char(string='Summary')
-    # ~ shortdesc = fields.Char(string='Module Name')
-    technical_name = fields.Char(string='Technical Name')
-    website = fields.Char(string='Website',)
-    licence_id = fields.Many2one(comodel_name='prd.odoo_licence',string="Licence",help="")
-    app_category_id = fields.Many2one('ir.module.category', string="Category", )
-    author = fields.Char("Author", )
-    maintainer = fields.Char('Maintainer', )
-    contributors = fields.Text('Contributors', )
-
-    # ~ url = fields.Char('URL', readonly=True)
-    # ~ dependencies_id = fields.One2many('ir.module.module.dependency', 'module_id',
-                                       # ~ string='Dependencies', readonly=True)
-    # ~ country_ids = fields.Many2many('res.country', 'module_country', 'module_id', 'country_id')
-    auto_install = fields.Boolean('Automatic Installation',
-                                   help='An auto-installable module is automatically installed by the '
-                                        'system when all its dependencies are satisfied. '
-                                        'If the module has no dependency, it is always installed.')
-    # ~ menus_by_module = fields.Text(string='Menus', compute='_get_views', store=True)
-    # ~ reports_by_module = fields.Text(string='Reports', compute='_get_views', store=True)
-    # ~ views_by_module = fields.Text(string='Views', compute='_get_views', store=True)
-    icon_image = fields.Binary(string='Icon', compute='_get_icon_image')
-    icon_flag = fields.Char(string='Flag', compute='_get_icon_image')
-
-
-    
-
-    @api.model
-    def _module2dict(self,module):
-        name == technical_name
-        category_id == app_category_id
-        shortdesc == name
-        return {
-            'application':  module.application,
-            'description':  module.description ,
-            'description_html': module.description_html,
-            'icon':         module.icon,
-            'icon_image':   module.icon_image,
-            'name':         module.shortdesc or module.name,
-            'repo_id': self.env.ref('prd.repo_odoo') if 'Odoo S.A.' in module.author else False,
-            'shortdesc':    module.shortdesc,
-            'summary':    module.summary,
-            'technical_name': module.name,
-            'website':      module.website,
-        }
-        
-    @api.onchange('module_id')
-    def _onchange_module_id(self):
-        
-        for record in self:
-            
-            d = {field_name: record[field_name] for field_name in record.fields_get()}
-            raise UserError(f"{d}")
-            
-            if record.module_id and record._name != 'prd.document':
-                for key, value in self._module2dict(record.module_id).items():
-                    setattr(record, key, value)
-
-    # ~ @api.depends('icon')
-    def _get_icon_image(self):
-        self.icon_image = ''
-        for module in self:
-            if not module.id:
-                continue
-            if module.icon:
-                path = os.path.join(module.icon.lstrip("/"))
-            else:
-                path = modules.module.get_module_icon_path(module)
-            if path:
-                try:
-                    with tools.file_open(path, 'rb', filter_ext=('.png', '.svg', '.gif', '.jpeg', '.jpg')) as image_file:
-                        module.icon_image = base64.b64encode(image_file.read())
-                except FileNotFoundError:
-                    module.icon_image = ''
-            countries = self.get_module_info(module.name).get('countries', [])
-            country_code = len(countries) == 1 and countries[0]
-            module.icon_flag = get_flag(country_code.upper()) if country_code else ''
-
 
 
 class PrdFunction(models.Model):
@@ -239,7 +148,11 @@ class PrdFunction(models.Model):
     @api.depends('image_128', 'uuid')
     def _compute_avatar_128(self):
         for record in self:
-            record.avatar_128 = record.image_128 or record._generate_avatar()
+            if record.module_id and record.icon:
+                record.avatar_128 = base64.b64encode(record.icon_image)
+                # ~ record.avatar_128 = record.icon_image
+            else:
+                record.avatar_128 = record.image_128 or record._generate_avatar()
 
     def _generate_avatar(self):
         avatar = function_icon

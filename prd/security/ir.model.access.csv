@@ -23,4 +23,8 @@ access_prd_function_type_user,prd.function user,model_prd_function_type,base.gro
 access_prd_function_type_manager,prd.function manager,model_prd_function_type,base.group_system,1,1,1,1
 access_prd_odoo_repo_user,prd.odoo_repo user,model_prd_odoo_repo,base.group_user,1,0,0,0
 access_prd_odoo_repo_manager,prd.odoo_repo manager,model_prd_odoo_repo,base.group_system,1,1,1,1
-prd.access_prd_requirement_wizard,access_prd_requirement_wizard,prd.model_prd_requirement_wizard,base.group_user,1,1,1,1
+access_prd_requirement_wizard,access_prd_requirement_wizard,prd.model_prd_requirement_wizard,base.group_user,1,1,1,1
+access_prd_model_access,access_prd_model_access,model_prd_model_access,base.group_user,1,1,1,1
+access_prd_rule,access_prd_rule,model_prd_rule,base.group_user,1,1,1,1
+access_prd_rule_groups,access_prd_rule_groups,model_prd_rule_groups,base.group_user,1,1,1,1
+

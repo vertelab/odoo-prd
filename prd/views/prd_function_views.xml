@@ -46,6 +46,8 @@
               <field name="name" options="{'line_breaks': False}" widget="text" class="w-80 flex-grow-1 o_text_overflow" placeholder="e.g. Function" />
             </h1>
           </div>
+          <field name="avatar_128" widget="image" class="oe_avatar" options="{&quot;preview_image&quot;: &quot;avatar_128&quot;}" nolabel="1"/>
+
           <div name="options" />
           <group col="2">
             <group id="c1">
@@ -60,12 +62,12 @@
             </group>
             <group id="c2">
               <field name="application" invisible="implementation_type != 'odoo_module'" />
-              <field name="description" invisible="implementation_type != 'odoo_module'" />
-              <field name="description_html" invisible="implementation_type != 'odoo_module'" />
+<!--
               <field name="icon" invisible="implementation_type != 'odoo_module'" />
               <field name="icon_image" invisible="implementation_type != 'odoo_module'" />
+-->
               <field name="repo_id" invisible="implementation_type != 'odoo_module'" />
-              <field name="shortdesc" invisible="implementation_type != 'odoo_module'" />
+              <field name="summary" invisible="implementation_type != 'odoo_module'" />
               <field name="technical_name" invisible="implementation_type != 'odoo_module'" />
               <field name="website" invisible="implementation_type != 'odoo_module'" />
             </group>
@@ -74,13 +76,16 @@
             <page string="Description">
               <field name="description" nolabel="1" />
             </page>
-            <page string="Input Data" invisible="implementation_type == 'module'">
+            <page string="Index" invisible="implementation_type != 'odoo_module'" >
+              <field name="description_html" nolabel="1" />
+            </page>
+            <page string="Input Data" invisible="implementation_type == 'odoo_module'">
               <field name="input_data" nolabel="1" />
             </page>
-            <page string="Process Data" invisible="implementation_type == 'module'">
+            <page string="Process Data" invisible="implementation_type == 'odoo_module'">
               <field name="process_data" nolabel="1"  />
             </page>
-            <page string="Output Data"  invisible="implementation_type == 'module'">
+            <page string="Output Data"  invisible="implementation_type == 'odoo_module'">
               <field name="output_data" nolabel="1" />
             </page>
             <page string="Requirements">

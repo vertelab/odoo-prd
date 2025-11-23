@@ -50,8 +50,9 @@
         'views/prd_requirement_views.xml',
         'views/prd_configuration_views.xml',
         'wizard/prd_requirement_wizard_views.xml',
-        'security/ir.model.access.csv',
         'security/prd_security.xml',
+        'security/ir.model.access.csv',
+
     ],
     'application': True,
 }

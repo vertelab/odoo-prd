@@ -12,21 +12,23 @@ from odoo import models, fields
 
 class ProductRequirementDocument(models.Model):
     _name = 'prd.document'
-    _inherit = ['mermaid.mixin', 'mail.thread', 'mail.activity.mixin']
+    _inherit = ['mermaid.mixin', 'mail.thread', 'mail.activity.mixin',]
     _description = 'Product Requirement Document'
     _order = "sequence desc, name desc"
 
+
+    avatar_128 = fields.Image("Avatar", max_width=128, max_height=128,)
     duration_tracking = fields.Float(string='Duration Tracking')
     active = fields.Boolean(string='Active', default=True)
-    parent_id = fields.Many2one(comodel_name='prd.document',string="Parent PRD",help="")
-    company_id = fields.Many2one(comodel_name='res.company',string="Company",help="") 
+    parent_id = fields.Many2one(comodel_name='prd.document',string="Parent PRD",help="", ondelete='set null')
+    company_id = fields.Many2one(comodel_name='res.company',string="Company",help="", ondelete='set null' ) 
     name = fields.Char(string="Titel", required=True)
     # ~ summary = fields.Char(string="Summary", required=True)
     description = fields.Text(string="Description",help="Purpuse")
     version = fields.Char(string="Version", default="1.0",readonly=True,tracking=True)
-    author_id = fields.Many2one('res.users', string="Author",tracking=True)
-    product_owner_id = fields.Many2one('res.users', string="Product Owner",tracking=True)
-    approved_by_id = fields.Many2one('res.users', string="Approved By",readonly=True,tracking=True)
+    author_id = fields.Many2one('res.users', string="Author",tracking=True, ondelete='set null' )
+    product_owner_id = fields.Many2one('res.users', string="Product Owner",tracking=True,  ondelete='set null')
+    approved_by_id = fields.Many2one('res.users', string="Approved By",readonly=True,tracking=True,  ondelete='set null')
     date = fields.Date(string="Date", default=fields.Date.today,readonly=True,tracking=True)
     goals = fields.Text(string="Goal")
     user_persona = fields.Text(string="Användarbeskrivning")
@@ -88,6 +90,13 @@ class ProductRequirementDocument(models.Model):
             record.requirements_percentage = 0.0
             if total > 0:
                 record.requirements_percentage = (closed / total) 
+
+
+    @api.depends('icon', )
+    def _compute_avatar_128(self):
+        for record in self:
+            if record.icon:
+                record.avatar_128 = record.icon
 
 
     def button_minor_version(self):
