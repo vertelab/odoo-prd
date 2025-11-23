@@ -83,8 +83,6 @@ function_icon ="""<svg height="800px" width="800px" version="1.1" id="图层_1" 
 	</g>
 </g>
 </svg>"""
-                    
-
 
 class PrdFunction(models.Model):
     _name = 'prd.function'
