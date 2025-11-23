@@ -83,6 +83,8 @@ function_icon ="""<svg height="800px" width="800px" version="1.1" id="图层_1" 
 	</g>
 </g>
 </svg>"""
+                    
+
 
 class PrdFunction(models.Model):
     _name = 'prd.function'
@@ -147,8 +149,8 @@ class PrdFunction(models.Model):
     def _compute_avatar_128(self):
         for record in self:
             if record.module_id and record.icon:
-                # ~ record.avatar_128 = base64.b64encode(record.icon_image)
-                record.avatar_128 = record.icon_image
+                record.avatar_128 = base64.b64encode(record.icon_image)
+                # ~ record.avatar_128 = record.icon_image
             else:
                 record.avatar_128 = record.image_128 or record._generate_avatar()
 
