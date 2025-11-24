@@ -2,6 +2,7 @@ import openpyxl
 import base64
 from io import BytesIO
 import re
+import zipfile
 
 from datetime import datetime, timedelta 
 from odoo import api, fields, models, _
@@ -21,8 +22,12 @@ class ExcelWizard(models.TransientModel):
         """
         Läser en excel-fil (kravspecifikation) och skapar krav i prd.requirement.
         """
+        file = BytesIO(base64.b64decode(self.file))
         try:
-            wb = openpyxl.load_workbook(filename=BytesIO(base64.b64decode(self.file)),data_only=True)
+            wb = openpyxl.load_workbook(filename=file,data_only=True)
+        except ValueError as e:
+            if "Unable to read workbook" in str(e):
+                wb = self.fix_broken_excel(file)
         except Exception as e:
             raise UserError(_("Kunde inte läsa Excel-filen: %s") % e)
 
@@ -41,7 +46,7 @@ class ExcelWizard(models.TransientModel):
             for row in sheet.iter_rows(values_only=True,max_col=20,max_row=1000):
                 if not row or not row[0]:
                     continue
-
+                _logger.error(f"{row=}")
                 first_cell = self.find_code(row)
                 # _logger.warning(f"{row=} {first_cell=}")
                 # Identifiera kravnummer (1.1, 2.1.5 etc.)
@@ -126,3 +131,29 @@ class ExcelWizard(models.TransientModel):
     def check_row_len(self,row,row_index,max_len,min_len):
         check = str(row[row_index]).strip() if len(row) > row_index and row[row_index] and len(row[row_index]) <= max_len and len(row[row_index]) >= min_len else False
         return check
+
+    def fix_broken_excel(self,file):
+        try:
+            new_file = BytesIO()
+            with zipfile.ZipFile(file, 'r') as zin:
+                with zipfile.ZipFile(new_file, 'w') as zout:
+            
+                    for item in zin.infolist():
+                        buffer = zin.read(item.filename)
+                        
+                        if item.filename == 'xl/workbook.xml':
+                            xml_str = buffer.decode('utf-8')
+                            
+                            clean_xml = re.sub(r'<definedNames>.*?</definedNames>', '', xml_str, flags=re.DOTALL)
+                            
+                            if len(xml_str) != len(clean_xml):
+                                _logger.warning(" -> Found and removed broken <definedNames> tag.")
+                            
+                            zout.writestr(item, clean_xml)
+                        
+                        else:
+                            zout.writestr(item, buffer)
+            wb = openpyxl.load_workbook(filename=new_file,data_only=True)
+        except Exception as e:
+            raise UserError(f"Tryed to fix broken excel but faild: {e}")
+        return wb
