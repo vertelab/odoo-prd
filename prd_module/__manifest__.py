@@ -49,7 +49,7 @@
         'views/prd_views.xml',
         'views/prd_function_views.xml',
         'views/prd_configuration_views.xml',
-        'views/users_views.xml'
+        # ~ 'views/users_views.xml',
     ],
     'application': False,
 }

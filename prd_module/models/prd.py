@@ -19,34 +19,87 @@ _logger = logging.getLogger(__name__)
 
 
 class ProductRequirementDocument(models.Model):
-    _inherit = 'prd.document'
 
-    app_module = fields.Many2one(comodel_name="prd.odoo_module", string="App Module", )
-    app_project = fields.Many2one(comodel_name='prd.odoo_repo', string="App Project", help="")
-    app_tree = fields.Char(string="Branch Tree", default="14.0")
-    app_icon = fields.Image(string="Icon")
-    app_url = fields.Char(string="Website", compute="_get_app_url", default="vertel")
-    app_banner = fields.Image(string="App Banner")
-    app_summary = fields.Char(string="App Summary")
-    app_category = fields.Many2one('ir.module.category', string="Category", default=1)
-    app_description = fields.Text(string="App Description", default="The module description goes here.")
-    app_manifest = fields.Char(string="App Manifest")
-    app_license = fields.Char(string="App License", default="LGPL-3")
-    # ~ app_index = fields.Html(string="App Index", translate=html_translate, sanitize_attributes=False,sanitize_form=False, default=_default_description)
-    app_index = fields.Html(string="App Index", )
-    app_depends = fields.Many2many(comodel_name='prd.odoo_module', string='Dependencies',
-                                   help="")  # relation|column1|column2
-    model_access_ids = fields.One2many(comodel_name="prd.model.access", inverse_name="prd_id")
-    rule_ids = fields.One2many(comodel_name="prd.rule", inverse_name="prd_id")
+    _name = "prd.document"
+    # ~ _inherit = ['prd.document','prd.odoo_module.mixin',]
+    _inherit = ['prd.document','prd.odoo_module.mixin','prd.odoo_module.mixin']
+    
+    def button_export_module(self):
+        module_path = f"{self.module_id.name}/"
+        tar_file = io.BytesIO()
+        with tarfile.open(fileobj=tar_file, mode='w:gz') as tar:
+    
+            for function in self.function_ids:
+                views_dir = ""
+                models_dir = ""
+                data_dir = ""
+                controllers_dir = ""
+                if function.has_views and function.views_filename:
+                    views_dir = f"{module_path}views/"
+                    self.add_file_to_tar(
+                        tar,
+                        views_dir,
+                        function.views_filename,
+                        function.views_xml
+                        )
+                if function.has_models and function.models_filename:
+                    models_dir = f"{module_path}models/"
+                    self.add_file_to_tar(
+                        tar,
+                        models_dir,
+                        function.models_filename,
+                        function.models_src
+                        )
+                    
+                if function.has_data and function.data_filename:
+                    data_dir = f"{module_path}data/"
+                    self.add_file_to_tar(
+                        tar,
+                        data_dir,
+                        function.data_filename,
+                        function.data_xml
+                        )
+                    
+                if function.has_controllers and function.controllers_filename:
+                    controllers_dir = f"{module_path}controllers/"
+                    self.add_file_to_tar(
+                        tar,
+                        controllers_dir,
+                        function.controllers_filename,
+                        function.controllers_src
+                        )
+        tar_file.seek(0)
+        return base64.b64encode(tar_file.read()).decode('ascii')
 
-    @api.depends('app_module', 'app_project')
-    def _get_app_url(self):
-        pass
-        for b in self:
-            if b.app_module and b.app_project:
-                b.app_url = "https://vertel.se/apps/" + b.app_project.name + "/" + b.app_module.name
-            else:
-                b.app_url = False
+    def add_file_to_tar(self,tar,dir_path,filename,content):
+        arcname = f"{dir_path}{filename}"
+        content = content if content else "" 
+        data = content.encode('utf-8')  # Encode string to bytes
+        fileobj = io.BytesIO(data)       # Create BytesIO stream from bytes
+        tarinfo = tarfile.TarInfo(name=arcname)
+        tarinfo.size = len(data)
+        tarinfo.mtime = time.time()
+        tar.addfile(tarinfo, fileobj=fileobj)
+
+    def action_redirect_to_url(self):
+        # '/web/content/%s?download=true' % attachment.id,
+        _logger.error("TEST"*10)
+        url = f"/prd_module/download_code/{self.id}"
+        return {
+            "type": "ir.actions.act_url",
+            "url": url,
+            "target": "self",
+        }
+
+    def sftp_upload(self):
+        hostname = self.env.user.sftp_hostname
+        port = self.env.user.sftp_port
+        username = self.env.user.sftp_username
+
+        if not hostname or not port or not username:
+            raise UserError(f"One of the following values are not set on the user {self.env.user.name}\n\nHostname: {hostname}\nPort: {port}\nUsername: {username}")
+
+        module_path = f"/usr/share/{self.repo_id.name}/"
 
     def _build_module_structure(self, writer):
         data = []
@@ -153,6 +206,7 @@ class ProductRequirementDocument(models.Model):
         writer = SFTPFileWriter(hostname=hostname,port=port,username=username,module_path=module_path)
         self._build_module_structure(writer)
         writer.close()
+
 
     def sync_module(self):
         git_url = self.env['ir.config_parameter'].sudo().get_param('GitHubBaseUrl')
@@ -276,21 +330,20 @@ class ProductRequirementDocument(models.Model):
             )
         return content
 
-    def create_manifest(self, data: list):
+    def create_manifest(self,data):
         manifest_vals = {
             'name': self.name,
-            'version': '1.0',
+            'version': f"{self.major_version}.{self.minor_version}",
             'category': self.app_category.name,
-            'website': 'https://vertel.se/apps/project/module',
-            'summary': self.app_summary,
-            'author': 'Vertel AB',
-            'license': self.app_license,
-            'description': self.app_description,
-            'depends': [d.strip() for d in self.dependencies.split(",")] if self.dependencies else [],
+            'website': self.website,
+            'summary': self.summary,
+            'author': self.env.company.name,
+            'license': self.app_license.code,
+            'description': self.description,
+            # ~ 'depends': [d.strip() for d in self.dependencies.split(",")] if self.dependencies else [],
             'data': data,
             'installable': True,
             'application': True,
             'qweb': []
         }
-        json_str = json.dumps(manifest_vals, indent=2)
-        return json_str
+        return json.dumps(manifest_vals, indent=2)
