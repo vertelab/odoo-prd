@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta 
-from odoo import api, fields, models, _, tools
+from odoo import api, fields, models, modules, tools, _
 from odoo.addons.base.models.avatar_mixin import get_hsl_from_seed
 from odoo.exceptions import UserError, ValidationError, AccessError
 from odoo.tools.misc import topological_sort, get_flag
@@ -69,7 +69,7 @@ class OdooModuleMixin(models.AbstractModel):
             if module.icon:
                 path = os.path.join(module.icon.lstrip("/"))
             else:
-                path = module.get_module_icon_path(module)
+                path = modules.module.get_module_icon_path(module)
             if path:
                 try:
                     with tools.file_open(path, 'rb', filter_ext=('.png', '.svg', '.gif', '.jpeg', '.jpg')) as image_file:
@@ -101,6 +101,11 @@ class PrdRule(models.Model):
     prd_id = fields.Many2one(comodel_name="prd.document")
     groups = fields.One2many(comodel_name="prd.rule.groups",inverse_name="rule_id")
 
+class PrdLicence(models.Model):
+    _name = 'prd.odoo_licence'
+    _description = 'PRD model licences'
+
+    name = fields.Char(string='Licence')
 
 class PrdModelAccess(models.Model):
     _name = 'prd.model.access'
