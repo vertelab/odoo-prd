@@ -46,7 +46,6 @@ class ExcelWizard(models.TransientModel):
             for row in sheet.iter_rows(values_only=True,max_col=20,max_row=1000):
                 if not row or not row[0]:
                     continue
-                _logger.error(f"{row=}")
                 first_cell = self.find_code(row)
                 # _logger.warning(f"{row=} {first_cell=}")
                 # Identifiera kravnummer (1.1, 2.1.5 etc.)
@@ -57,7 +56,7 @@ class ExcelWizard(models.TransientModel):
                     code = first_cell
                     desc = self.get_description(row,is_category)
                     name = desc
-                    req_type = self.create_req_type(current_page,desc)
+                    req_type = self.create_req_type(current_page,desc,prd_id)
                     priority = self.get_priority(row)
                     category = self.get_category(row,is_category)
 
@@ -104,7 +103,7 @@ class ExcelWizard(models.TransientModel):
         if category_str and is_category:
             category_id = self.env["prd.requirement_category"].search([("name", "=", category_str)],limit=1)
             if category_id:
-                category = Command.link(category_id.id)
+                category = Command.link(category_id.id) # type: ignore
             else:
                 category = Command.create({
                     "name": category_str
@@ -117,15 +116,17 @@ class ExcelWizard(models.TransientModel):
             desc = self.check_row_len(row,row_index=2,max_len=9999,min_len=26)
         return desc
 
-    def create_req_type(self,curent_page,desc):
+    def create_req_type(self,curent_page,desc,prd_id):
         req_type = self.env["prd.requirement_type"]
 
         req_type_id = req_type.search([("name", "ilike", curent_page)],limit=1)
 
         if not req_type_id:
+            _logger.error(f"{prd_id=}")
             req_type_id = req_type.create({
                 "name": curent_page,
-            })
+                "prd_id": prd_id
+            }) # type: ignore
         return req_type_id
 
     def check_row_len(self,row,row_index,max_len,min_len):
@@ -155,5 +156,5 @@ class ExcelWizard(models.TransientModel):
                             zout.writestr(item, buffer)
             wb = openpyxl.load_workbook(filename=new_file,data_only=True)
         except Exception as e:
-            raise UserError(f"Tryed to fix broken excel but faild: {e}")
+            raise UserError(f"Tried to fix broken Excel but failed: {e}")
         return wb

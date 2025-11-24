@@ -66,7 +66,7 @@ class PrdRequirement(models.Model):
         ('should', 'Should'),
         ('could', 'Could')
     ], string="Priority", default='must')
-    req_type = fields.Many2one(comodel_name='prd.requirement_type', string="Type", help="")
+    req_type = fields.Many2one(comodel_name='prd.requirement_type', string="Type", help="", domain="[('prd_id', '=', prd_id)]")
     sequence = fields.Integer(string='Sequence')
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -133,6 +133,7 @@ class RequirementType(models.Model):
     name = fields.Char(string='View Type Name', required=True)
     description = fields.Text(string='Description')
     active = fields.Boolean(string='Active', default=True)
+    prd_id = fields.Many2one(comodel_name = "prd.document")
     
 class RequirementCategory(models.Model):
     _name = 'prd.requirement_category'
@@ -140,3 +141,4 @@ class RequirementCategory(models.Model):
 
     name = fields.Char(string='Category', required=True)
     active = fields.Boolean(string='Active', default=True)
+    prd_id = fields.Many2one(comodel_name = "prd.document")

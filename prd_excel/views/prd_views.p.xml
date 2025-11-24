@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+  <data>
 
     <!-- Form View -->
     <record id="view_prd_document_form" model="ir.ui.view">
@@ -8,12 +9,23 @@
       <field name="inherit_id" ref="prd.view_prd_document_form" />
       <field name="arch" type="xml">
         <header position="inside">
-<!--
-          <button name="action_excel_wizard" string="Load Requirements" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
--->
-          <button name="action_excel_wizard" string="Load Requirements" type="object" class="oe_highlight"  data-hotkey="m" />
+          <button name="action_excel_wizard" string="Load Requirements" type="object" class="oe_highlight" data-hotkey="m" />
         </header>
       </field>
     </record>
 
+    <record id="action_set_prd_id_on_type" model="ir.actions.server">
+      <field name="name">Set prd_id on types</field>
+      <field name="model_id" ref="prd.model_prd_requirement"/>
+      <field name="state">code</field>
+      <field name="binding_model_id" ref="prd.model_prd_requirement"/>
+      <field name="binding_type">action</field>
+      <field name="code">
+for rec in records:
+  if rec.req_type:
+    rec.req_type.write({"prd_id": rec.prd_id.id}) 
+      </field>
+    </record>
+
+  </data>
 </odoo>
