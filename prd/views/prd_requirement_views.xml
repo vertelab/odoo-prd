@@ -48,7 +48,7 @@
                 <field name="prd_id" optional="hide" />
                 <field name="partner_id" optional="hide" />
                 <field name="to_check" optional="hide" />
-                <button name="set_state_done" class="btn-primary" type="object" icon="fa-check" invisible="state == 'done'" string="Done" />
+                <button name="set_state_done" class="btn-primary" type="object" icon="fa-check" invisible="state == 'done'" string="Done"/>
             </list>
         </field>
     </record>
