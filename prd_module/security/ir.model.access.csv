@@ -5,5 +5,6 @@ access_prd_odoo_lincence_user,prd.odoo_lincence user,model_prd_odoo_lincence,bas
 access_prd_odoo_lincence_manager,prd.odoo_lincence manager,model_prd_odoo_lincence,base.group_system,1,1,1,1
 access_prd_odoo_library_user,prd.odoo_library user,model_prd_odoo_library,base.group_user,1,1,1,1
 access_prd_odoo_library_manager,prd.odoo_library manager,model_prd_odoo_library,base.group_system,1,1,1,1
+prd_module.access_prd_odoo_models,access_prd_odoo_models,prd_module.model_prd_odoo_models,base.group_user,1,1,1,1
 
 

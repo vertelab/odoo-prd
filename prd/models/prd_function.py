@@ -83,7 +83,7 @@ function_icon ="""<svg height="800px" width="800px" version="1.1" id="图层_1" 
 	</g>
 </g>
 </svg>"""
-                    
+
 
 
 class PrdFunction(models.Model):
@@ -91,7 +91,7 @@ class PrdFunction(models.Model):
     _inherit = ['mermaid.mixin', 'mail.thread', 'mail.activity.mixin','prd.odoo_module.mixin']
     _description = 'PRD Functions'
 
-    # models / data / sequrity / sequirity.xml / views / 
+    # models / data / sequrity / sequirity.xml / views /
     active = fields.Boolean(string='Active', default=True)
     avatar_128 = fields.Image("Avatar", max_width=128, max_height=128, compute='_compute_avatar_128')
     category_ids = fields.Many2many(
@@ -103,8 +103,7 @@ class PrdFunction(models.Model):
     duration_tracking = fields.Float(string='Duration Tracking')
     func_type = fields.Many2one(comodel_name='prd.function_type', string="Type", help="")
     input_data = fields.Text(string="Input")
-    # ~ module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Odoo Module",help="")
-    module_prd_id = fields.Many2one(comodel_name='prd.document',string="Product Requirement Document",help="")
+    module_prd_id = fields.Many2one(comodel_name='prd.document', string="Product Requirement Document", help="")
     name = fields.Char(string="Name", required=True)
     odoo_view_ids = fields.Many2many(
         comodel_name='prd.odoo_view_type',
@@ -115,15 +114,16 @@ class PrdFunction(models.Model):
     prd_id = fields.Many2one('prd.document', string='PRD', ondelete='cascade', required=True)
     process_data = fields.Text(string="Process")
     requirement_ids = fields.One2many(comodel_name='prd.requirement.function', inverse_name='func_id')
-    
-    requirement_names_ids = fields.Many2many(comodel_name='prd.requirement',string="Requirement",compute='_compute_requirement_names_ids') 
+
+    requirement_names_ids = fields.Many2many(
+        comodel_name='prd.requirement',string="Requirement",compute='_compute_requirement_names_ids'
+    )
+
     @api.depends('requirement_ids.func_id')
     def _compute_requirement_names_ids(self):
         for record in self:
             record.requirement_names_ids = record.requirement_ids.mapped('req_id')
-            # ~ record.requirement_names_ids = [(6,0,[record.requirement_ids.mapped('req_id.id')])]
 
- 
     sequence = fields.Integer(string='Sequence')
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -140,27 +140,28 @@ class PrdFunction(models.Model):
     )
     color = fields.Integer(default=lambda self: randint(1, 11))
     image_128 = fields.Image("Image", max_width=128, max_height=128)
+
     @api.model
     def _generate_random_token(self):
         return ''.join(choice('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ23456789') for _i in range(10))
 
     uuid = fields.Char('UUID', size=50, default=_generate_random_token, copy=False)
+
     @api.depends('image_128', 'uuid')
     def _compute_avatar_128(self):
         for record in self:
-            if record.module_id and record.icon:
-                record.avatar_128 = base64.b64encode(record.icon_image)
-                # ~ record.avatar_128 = record.icon_image
+            if record.image_128:
+                record.avatar_128 = record.image_128
             else:
-                record.avatar_128 = record.image_128 or record._generate_avatar()
+                record.avatar_128 = record._generate_avatar()
 
     def _generate_avatar(self):
         avatar = function_icon
         bgcolor = get_hsl_from_seed(self.uuid)
         avatar = avatar.replace('fill="#875a7b"', f'fill="{bgcolor}"')
-        return base64.b64encode(function_icon.encode())
-   
-   
+        return base64.b64encode(avatar.encode())
+
+
    
   
 

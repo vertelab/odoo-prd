@@ -25,6 +25,7 @@
                 </search>
             </field>
         </record>
+
         <!-- Form View -->
         <record id="view_prd_document_form" model="ir.ui.view">
             <field name="name">prd.document.form</field>
@@ -34,14 +35,11 @@
                     <header>
                         <button name="button_major_version" string="Major Version" type="object" xclass="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
                         <button name="button_minor_version" string="Minor Version" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
-                        <!--
-                             <field name="state" widget="statusbar_duration" options="{'clickable': '1', 'fold_field': 'fold'}" groups="project.group_project_stages" domain="[('company_id', 'in', (company_id, False))]" />
-                        -->
                         <field name="state" widget="statusbar_duration" options="{'clickable': '1', 'fold_field': 'fold'}" />
                     </header>
                     <sheet string="PRD">
                         <div class="oe_button_box" name="button_box" groups="base.group_user">
-                            <button class="oe_stat_button" type="object" name="action_requirements" icon="fa-check">
+                            <button class="oe_stat_button" type="object" name="action_requirements" icon="fa-check" string="Requirements">
                                 <div class="o_field_widget o_stat_info">
                                     <span class="o_stat_text">Requirements</span>
                                     <span class="o_stat_value">
@@ -54,7 +52,7 @@
                                     </span>
                                 </div>
                             </button>
-                            <button class="oe_stat_button" type="object" name="action_functions" icon="fa-cogs">
+                            <button class="oe_stat_button" type="object" name="action_functions" icon="fa-cogs" string="Functions">
                                 <div class="o_field_widget o_stat_info">
                                     <span class="o_stat_text">Functions</span>
                                     <span class="o_stat_value">
@@ -73,20 +71,16 @@
                             <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
                             <div class="oe_title">
                                 <h1 class="d-flex flex-row">
-                                    <!--
-                                         <field name="is_favorite" nolabel="1" widget="project_is_favorite" class="me-2" options="{'autosave': False}"/>
-                                    -->
                                     <field name="name" options="{'line_breaks': False}" widget="text" class="flex-grow-1 o_text_overflow" placeholder="e.g. Office Party" style="width: 32em; font-size: 1.1em; xline-height: 2;" />
                                 </h1>
-                                <!--
-                                     <field name="summary" />
-                                -->
                             </div>
                         </group>
+
                         <group>
                             <field name="tender_id" invisible="document_type != 'procurement'" required="document_type == 'procurement'" />
                         </group>
-                        <group col="2">
+
+                        <group>
                             <group id="c1">
                                 <field name="parent_id" />
                                 <field name="document_type" />
@@ -97,29 +91,21 @@
                                 <field name="approved_by_id" />
                                 <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" />
                             </group>
-                            <group id="c2" name="c2">
-                                <separator id="general" string="General" invisible="not document_type == 'module'" />
-                                <group>
-                                    <group>
-                                        <field name="application" help="Is this an applicaton?" invisible="not document_type == 'module'" />
-                                        <field name="auto_install" help="Auto-installation when the modules that this module depends on is installed" invisible="not document_type == 'module'" />
-                                        <field name="app_category_id" help="Category" invisible="not document_type == 'module'" />
-                                        <field name="licence_id" invisible="not document_type == 'module'" />
-                                    </group>
-                                    <group>
-                                        <field name="author" placeholder="Author..." invisible="not document_type == 'module'" />
-                                        <field name="maintainer" placeholder="Maintainer..." invisible="not document_type == 'module'" />
-                                        <field name="website" placeholder="https://example.com" widget="url" invisible="not document_type == 'module'" />
-                                        <field name="repo_id" string="Repository" invisible="not document_type == 'module'" />
-                                    </group>
-                                </group>
+                            <group id="c2" name="c2" string="General" invisible="not document_type == 'module'">
+                                <field name="application" help="Is this an application?" invisible="not document_type == 'module'" />
+                                <field name="auto_install" help="Auto-installation when the modules that this module depends on is installed" invisible="not document_type == 'module'" />
+                                <field name="app_category_id" help="Category" invisible="not document_type == 'module'" />
+                                <field name="licence_id" invisible="not document_type == 'module'" />
+                                <field name="author" placeholder="Author..." invisible="not document_type == 'module'" />
+                                <field name="maintainer" placeholder="Maintainer..." invisible="not document_type == 'module'" />
+                                <field name="website" placeholder="https://example.com" widget="url" invisible="not document_type == 'module'" />
+                                <field name="repo_id" string="Repository" invisible="not document_type == 'module'" />
                                 <field name="description_html" string="Beskrivning" placeholder="Detaljerad beskrivning..." invisible="not document_type == 'module'" />
                                 <field name="contributors" placeholder="Bidragsgivare (en per rad)..." invisible="not document_type == 'module'" />
-                                <separator id="technical" string="Technical" invisible="not document_type == 'module'" />
-                                <group>
-                                    <field name="module_id" string="Modul (ir.module.module)" invisible="not document_type == 'module'" />
-                                    <field name="technical_name" string="Tekniskt namn" readonly="1" invisible="not document_type == 'module'" />
-                                </group>
+                            </group>
+                            <group id="technical" string="Technical" invisible="not document_type == 'module'">
+                                <field name="module_id" string="Modul (ir.module.module)" invisible="not document_type == 'module'" />
+                                <field name="technical_name" string="Tekniskt namn" readonly="1" invisible="not document_type == 'module'" />
                                 <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" />
                                 <field name="user_persona" />
                                 <field name="use_cases" />
@@ -133,7 +119,7 @@
                             <page string="Goals" id="goals">
                                 <field name="goals" no-label="1" />
                             </page>
-                            <page string="Success Criteras/Risks" id="success_criterias">
+                            <page string="Success Criteria/Risks" id="success_criteria">
                                 <group>
                                     <field name="success_criteria" />
                                     <field name="risks" />
@@ -151,6 +137,7 @@
                 </form>
             </field>
         </record>
+
         <!-- List (Tree) View -->
         <record id="view_prd_document_tree" model="ir.ui.view">
             <field name="name">prd.document.tree</field>
@@ -168,6 +155,7 @@
                 </list>
             </field>
         </record>
+
         <!-- Kanban View -->
         <record id="view_prd_document_kanban" model="ir.ui.view">
             <field name="name">prd.document.kanban</field>
@@ -206,6 +194,7 @@
                 </kanban>
             </field>
         </record>
+
         <!-- Calendar View -->
         <record id="view_prd_document_calendar" model="ir.ui.view">
             <field name="name">prd.document.calendar</field>
@@ -217,12 +206,14 @@
                 </calendar>
             </field>
         </record>
+
         <record id="action_prd_document" model="ir.actions.act_window">
             <field name="name">PRD Documents</field>
             <field name="res_model">prd.document</field>
             <field name="view_mode">kanban,list,form,calendar</field>
             <field name="view_id" ref="view_prd_document_kanban" />
         </record>
+
         <menuitem id="menu_prd_document_root" name="Product Requirements Docs" sequence="10" />
         <menuitem id="menu_prd_document" name="Product Requirement Documents" parent="menu_prd_document_root" action="action_prd_document" sequence="20" />
     </odoo>

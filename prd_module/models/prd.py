@@ -8,6 +8,7 @@ import os
 import tarfile
 import io
 import base64
+import time
 
 
 from odoo import api, fields, models, _
@@ -21,69 +22,10 @@ _logger = logging.getLogger(__name__)
 class ProductRequirementDocument(models.Model):
 
     _name = "prd.document"
-    # ~ _inherit = ['prd.document','prd.odoo_module.mixin',]
-    _inherit = ['prd.document','prd.odoo_module.mixin','prd.odoo_module.mixin']
-    
-    def button_export_module(self):
-        module_path = f"{self.module_id.name}/"
-        tar_file = io.BytesIO()
-        with tarfile.open(fileobj=tar_file, mode='w:gz') as tar:
-    
-            for function in self.function_ids:
-                views_dir = ""
-                models_dir = ""
-                data_dir = ""
-                controllers_dir = ""
-                if function.has_views and function.views_filename:
-                    views_dir = f"{module_path}views/"
-                    self.add_file_to_tar(
-                        tar,
-                        views_dir,
-                        function.views_filename,
-                        function.views_xml
-                        )
-                if function.has_models and function.models_filename:
-                    models_dir = f"{module_path}models/"
-                    self.add_file_to_tar(
-                        tar,
-                        models_dir,
-                        function.models_filename,
-                        function.models_src
-                        )
-                    
-                if function.has_data and function.data_filename:
-                    data_dir = f"{module_path}data/"
-                    self.add_file_to_tar(
-                        tar,
-                        data_dir,
-                        function.data_filename,
-                        function.data_xml
-                        )
-                    
-                if function.has_controllers and function.controllers_filename:
-                    controllers_dir = f"{module_path}controllers/"
-                    self.add_file_to_tar(
-                        tar,
-                        controllers_dir,
-                        function.controllers_filename,
-                        function.controllers_src
-                        )
-        tar_file.seek(0)
-        return base64.b64encode(tar_file.read()).decode('ascii')
+    _inherit = ['prd.document','prd.odoo_module.mixin']
 
-    def add_file_to_tar(self,tar,dir_path,filename,content):
-        arcname = f"{dir_path}{filename}"
-        content = content if content else "" 
-        data = content.encode('utf-8')  # Encode string to bytes
-        fileobj = io.BytesIO(data)       # Create BytesIO stream from bytes
-        tarinfo = tarfile.TarInfo(name=arcname)
-        tarinfo.size = len(data)
-        tarinfo.mtime = time.time()
-        tar.addfile(tarinfo, fileobj=fileobj)
 
     def action_redirect_to_url(self):
-        # '/web/content/%s?download=true' % attachment.id,
-        _logger.error("TEST"*10)
         url = f"/prd_module/download_code/{self.id}"
         return {
             "type": "ir.actions.act_url",
@@ -91,15 +33,17 @@ class ProductRequirementDocument(models.Model):
             "target": "self",
         }
 
-    def sftp_upload(self):
-        hostname = self.env.user.sftp_hostname
-        port = self.env.user.sftp_port
-        username = self.env.user.sftp_username
+    # def sftp_upload(self):
+    #     hostname = self.env.user.sftp_hostname
+    #     port = self.env.user.sftp_port
+    #     username = self.env.user.sftp_username
+    #
+    #     if not hostname or not port or not username:
+    #         raise UserError(f"One of the following values are not set on the user {self.env.user.name}\n\nHostname: {hostname}\nPort: {port}\nUsername: {username}")
+    #
+    #     module_path = f"/usr/share/{self.repo_id.name}/"
 
-        if not hostname or not port or not username:
-            raise UserError(f"One of the following values are not set on the user {self.env.user.name}\n\nHostname: {hostname}\nPort: {port}\nUsername: {username}")
 
-        module_path = f"/usr/share/{self.repo_id.name}/"
 
     def _build_module_structure(self, writer):
         data = []
@@ -144,7 +88,7 @@ class ProductRequirementDocument(models.Model):
 
         rec_rule_path = writer.write_file(
             "security/",
-            f"{self.app_module.name}_record_rules.xml",
+            f"{self.name}_record_rules.xml",
             self.create_record_rules()
         )
         # Extract relative path for manifest (remove module path prefix)
@@ -162,23 +106,24 @@ class ProductRequirementDocument(models.Model):
 
     def button_export_module(self):
         """Export module as a downloadable tar.gz file"""
-        module_path = f"{self.app_module.name}/"
-       
-        writer = TarFileWriter(module_path)  
+        module_path = f"{self.name}/"
+
+        writer = TarFileWriter(module_path)
         self._build_module_structure(writer)
 
-        tar_file = writer.tar_file
+        writer.close()
 
+        tar_file = writer.tar_file
         tar_file.seek(0)
+        tar_data = tar_file.read()
+
         ir_att_id = self.env["ir.attachment"].create({
-            "name": f"{self.name}",
+            "name": f"{self.name}.tar.gz",
             "type": "binary",
-            "datas": base64.b64encode(tar_file.read()),
+            "datas": base64.b64encode(tar_data),
             "res_model": self._name,
             "res_id": self.id,
         })
-
-        writer.close()
 
         return {
             'type': 'ir.actions.act_url',
@@ -203,9 +148,29 @@ class ProductRequirementDocument(models.Model):
         else:
             module_path = f"/usr/share/{self.name}/{self.app_module.technical_name}/"
 
-        writer = SFTPFileWriter(hostname=hostname,port=port,username=username,module_path=module_path)
-        self._build_module_structure(writer)
-        writer.close()
+        try:
+            writer = SFTPFileWriter(
+                username=username,
+                hostname=hostname,
+                port=port,
+                module_path=module_path
+            )
+            self._build_module_structure(writer)
+            writer.close()
+
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Success'),
+                    'message': _('Module uploaded successfully to %s:%s%s') % (hostname, port, module_path),
+                    'type': 'success',
+                    'sticky': False,
+                }
+            }
+        except Exception as e:
+            _logger.error(f"SFTP upload failed: {str(e)}")
+            raise UserError(f"Failed to upload module via SFTP:\n\n{str(e)}")
 
 
     def sync_module(self):
@@ -333,12 +298,13 @@ class ProductRequirementDocument(models.Model):
     def create_manifest(self,data):
         manifest_vals = {
             'name': self.name,
-            'version': f"{self.major_version}.{self.minor_version}",
-            'category': self.app_category.name,
+            # 'version': f"{self.major_version}.{self.minor_version}",
+            'version': f"{self.version}",
+            'category': self.app_category_id.name,
             'website': self.website,
             'summary': self.summary,
             'author': self.env.company.name,
-            'license': self.app_license.code,
+            'license': self.licence_id.name,
             'description': self.description,
             # ~ 'depends': [d.strip() for d in self.dependencies.split(",")] if self.dependencies else [],
             'data': data,

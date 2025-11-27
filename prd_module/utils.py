@@ -40,8 +40,8 @@ class TarFileWriter(FileWriter):
         return arcname
 
     def close(self):
-        self.tar.close()
-        self.tar_file.close()
+        if not self.tar.closed:
+            self.tar.close()
 
 class SFTPFileWriter(FileWriter):
     """Writer that uploads files via SFTP"""
@@ -64,9 +64,8 @@ class SFTPFileWriter(FileWriter):
         full_path = f"{self.module_path}{dir_path}"
         self._mkdir_safe(full_path)
         file_path = f"{full_path}{filename}"
-        with self.sftp.file(file_path, 'w+') as remote_file:
+        with self.sftp.file(file_path, 'w') as remote_file:
             remote_file.write(content if content else "")
-            remote_file.close()
         return file_path
 
     def _mkdir_safe(self, dir_path, mode=0o775):
@@ -103,5 +102,7 @@ class SFTPFileWriter(FileWriter):
                 )
 
     def close(self):
-        self.sftp.close()
-        self.ssh.close()
+        if hasattr(self, 'sftp') and self.sftp:
+            self.sftp.close()
+        if hasattr(self, 'ssh') and self.ssh:
+            self.ssh.close()
