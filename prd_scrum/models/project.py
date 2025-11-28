@@ -8,8 +8,19 @@ _logger = logging.getLogger(__name__)
 class ProjectUserStories(models.Model):
     _inherit = 'project.scrum.us'
     
-    doc_id = fields.Many2one(comodel_name="prd.document")
-    func_id = fields.Many2one(comodel_name='prd.function',string="Function",help="")
+    function_us_ids = fields.One2many(comodel_name='prd.function.us',inverse_name="user_story_id",string="Function",help="")
+
+    @api.model
+    def _read_group_stage_ids(self, stages, domain):
+        stage_ids = super(ProjectUserStories,self)._read_group_stage_ids(stages,domain)
+        
+        if prd_id := self.env.context.get("prd_id"):
+            prd_id = self.env["prd.document"].browse(prd_id)
+            stage_ids = self.env["project.task.type"].search([("project_ids", "in", prd_id.project_id.ids)])
+            _logger.error(f"{stage_ids=}")
+            return stage_ids
+
+        return stage_ids
 
 class ProjectTask(models.Model):
     _inherit = 'project.task'
