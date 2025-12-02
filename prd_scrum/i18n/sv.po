@@ -1,15 +1,165 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
+# 	* prd_scrum
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0-20250826\n"
+"Project-Id-Version: Odoo Server 18.0-20251125\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-27 11:41+0000\n"
-"PO-Revision-Date: 2025-08-27 11:41+0000\n"
+"POT-Creation-Date: 2025-12-02 12:38+0000\n"
+"PO-Revision-Date: 2025-12-02 13:51+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: sv_SE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
-"Plural-Forms: \n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#. module: prd_scrum
+#: model_terms:ir.ui.view,arch_db:prd_scrum.view_project_task_func_button_form
+msgid "<span class=\"o_stat_text\">Functions</span>"
+msgstr "<span class=\"o_stat_text\">Funktioner</span>"
+
+#. module: prd_scrum
+#: model_terms:ir.ui.view,arch_db:prd_scrum.view_project_task_func_button_form
+msgid "<span class=\"o_stat_text\">Requirements</span>"
+msgstr "<span class=\"o_stat_text\">Krav</span>"
+
+#. module: prd_scrum
+#: model_terms:ir.ui.view,arch_db:prd_scrum.view_prd_document_form
+msgid "<span class=\"o_stat_text\">Tasks</span>"
+msgstr "<span class=\"o_stat_text\">Uppgifter</span>"
+
+#. module: prd_scrum
+#: model_terms:ir.ui.view,arch_db:prd_scrum.view_prd_document_form
+msgid "<span class=\"o_stat_text\">User Stories</span>"
+msgstr "<span class=\"o_stat_text\">Användarberättelser</span>"
+
+#. module: prd_scrum
+#: model:ir.model,name:prd_scrum.model_prd_function_us
+msgid "A glue model between prd.function and project.scrum.us"
+msgstr "En klistermodul mellan prd.function och project.scrum.us"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_function_us__create_uid
+msgid "Created by"
+msgstr "Skapad av"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_function_us__create_date
+msgid "Created on"
+msgstr "Skapad den"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_function_us__display_name
+msgid "Display Name"
+msgstr "Visningsnamn"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_project_task__func_count
+msgid "Func Count"
+msgstr "Antal funktioner"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_function_us__function_id
+#: model:ir.model.fields,field_description:prd_scrum.field_project_scrum_us__function_us_ids
+#: model:ir.model.fields,field_description:prd_scrum.field_project_task__func_ids
+msgid "Function"
+msgstr "Funktion"
+
+#. module: prd_scrum
+#: model:ir.model,name:prd_scrum.model_prd_function_type
+msgid "Function Type"
+msgstr "Funktionstyp"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_function__function_us_ids
+msgid "Function Us"
+msgstr "Funktion Us"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_function_us__id
+msgid "ID"
+msgstr "ID"
+
+#. module: prd_scrum
+#: model:ir.model.fields,help:prd_scrum.field_prd_document__project_id
+msgid "In this project functions may have tasks"
+msgstr "I detta projekt kan funktioner ha uppgifter"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_function_us__write_uid
+msgid "Last Updated by"
+msgstr "Senast uppdaterad av"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_function_us__write_date
+msgid "Last Updated on"
+msgstr "Senast uppdaterad den"
+
+#. module: prd_scrum
+#: model:ir.model,name:prd_scrum.model_prd_function
+msgid "PRD Functions"
+msgstr "PRD Funktioner"
+
+#. module: prd_scrum
+#: model:ir.model,name:prd_scrum.model_prd_document
+msgid "Product Requirement Document"
+msgstr "Produktkravdokument"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_document__project_id
+msgid "Project"
+msgstr "Projekt"
+
+#. module: prd_scrum
+#: model:ir.model,name:prd_scrum.model_project_scrum_us
+msgid "Project Scrum Use Stories"
+msgstr "Project Scrum användarberättelser"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_project_task__req_ids
+msgid "Req"
+msgstr "Förfrågnignar"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_project_task__req_count
+msgid "Req Count"
+msgstr "Antal förfrågningar"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_function_us__sequence
+msgid "Sequence"
+msgstr "Sekvens"
+
+#. module: prd_scrum
+#: model:ir.model,name:prd_scrum.model_project_task
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_function__task_id
+#: model:ir.model.fields.selection,name:prd_scrum.selection__prd_function_type__implementation_type__task
+msgid "Task"
+msgstr "Uppgift"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_document__task_count
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_document__task_ids
+msgid "Tasks"
+msgstr "Uppgifter"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_function_type__implementation_type
+msgid "Type"
+msgstr "Typ"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_document__scrum_us_count
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_document__scrum_us_ids
+#: model_terms:ir.ui.view,arch_db:prd_scrum.view_prd_function_form
+msgid "User Stories"
+msgstr "Användarberättelser"
+
+#. module: prd_scrum
+#: model:ir.model.fields,field_description:prd_scrum.field_prd_function_us__user_story_id
+msgid "User Story"
+msgstr "Användarberättelse"
