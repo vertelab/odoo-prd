@@ -105,6 +105,40 @@ class PrdRequirement(models.Model):
             'target': 'new',
             'context': { "default_requirement_ids": self.ids }
         }
+        
+        
+    @api.model
+    def get_system_report_data(self):
+        """Hämtar unika module-funktioner med krav-referenser, sorterat A-Ö"""
+        # Hämta alla function med module-typ via req.function_ids
+        Function = self.env['prd.function']
+        domain = [
+            ('id', 'in', self.env['prd.requirement.function'].search([
+                ('req_id', 'in', self.search([]).ids),
+                ('func_id.type', '=', 'module')  # antar type-fält på prd.function
+            ]).mapped('func_id.id'))
+        ]
+        
+        functions = Function.search(domain, order='name asc')
+        
+        data = []
+        for func in functions:
+            # Hitta alla krav som refererar denna funktion
+            req_functions = self.env['prd.requirement.function'].search([
+                ('func_id', '=', func.id)
+            ])
+            req_codes = req_functions.mapped('req_id.code')
+            req_codes_str = ', '.join(filter(None, req_codes))
+            
+            data.append({
+                'name': func.name,
+                'description': func.description or '',
+                'requirements': req_codes_str,
+                'complexity': getattr(func, 'complexity', 'N/A'),  # antar komplexitet-fält
+            })
+        
+        return data
+
 
 class PRDRequirementFunction(models.Model):
     _name = 'prd.requirement.function'

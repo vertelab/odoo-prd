@@ -52,6 +52,7 @@
         'wizard/prd_requirement_wizard_views.xml',
         'security/prd_security.xml',
         'security/ir.model.access.csv',
+        'report/prd_requirement_report.xml'
 
     ],
     'application': True,
