@@ -57,4 +57,61 @@
       </t>
     </t>
   </template>
+  
+  <record id="action_report_system_overview" model="ir.actions.report">
+    <field name="name">System Overview - Module Functions</field>
+    <field name="model">prd.requirement</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">prd.report_system_overview</field>
+    <field name="report_file">prd.report_system_overview</field>
+    <field name="print_report_name">'System overview - %s' % (object.prd_id.name)</field>
+    <field name="binding_model_id" ref="model_prd_requirement"/>
+    <field name="binding_type">report</field>
+</record>
+
+<template id="report_system_overview">
+    <t t-call="web.html_container">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h1>System overview - Module Functions</h1>
+                
+                <t t-set="report_data" t-value="docs[0].get_system_report_data()"/>
+                
+                <table class="table table-sm table-bordered" style="width:100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: #f8f9fa;">
+                            <th style="padding: 8px; border: 1px solid #dee2e6;">Namn</th>
+                            <th style="padding: 8px; border: 1px solid #dee2e6;">Beskrivning</th>
+                            <th style="padding: 8px; border: 1px solid #dee2e6;">Krav</th>
+                            <th style="padding: 8px; border: 1px solid #dee2e6;">Komplexitet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="report_data" t-as="row">
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #dee2e6; vertical-align: top;">
+                                    <strong t-esc="row['name']"/>
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #dee2e6;">
+                                    <t t-esc="row['description']"/>
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #dee2e6;">
+                                    <t t-esc="row['requirements']"/>
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">
+                                    <t t-esc="row['complexity']"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+                
+
+            </div>
+        </t>
+    </t>
+</template>
+
+  
+  
 </odoo>

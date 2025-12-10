@@ -105,6 +105,22 @@ class PrdRequirement(models.Model):
             'target': 'new',
             'context': { "default_requirement_ids": self.ids }
         }
+        
+        
+    def get_system_report_data(self):
+        """Hämtar unika module-funktioner med krav-referenser, sorterat A-Ö"""
+        # Hämta alla function med module-typ via req.function_ids
+        data = []
+        for req in self:
+            for func in [f for f in req.function_ids if f.type == 'module']:
+                data.append({
+                    'name': func.name,
+                    'description': func.description or '',
+                    'requirements': ','.join(func.requirement_ids.mapped('code')),
+                    'complexity': '', # Weight in related task
+                })
+        return data
+
 
 class PRDRequirementFunction(models.Model):
     _name = 'prd.requirement.function'
