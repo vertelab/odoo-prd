@@ -36,22 +36,21 @@
             </t>
             <!-- Code + Name -->
             <h2>
-              <span t-esc="req.code or ''" />
-              -
+              <span t-esc="req.code or ''" />&amp;nbs;
               <span t-esc="req.name or ''" />
             </h2>
             <span t-esc="', '.join(req.category.mapped('name'))"/>
             <!-- Description -->
             <t t-if="req.description">
-              <h3>Description</h3>
+              <h4>Description</h4>
               <p t-esc="req.description" />
             </t>
             <!-- Comment (Html) -->
             <t t-if="req.note">
-              <h3>Comments</h3>
+              <h4>Comment</h4>
               <div t-raw="req.note" />
             </t>
-          <span t-esc="req.id"/>  
+         
           </t>
         </div>
       </t>
@@ -87,19 +86,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <t t-foreach="report_data" t-as="row">
+                        <t t-foreach="sorted(report_data.keys())" t-as="row">
                             <tr>
                                 <td style="padding: 8px; border: 1px solid #dee2e6; vertical-align: top;">
-                                    <strong t-esc="row['name']"/>
+                                    <strong t-esc="report_data[row]['name']"/>
                                 </td>
                                 <td style="padding: 8px; border: 1px solid #dee2e6;">
-                                    <t t-esc="row['description']"/>
+                                    <t t-esc="report_data[row]['description']"/>
                                 </td>
                                 <td style="padding: 8px; border: 1px solid #dee2e6;">
-                                    <t t-esc="row['requirements']"/>
+                                    <t t-esc="report_data[row]['requirements']"/>
                                 </td>
                                 <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">
-                                    <t t-esc="row['complexity']"/>
+                                    <t t-esc="report_data[row]['complexity']"/>
                                 </td>
                             </tr>
                         </t>

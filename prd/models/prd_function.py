@@ -113,6 +113,16 @@ class PrdFunction(models.Model):
     prd_id = fields.Many2one('prd.document', string='PRD', ondelete='cascade', required=True)
     process_data = fields.Text(string="Process")
     requirement_ids = fields.One2many(comodel_name='prd.requirement.function', inverse_name='func_id')
+    weight = fields.Selection(
+    selection=[
+        ('1', 'Easy'),
+        ('2', 'Medium'),
+        ('4', 'Hard'),
+        ('8', 'Very hard'),
+    ],
+    string="Weight",
+    default='1',
+        )
 
     requirement_names_ids = fields.Many2many(
         comodel_name='prd.requirement', string="Requirement", compute='_compute_requirement_names_ids'
