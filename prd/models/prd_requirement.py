@@ -107,11 +107,11 @@ class PrdRequirement(models.Model):
         }
         
         
-    def get_system_report_data(self):
+    def get_system_report_data(self,req_ids):
         """Hämtar unika module-funktioner med krav-referenser, sorterat A-Ö"""
         # Hämta alla function med module-typ via req.function_ids
         data = []
-        for req in self:
+        for req in req_ids:
             for func in [f for f in req.function_ids if f.type == 'module']:
                 data.append({
                     'name': func.name,
@@ -119,6 +119,7 @@ class PrdRequirement(models.Model):
                     'requirements': ','.join(func.requirement_ids.mapped('code')),
                     'complexity': '', # Weight in related task
                 })
+        data = sorted(set(data),key=lambda d: d['name'])
         return data
 
 

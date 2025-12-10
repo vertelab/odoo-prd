@@ -75,7 +75,7 @@
             <div class="page">
                 <h1>System overview - Module Functions</h1>
                 
-                <t t-set="report_data" t-value="docs[0].get_system_report_data()"/>
+                <t t-set="report_data" t-value="docs[0].get_system_report_data(docs)"/>
                 
                 <table class="table table-sm table-bordered" style="width:100%; border-collapse: collapse;">
                     <thead>
