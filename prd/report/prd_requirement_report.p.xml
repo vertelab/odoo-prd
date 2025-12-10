@@ -32,13 +32,14 @@
               <!-- H1 för typen högst upp på sidan -->
               <h1>
                 <span t-esc="req.req_type.name or 'n/a'" />
+                (<span t-esc="req.req_type.total" />)
               </h1>
             </t>
             <!-- Code + Name -->
-            <h2>
-              <span t-esc="req.code or ''" />&amp;nbs;
+            <h3>
+              <span t-esc="req.code or ''" />&amp;nbsp;
               <span t-esc="req.name or ''" />
-            </h2>
+            </h3>
             <span t-esc="', '.join(req.category.mapped('name'))"/>
             <!-- Description -->
             <t t-if="req.description">
@@ -75,6 +76,7 @@
                 <h1>System overview - Module Functions</h1>
                 
                 <t t-set="report_data" t-value="docs[0].get_system_report_data(docs)"/>
+                <t t-set="total" t-value="0"/>
                 
                 <table class="table table-sm table-bordered" style="width:100%; border-collapse: collapse;">
                     <thead>
@@ -101,7 +103,24 @@
                                     <t t-esc="report_data[row]['complexity']"/>
                                 </td>
                             </tr>
+                             <t t-set="total" t-value="total + report_data[row]['time']"/>
+                        
                         </t>
+                        <tr>
+                        <td style="padding: 8px; border: 1px solid #dee2e6; vertical-align: top;">
+                                    <strong>Total</strong>
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #dee2e6;">
+                                    
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #dee2e6;">
+                                    
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">
+                                    <t t-esc="total"/>
+                                </td>
+                            </tr>
+                        
                     </tbody>
                 </table>
                 
