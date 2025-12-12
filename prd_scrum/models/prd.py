@@ -10,7 +10,6 @@ class ProductRequirementDocument(models.Model):
     project_id = fields.Many2one(comodel_name='project.project',string="Project",help="In this project functions may have tasks") 
     scrum_us_ids = fields.One2many(
         comodel_name='project.scrum.us',
-        # inverse_name="doc_id",
         compute='_compute_scrum_us_ids',
         string='User Stories',
         store=False
@@ -26,21 +25,18 @@ class ProductRequirementDocument(models.Model):
             if p.scrum_us_ids:
                 p.scrum_us_count = len(p.scrum_us_ids)
 
-    @api.depends('function_ids.scrum_us_ids')  
+    @api.depends('function_ids')  
     def _compute_scrum_us_ids(self):
         for doc in self:
-            scrum_us_ids = doc.env['project.scrum.us'].search([
-                ('func_id.prd_id', '=', doc.id)
-            ])
-            if scrum_us_ids:
-                doc.scrum_us_ids = scrum_us_ids
-            else:
-                doc.scrum_us_ids = False
+            function_us_ids = doc.env["prd.function.us"].search([("function_id", "in", doc.function_ids.ids)])
+            user_story_ids = function_us_ids.mapped("user_story_id")
+            doc.scrum_us_ids = user_story_ids
 
-    @api.depends('function_ids.task_id')  
+    @api.depends('function_ids')  
     def _compute_task_ids(self):
         for doc in self:
-            doc.task_ids = doc.function_ids.mapped('task_id')
+            task_ids = doc.function_ids.mapped("task_id")
+            doc.task_ids = task_ids
 
     def _task_count(self):
         for p in self:
@@ -51,8 +47,8 @@ class ProductRequirementDocument(models.Model):
           'type': 'ir.actions.act_window',
           'name': 'User Stories',
           'res_model': 'project.scrum.us',
-          'domain': [('func_id.prd_id', '=', self.id)],
-          'context': {'default_func_id': self.function_ids.ids[0] if self.function_ids else False},
+          'domain': [('id', 'in', self.scrum_us_ids.ids)],
+          'context': {"prd_id": self.id,'create_stage_allowed': False,'search_default_group_by_stage_id': 1},
           'view_mode': 'kanban,list,form', 
           'target': 'current',
       }
@@ -67,27 +63,5 @@ class ProductRequirementDocument(models.Model):
             'target': 'current',
         }
 
-
-class PrdFunction(models.Model):
-    _inherit = 'prd.function'
-
-    scrum_us_ids = fields.One2many(comodel_name='project.scrum.us', inverse_name='func_id')
-    task_id = fields.Many2one(comodel_name='project.task',string="Task",help="")
-    
-    def action_user_stories(self):
-      return {
-          'type': 'ir.actions.act_window',
-          'name': 'User Stories',
-          'res_model': 'project.scrum.us',
-          'domain': [('func_id', '=', self.id)],
-          'context': {'default_prd_id': self.id},
-          'view_mode': 'kanban,list,form', 
-          'target': 'current',
-      }
-
-class FunctionTypes(models.Model):
-    _inherit = 'prd.function_type'
-    
-    implementation_type = fields.Selection(selection_add=[('task','Task'),],ondelete={'task': 'cascade', })
 
 

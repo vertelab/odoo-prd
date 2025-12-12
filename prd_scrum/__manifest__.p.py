@@ -37,6 +37,7 @@
     'maintainer': 'Vertel AB',
     'depends': ['prd', 'project_scrum'],
     'data': [
+        'security/ir.model.access.csv',
         'data/prd_function_types.xml',
         'views/prd_views.xml',
         'views/project_views.xml'

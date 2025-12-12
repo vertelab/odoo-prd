@@ -85,8 +85,6 @@ class OdooLibrary(models.Model):
     _name = 'prd.odoo_library'
     _description = 'Odoo Library'
 
-    # requitement.txt
-
     name = fields.Char(string='Name', required=True)
     description = fields.Text(string='Description')
     active = fields.Boolean(string='Active', default=True)
