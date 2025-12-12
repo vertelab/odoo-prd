@@ -52,8 +52,11 @@
         'wizard/prd_requirement_wizard_views.xml',
         'security/prd_security.xml',
         'security/ir.model.access.csv',
+        'report/prd_requirement_report_action.xml',
+        'report/prd_requirement_report_templates.xml',
 
     ],
+    'post_init_hook': 'post_init_hook',
     'application': True,
 }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

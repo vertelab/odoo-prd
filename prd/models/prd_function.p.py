@@ -206,26 +206,26 @@ class OdooRepo(models.Model):
     url = fields.Char(string='URL', help='Github url')
     path = fields.Char(string='Path', help='Filesystem path')
     module_ids = fields.One2many(
-        comodel_name='prd.odoo_module',
+        comodel_name='prd.module',
         inverse_name='repo_id',
         string='Modules',
         help=''
     )
 
 
-class OdooModule(models.Model):
-    _name = 'prd.odoo_module'
-    _inherit = ['prd.odoo_module.mixin']
-    _description = 'Odoo Module'
+# ~ class OdooModule(models.Model):
+    # ~ _name = 'prd.odoo_module'
+    # ~ _inherit = ['prd.odoo_module.mixin']
+    # ~ _description = 'Odoo Module'
 
-    name = fields.Char(string='Name', required=True)
+    # ~ name = fields.Char(string='Name', required=True)
 
-    @api.model
-    def get_modules(self):
-        for mod in self.env['ir.module.module'].search([]):
-            if self.search([('technical_name', '=', mod.name)], limit=1):
-                continue
-            self.create(self._module2dict(mod))
+    # ~ @api.model
+    # ~ def get_modules(self):
+        # ~ for mod in self.env['ir.module.module'].search([]):
+            # ~ if self.search([('technical_name', '=', mod.name)], limit=1):
+                # ~ continue
+            # ~ self.create(self._module2dict(mod))
 
 
 class OdooViewType(models.Model):
