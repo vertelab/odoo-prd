@@ -52,9 +52,7 @@
         'wizard/prd_requirement_wizard_views.xml',
         'security/prd_security.xml',
         'security/ir.model.access.csv',
-        'report/prd_requirement_report_action.xml',
-        'report/prd_requirement_report_templates.xml',
-
+        'report/prd_requirement_report.xml'
     ],
     'post_init_hook': 'post_init_hook',
     'application': True,

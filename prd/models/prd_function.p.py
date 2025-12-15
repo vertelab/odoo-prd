@@ -113,6 +113,16 @@ class PrdFunction(models.Model):
     prd_id = fields.Many2one('prd.document', string='PRD', ondelete='cascade', required=True)
     process_data = fields.Text(string="Process")
     requirement_ids = fields.One2many(comodel_name='prd.requirement.function', inverse_name='func_id')
+    weight = fields.Selection(
+    selection=[
+        ('1', 'Easy'),
+        ('2', 'Medium'),
+        ('4', 'Hard'),
+        ('8', 'Very hard'),
+    ],
+    string="Weight",
+    default='1',
+        )
 
     requirement_names_ids = fields.Many2many(
         comodel_name='prd.requirement', string="Requirement", compute='_compute_requirement_names_ids'
@@ -206,26 +216,37 @@ class OdooRepo(models.Model):
     url = fields.Char(string='URL', help='Github url')
     path = fields.Char(string='Path', help='Filesystem path')
     module_ids = fields.One2many(
-        comodel_name='prd.module',
+        comodel_name='prd.odoo_module',
         inverse_name='repo_id',
         string='Modules',
         help=''
     )
 
 
-# ~ class OdooModule(models.Model):
-    # ~ _name = 'prd.odoo_module'
-    # ~ _inherit = ['prd.odoo_module.mixin']
-    # ~ _description = 'Odoo Module'
+class OdooModule(models.Model):
+    _name = 'prd.odoo_module'
+    _inherit = ['prd.odoo_module.mixin']
+    _description = 'Odoo Module'
 
-    # ~ name = fields.Char(string='Name', required=True)
+    name = fields.Char(string='Name', required=True)
 
-    # ~ @api.model
-    # ~ def get_modules(self):
-        # ~ for mod in self.env['ir.module.module'].search([]):
-            # ~ if self.search([('technical_name', '=', mod.name)], limit=1):
-                # ~ continue
-            # ~ self.create(self._module2dict(mod))
+    @api.model
+    def get_modules(self):
+        for mod in self.env['ir.module.module'].search([]):
+            if self.search([('technical_name', '=', mod.name)], limit=1):
+                continue
+            vals = self._module2dict(mod)
+            vals['technical_name'] = vals['name']
+            vals['name'] = mod.shortdesc
+            vals['module_id'] = mod.id
+            vals['dependencies_id'] = [(6, 0, [x.id for x in vals['dependencies_id'] if x._name == 'ir.module.module' and x.id])]
+            if not (hasattr(mod.dependencies_id, '_name') and mod.dependencies_id._name == 'ir.module.module.dependency'):
+                vals['dependencies_id'] = None
+            # ~ print(f"DEBUG: type(mod.dependencies_id) = {type(mod.dependencies_id)}") <class 'odoo.api.ir.module.module.dependency'>
+            
+            new_mod = self.create(vals)
+            # ~ if mod.dependencies_id:
+                # ~ new_mod.write({'dependencies_id': [(4, dep.id) for dep in mod.dependencies_id]})
 
 
 class OdooViewType(models.Model):

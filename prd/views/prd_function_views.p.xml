@@ -59,6 +59,7 @@
               <field name="prd_id" invisible="1" />
               <field name="category_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_edit_color': true}" />
               <field name="to_check" widget="boolean_toggle" />
+               <field name="weight"  />
             </group>
             <group id="c2">
               <field name="application" invisible="implementation_type != 'odoo_module'" />
@@ -122,6 +123,7 @@
         <field name="user_id" optional="show" />
         <field name="state" optional="show" />
         <field name="to_check" optional="hide" />
+        <field name="weight" optional="hide" />
       </list>
     </field>
   </record>

@@ -105,6 +105,24 @@ class PrdRequirement(models.Model):
             'target': 'new',
             'context': { "default_requirement_ids": self.ids }
         }
+        
+        
+    def get_system_report_data(self,req_ids):
+        """Hämtar unika module-funktioner med krav-referenser, sorterat A-Ö"""
+        # Hämta alla function med module-typ via req.function_ids
+        data = {}
+        for req in req_ids:
+            for func in [f.func_id for f in req.function_ids if f.func_type.implementation_type == 'module']:
+                data[func.name] = {
+                    'name': func.name,
+                    'description': func.description or '',
+                    'requirements': ','.join([r.code for r in func.requirement_ids.mapped('req_id')]),
+                    'complexity': dict(func._fields['weight'].selection).get(func.weight, ''), 
+                    'time': int(func.weight), 
+                }
+        # ~ data = sorted(set(data),key=lambda d: d['name'])
+        return data
+
 
 class PRDRequirementFunction(models.Model):
     _name = 'prd.requirement.function'
@@ -125,7 +143,6 @@ class PRDRequirementFunction(models.Model):
         ('done', 'Done')
     ], string="State", default='draft')
 
-
 class RequirementType(models.Model):
     _name = 'prd.requirement_type'
     _description = 'Requirement Type'
@@ -134,6 +151,18 @@ class RequirementType(models.Model):
     description = fields.Text(string='Description')
     active = fields.Boolean(string='Active', default=True)
     prd_id = fields.Many2one(comodel_name = "prd.document")
+    total = fields.Integer(string='Total',compute="_total")
+            
+    def _total(self):
+        active_model = self.env.context.get('active_model',None)
+        active_ids = self.env.context.get('active_ids',[]) 
+        tot = {}
+        if active_model == 'prd.requirement':
+            tot = {req.req_type.id: 0 for req in self.env['prd.requirement'].browse(active_ids) if req.req_type}
+            for req in self.env['prd.requirement'].browse(active_ids):
+                tot[req.req_type.id] += sum([int(t.weight) for t in req.function_ids.mapped('func_id')])
+            for tid in tot.keys():
+                self.env['prd.requirement_type'].browse(tid).total = tot[tid]
     
 class RequirementCategory(models.Model):
     _name = 'prd.requirement_category'
