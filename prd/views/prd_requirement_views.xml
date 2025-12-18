@@ -76,7 +76,16 @@
                     <group col="2">
                         <group id="c1">
                             <field name="category" widget="many2many_tags" />
-                            <field name="req_type" />
+                            <field name="req_type"  context="{      'default_req_id': id,   'default_prd_id': prd_id  }" />
+<!--
+                            <field name="req_type"  />
+-->
+<!--
+                                <field name="req_type_domain" />
+-->
+<!--
+                            <field name="req_type_ids" widget="many2many_tags" />
+-->
                             <field name="partner_id" />
                             <field name="prd_id" invisible="1" />
                             <field name="object_id" />

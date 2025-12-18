@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
   <!-- Views for prd.requirement_type -->
+  <record id="view_prd_requirement_type_search" model="ir.ui.view">
+    <field name="name">prd.requirement_type.search</field>
+    <field name="model">prd.requirement_type</field>
+    <field name="arch" type="xml">
+      <search string="Search Requirement Types">
+        <!-- Sökfält -->
+<!--
+        <field name="name" filter_domain="[('name','ilike',self)] | [('description','ilike',self)] | [('prd_id.name','ilike',self)]" />
+-->
+        <field name="name" filter_domain="['|','|',('name','ilike',self),('description','ilike',self),('prd_id.name','ilike',self)]" />
+        <field name="description" />
+        <field name="prd_id" />
+        <!-- Filter på active -->
+        <filter string="Archived" name="inactive" domain="[('active', '=', False)]" />
+        <!-- Separator och andra filter -->
+        <separator />
+        <filter string="Has PRD" name="has_prd" domain="[('prd_id', '!=', False)]" />
+        <!-- Group By -->
+        <group expand="0" string="Group By">
+          <filter string="PRD Document" name="group_prd_id" context="{'group_by': 'prd_id'}" />
+        </group>
+      </search>
+    </field>
+  </record>
   <record id="view_prd_requirement_type_tree" model="ir.ui.view">
     <field name="name">prd.requirement_type.tree</field>
     <field name="model">prd.requirement_type</field>
@@ -8,7 +32,7 @@
       <list string="Requirement Types">
         <field name="name" />
         <field name="description" />
-        <field name="active" />
+        <field name="prd_id" />
       </list>
     </field>
   </record>
@@ -17,11 +41,15 @@
     <field name="model">prd.requirement_type</field>
     <field name="arch" type="xml">
       <form string="Requirement Type">
+        <header>
+          <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
+        </header>
         <sheet>
           <group>
             <field name="name" required="1" />
             <field name="description" />
-            <field name="active" />
+            <field name="prd_id" />
+            <field name="active" invisible="1" />
           </group>
         </sheet>
       </form>
