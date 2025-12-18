@@ -39,14 +39,20 @@ class OdooModuleMixin(models.AbstractModel):
     summary = fields.Char(string='Summary')
     technical_name = fields.Char(string='Technical Name')
     website = fields.Char(string='Website')
+    # ~ url = fields.Char('URL', )
+    sequence = fields.Integer('Sequence', default=100)
+    dependencies_id = fields.One2many(  comodel_name='ir.module.module.dependency', 
+                                        inverse_name='module_id',
+                                        string='Dependencies',)
 
     @api.model
     def _module2dict(self,module):
         fields = ["app_category_id","application","auto_install","author",
                   "contributors","description","description_html","icon",
-                  "icon_image","licence_id","maintainer",
-                  "summary","technical_name","website"]
-                  
+                  "icon_image","licence_id","maintainer","name",
+                  "summary","technical_name","website",'sequience',
+                  'dependencies_id',]
+                                    
         return {field_name: module[field_name] 
                     for field_name in module.fields_get() if field_name in fields}
         

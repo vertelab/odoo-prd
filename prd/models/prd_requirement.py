@@ -66,7 +66,11 @@ class PrdRequirement(models.Model):
         ('should', 'Should'),
         ('could', 'Could')
     ], string="Priority", default='must')
-    req_type = fields.Many2one(comodel_name='prd.requirement_type', string="Type", help="", domain="[('prd_id', '=', prd_id)]")
+    req_type_ids = fields.Many2many(comodel_name='prd.requirement_type', compute='_compute_req_type_domain',store=True)
+    # ~ req_type = fields.Many2one(comodel_name='prd.requirement_type', string="Type", compute='_compute_req_type_domain', help="",)
+    # ~ req_type = fields.Many2one(comodel_name='prd.requirement_type', string="Type", help="", domain="[('prd_id', 'in', rec_type_ids.ids )]")
+    req_type = fields.Many2one(comodel_name='prd.requirement_type', string="Type", help="",)
+    # ~ req_type_domain = fields.Char(compute='_compute_req_type_domain', store=False)
     sequence = fields.Integer(string='Sequence')
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -75,6 +79,18 @@ class PrdRequirement(models.Model):
     ], string="State", default='draft')
     to_check = fields.Boolean()
     user_id = fields.Many2one(comodel_name="res.users",string="Responsible")
+
+    @api.depends("prd_id","prd_id.parent_id")
+    def _compute_req_type_domain(self):
+        for record in self:
+            prd_ids = []
+            if record.prd_id:
+                prd_ids.append(record.prd_id.id)
+                if record.prd_id.parent_id:
+                    prd_ids.append(record.prd_id.parent_id.id)
+            prd_ids.append(False) 
+            # ~ record.req_type_domain = str([('prd_id', 'in', prd_ids)])
+            record.req_type_ids = [(6, 0, self.env['prd.requirement_type'].search([('prd_id', 'in', prd_ids)]).ids)]
 
     @api.depends("code")
     def _compute_parent_id(self):
@@ -147,7 +163,7 @@ class RequirementType(models.Model):
     _name = 'prd.requirement_type'
     _description = 'Requirement Type'
 
-    name = fields.Char(string='View Type Name', required=True)
+    name = fields.Char(string='Type', required=True)
     description = fields.Text(string='Description')
     active = fields.Boolean(string='Active', default=True)
     prd_id = fields.Many2one(comodel_name = "prd.document")
@@ -161,8 +177,22 @@ class RequirementType(models.Model):
             tot = {req.req_type.id: 0 for req in self.env['prd.requirement'].browse(active_ids) if req.req_type}
             for req in [r for r in self.env['prd.requirement'].browse(active_ids) if r.req_type]:
                 tot[req.req_type.id] += sum([int(t.weight) for t in req.function_ids.mapped('func_id')])
+<<<<<<< HEAD
             for tid in self.env['prd.requirement_type'].browse(tot.keys()):
                 tid.total = tot[tid.id]
+=======
+            for tid in tot.keys():
+                self.env['prd.requirement_type'].browse(tid).total = tot[tid]
+
+    @api.model
+    def create(self, vals):
+        if vals.get('req_id'):
+            req = self.env['prd.requirement'].browse(vals['req_id'])
+            vals['prd_id'] = req.prd_id.id if req.prd_id else False
+        return super().create(vals)
+        
+    
+>>>>>>> 96b4f12d260d49850affb695b9df5927752db7e4
     
 class RequirementCategory(models.Model):
     _name = 'prd.requirement_category'

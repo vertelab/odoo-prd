@@ -235,7 +235,18 @@ class OdooModule(models.Model):
         for mod in self.env['ir.module.module'].search([]):
             if self.search([('technical_name', '=', mod.name)], limit=1):
                 continue
-            self.create(self._module2dict(mod))
+            vals = self._module2dict(mod)
+            vals['technical_name'] = vals['name']
+            vals['name'] = mod.shortdesc
+            vals['module_id'] = mod.id
+            vals['dependencies_id'] = [(6, 0, [x.id for x in vals['dependencies_id'] if x._name == 'ir.module.module' and x.id])]
+            if not (hasattr(mod.dependencies_id, '_name') and mod.dependencies_id._name == 'ir.module.module.dependency'):
+                vals['dependencies_id'] = None
+            # ~ print(f"DEBUG: type(mod.dependencies_id) = {type(mod.dependencies_id)}") <class 'odoo.api.ir.module.module.dependency'>
+            
+            new_mod = self.create(vals)
+            # ~ if mod.dependencies_id:
+                # ~ new_mod.write({'dependencies_id': [(4, dep.id) for dep in mod.dependencies_id]})
 
 
 class OdooViewType(models.Model):
