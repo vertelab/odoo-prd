@@ -175,12 +175,8 @@ class RequirementType(models.Model):
         tot = {}
         if active_model == 'prd.requirement':
             tot = {req.req_type.id: 0 for req in self.env['prd.requirement'].browse(active_ids) if req.req_type}
-            for req in [r for r in self.env['prd.requirement'].browse(active_ids) if r.req_type]:
+            for req in self.env['prd.requirement'].browse(active_ids):
                 tot[req.req_type.id] += sum([int(t.weight) for t in req.function_ids.mapped('func_id')])
-<<<<<<< HEAD
-            for tid in self.env['prd.requirement_type'].browse(tot.keys()):
-                tid.total = tot[tid.id]
-=======
             for tid in tot.keys():
                 self.env['prd.requirement_type'].browse(tid).total = tot[tid]
 
@@ -192,7 +188,6 @@ class RequirementType(models.Model):
         return super().create(vals)
         
     
->>>>>>> 96b4f12d260d49850affb695b9df5927752db7e4
     
 class RequirementCategory(models.Model):
     _name = 'prd.requirement_category'
