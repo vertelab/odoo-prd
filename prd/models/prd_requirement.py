@@ -174,8 +174,7 @@ class RequirementType(models.Model):
             prd_id = vals.get(self.env.context.get('default_prd_id'))
             vals.update({"prd_id": prd_id})
         return super().create(vals_list)
-        
-
+    
 class RequirementCategory(models.Model):
     _name = 'prd.requirement_category'
     _description = 'Requirement Category'
