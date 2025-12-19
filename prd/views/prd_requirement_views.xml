@@ -76,19 +76,10 @@
                     <group col="2">
                         <group id="c1">
                             <field name="category" widget="many2many_tags" />
-                            <field name="req_type"  context="{      'default_req_id': id,   'default_prd_id': prd_id  }" />
-<!--
-                            <field name="req_type"  />
--->
-<!--
-                                <field name="req_type_domain" />
--->
-<!--
-                            <field name="req_type_ids" widget="many2many_tags" />
--->
+                            <field name="req_type" context="{'default_req_id': id,'default_prd_id': prd_id}" /> <!--domain="[('prd_id', 'in', req_type_domain_ids)]" context="{'default_req_id': id,'default_prd_id': prd_id}"--> 
                             <field name="partner_id" />
-                            <field name="prd_id" invisible="1" />
                             <field name="object_id" />
+                            <field name="prd_id" />
                             <field name="user_id" widget="many2one_avatar_user" />
                             <field name="to_check" widget="boolean_toggle" />
                         </group>
@@ -111,7 +102,10 @@
                                     <field name="func_id" context="{
     'default_prd_id': prd_id
 }" />
-                                    <field name="func_type" />
+                                    <field name="func_type"  context="{
+    'default_req_id': id,
+    'default_prd_id': prd_id
+}"/>
                                     <field name="func_state" />
                                 </list>
                             </field>

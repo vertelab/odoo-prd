@@ -61,16 +61,14 @@ class PrdRequirement(models.Model):
         ondelete='cascade',
         required=True
     )
+    prd_parent_id = fields.Many2one(related="prd_id.parent_id")
     priority = fields.Selection([
         ('must', 'Must'),
         ('should', 'Should'),
         ('could', 'Could')
     ], string="Priority", default='must')
-    req_type_ids = fields.Many2many(comodel_name='prd.requirement_type', compute='_compute_req_type_domain',store=True)
-    # ~ req_type = fields.Many2one(comodel_name='prd.requirement_type', string="Type", compute='_compute_req_type_domain', help="",)
-    # ~ req_type = fields.Many2one(comodel_name='prd.requirement_type', string="Type", help="", domain="[('prd_id', 'in', rec_type_ids.ids )]")
-    req_type = fields.Many2one(comodel_name='prd.requirement_type', string="Type", help="",)
-    # ~ req_type_domain = fields.Char(compute='_compute_req_type_domain', store=False)
+
+    req_type = fields.Many2one(comodel_name='prd.requirement_type', string="Type", help="", domain="['|',('prd_id','=',prd_id),('prd_id','=',prd_parent_id)]")
     sequence = fields.Integer(string='Sequence')
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -79,18 +77,6 @@ class PrdRequirement(models.Model):
     ], string="State", default='draft')
     to_check = fields.Boolean()
     user_id = fields.Many2one(comodel_name="res.users",string="Responsible")
-
-    @api.depends("prd_id","prd_id.parent_id")
-    def _compute_req_type_domain(self):
-        for record in self:
-            prd_ids = []
-            if record.prd_id:
-                prd_ids.append(record.prd_id.id)
-                if record.prd_id.parent_id:
-                    prd_ids.append(record.prd_id.parent_id.id)
-            prd_ids.append(False) 
-            # ~ record.req_type_domain = str([('prd_id', 'in', prd_ids)])
-            record.req_type_ids = [(6, 0, self.env['prd.requirement_type'].search([('prd_id', 'in', prd_ids)]).ids)]
 
     @api.depends("code")
     def _compute_parent_id(self):
@@ -137,7 +123,7 @@ class PrdRequirement(models.Model):
                     'time': int(func.weight), 
                 }
         # ~ data = sorted(set(data),key=lambda d: d['name'])
-        return data
+        return data        
 
 
 class PRDRequirementFunction(models.Model):
@@ -145,10 +131,11 @@ class PRDRequirementFunction(models.Model):
     _description = 'PRD Request Function'
     _order = "sequence asc"
 
-    func_id = fields.Many2one(comodel_name='prd.function', string="Function", help="", ondelete='cascade')
+    prd_id = fields.Many2one(comodel_name='prd.document', string="", help="", ondelete='cascade', required=True)
+    prd_parent_id = fields.Many2one(related="prd_id.parent_id")
+    func_id = fields.Many2one(comodel_name='prd.function', string="Function", help="", ondelete='cascade', domain="['|',('prd_id','=',prd_id),('prd_id','=',prd_parent_id)]")
     func_state = fields.Selection(related="func_id.state", string='State')
     func_type = fields.Many2one(comodel_name='prd.function_type', string="Type", related="func_id.func_type")
-    prd_id = fields.Many2one(comodel_name='prd.document', string="", help="", ondelete='cascade')
     req_id = fields.Many2one(comodel_name='prd.requirement', string="", help="", ondelete='cascade')
     req_state = fields.Selection(related="req_id.state", string='State')
     req_type = fields.Many2one(comodel_name='prd.requirement_type', string="Type", related="req_id.req_type")
@@ -175,25 +162,20 @@ class RequirementType(models.Model):
         tot = {}
         if active_model == 'prd.requirement':
             tot = {req.req_type.id: 0 for req in self.env['prd.requirement'].browse(active_ids) if req.req_type}
-            for req in [r for r in self.env['prd.requirement'].browse(active_ids) if r.req_type]:
+            for req in self.env['prd.requirement'].browse(active_ids):
                 tot[req.req_type.id] += sum([int(t.weight) for t in req.function_ids.mapped('func_id')])
-<<<<<<< HEAD
-            for tid in self.env['prd.requirement_type'].browse(tot.keys()):
-                tid.total = tot[tid.id]
-=======
             for tid in tot.keys():
                 self.env['prd.requirement_type'].browse(tid).total = tot[tid]
-
-    @api.model
-    def create(self, vals):
-        if vals.get('req_id'):
-            req = self.env['prd.requirement'].browse(vals['req_id'])
-            vals['prd_id'] = req.prd_id.id if req.prd_id else False
-        return super().create(vals)
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            _logger.error(f"{self.env.context=}")
+            prd_id = vals.get(self.env.context.get('default_prd_id'))
+            vals.update({"prd_id": prd_id})
+        return super().create(vals_list)
         
-    
->>>>>>> 96b4f12d260d49850affb695b9df5927752db7e4
-    
+
 class RequirementCategory(models.Model):
     _name = 'prd.requirement_category'
     _description = 'Requirement Category'
