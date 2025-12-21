@@ -209,11 +209,18 @@ class FunctionCategory(models.Model):
 
 
 class OdooRepo(models.Model):
+    _name = 'prd.odoo_branch'
+    _description = 'Odoo Branch'
+
+    name = fields.Char(string='Name', required=True)
+
+
+class OdooRepo(models.Model):
     _name = 'prd.odoo_repo'
     _description = 'Odoo Repository'
 
     name = fields.Char(string='Name', required=True)
-    url = fields.Char(string='URL', help='Github url')
+    url = fields.Char(string='URL', help='url eg "https://api.github.com/repos/{self.owner}/{self.name}/git/trees/{branch_id.name}?recursive=1"')
     path = fields.Char(string='Path', help='Filesystem path')
     module_ids = fields.One2many(
         comodel_name='prd.odoo_module',
@@ -221,7 +228,71 @@ class OdooRepo(models.Model):
         string='Modules',
         help=''
     )
+    owner = fields.Char(string='Owner', size=64, trim=True, )
+    repo_source = fields.Selection(selection=[('github','Github'),('gitlab','Gitlab')],string='Source')
+    branch_ids = fields.Many2many(comodel_name='prd.odoo_branch',string='Branch',help="") 
 
+    def list_files(self,branch_id):
+        # url = f"https://api.github.com/repos/{self.owner}/{self.name}/git/trees/{branch_id.name}?recursive=1"
+        resp = requests.get(eval(self.url))
+        resp.raise_for_status()
+        data = resp.json()
+        files = []
+        for item in data.get("tree", []):
+            if item["type"] == "blob":
+                files.append({"path": item["path"], "sha": item["sha"], 'branch': branch_id.name})
+        return files
+
+    @api.model
+    def get_file_content(self,file):
+        resp = requests.get(file['url'])
+        resp.raise_for_status()
+        blob = resp.json()
+        content_b64 = blob["content"].replace("\n", "")
+        decoded_bytes = base64.b64decode(content_b64)
+        text = decoded_bytes.decode(encoding, errors="replace")
+        return text
+        
+    def get_branch(self):
+        """Get all branches for this repo"""
+        self.ensure_one()
+        if self.repo_source == 'github':
+            # GitHub API: https://api.github.com/repos/{owner}/{repo}/branches
+            url = f"https://api.github.com/repos/{self.owner}/{self.name}/branches"
+        elif self.repo_source == 'gitlab':
+            # GitLab API: https://gitlab.com/api/v4/projects/{owner}%2F{repo}/repository/branches
+            url = f"https://gitlab.com/api/v4/projects/{self.owner}%2F{self.name}/repository/branches"
+        else:
+            return []
+        try:
+            resp = requests.get(url, timeout=10)
+            resp.raise_for_status()
+            branches = resp.json()
+            
+            branch_data = []
+            for branch in branches:
+                if self.repo_source == 'github':
+                    name = branch['name']
+                    commit_sha = branch['commit']['sha']
+                else:  # gitlab
+                    name = branch['name']
+                    commit_sha = branch['commit']['id']
+                b = self.env['ord.odoo_branch'].search([('name','=',name)],limit=1)
+                if not b:
+                    b = self.env['ord.odoo_branch'].create({'name': name})
+                self.branch_ids = [(6,0,[b.id])]
+                branch_data.append({
+                    'name': name,
+                    'commit_sha': commit_sha,
+                    'url': branch.get('links', {}).get('html', f"https://github.com/{self.owner}/{self.name}/tree/{name}")
+                })
+            return branch_data
+        except requests.exceptions.RequestException as e:
+            _logger.error(f"Failed to fetch branches for {self.name}: {e}")
+            return []
+        except Exception as e:
+            _logger.error(f"Error processing branches for {self.name}: {e}")
+            return []
 
 class OdooModule(models.Model):
     _name = 'prd.odoo_module'
@@ -229,6 +300,7 @@ class OdooModule(models.Model):
     _description = 'Odoo Module'
 
     name = fields.Char(string='Name', required=True)
+    branch_id = fields.Many2one(comodel_name='prd.odoo_branch',string="Branch",help="") # TODO Domain repo_id.branch_ids
 
     @api.model
     def get_modules(self):

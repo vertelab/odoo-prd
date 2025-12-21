@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_prd_requirement" model="ir.actions.report">
+        <field name="name">PRD Requirement</field>
+        <field name="model">prd.requirement</field>
+        <field name="report_type">qweb-pdf</field>
+        <!-- tekniskt namn på rapporten -->
+        <field name="report_name">prd.report_prd_requirement</field>
+        <!-- QWeb-templatefil (kan vara samma som report_name) -->
+        <field name="report_file">prd.report_prd_requirement</field>
+        <!-- skrivs ut i Print-menyn -->
+        <field name="print_report_name">'PRD Requirement - %s' % (object.code or object.name)</field>
+        <field name="binding_model_id" ref="model_prd_requirement"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
+

@@ -7,9 +7,9 @@
     <field name="arch" type="xml">
       <search string="Search Requirement Types">
         <!-- Sökfält -->
-<!--
-        <field name="name" filter_domain="[('name','ilike',self)] | [('description','ilike',self)] | [('prd_id.name','ilike',self)]" />
--->
+        <!--
+             <field name="name" filter_domain="[('name','ilike',self)] | [('description','ilike',self)] | [('prd_id.name','ilike',self)]" />
+        -->
         <field name="name" filter_domain="['|','|',('name','ilike',self),('description','ilike',self),('prd_id.name','ilike',self)]" />
         <field name="description" />
         <field name="prd_id" />
@@ -199,7 +199,9 @@
     <field name="model">prd.odoo_module</field>
     <field name="arch" type="xml">
       <form string="Odoo Module">
+        <header />
         <sheet>
+          <div class="oe_button_box" name="button_box" groups="base.group_user" />
           <group>
             <field name="name" required="1" />
             <field name="technical_name" required="1" />
