@@ -6,7 +6,7 @@
       <field name="binding_model_id" ref="prd.model_prd_odoo_module" />
       <field name="binding_view_types">list,form</field>
       <field name="state">code</field>
-      <field name="code">model.get_files()</field>
+      <field name="code">model.get_module_files()</field>
     </record>
   </data>
 </odoo>
