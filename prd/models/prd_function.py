@@ -1,12 +1,15 @@
 from datetime import datetime, timedelta
+from github import Github, Auth
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError, AccessError
-import logging
-from random import randint
 from odoo.addons.base.models.avatar_mixin import get_hsl_from_seed
+from odoo.exceptions import UserError, ValidationError, AccessError
+from odoo.tools.misc import topological_sort, get_flag
+from random import randint
 from secrets import choice
 import base64
-from odoo.tools.misc import topological_sort, get_flag
+import logging
+import requests
+import re
 
 _logger = logging.getLogger(__name__)
 
@@ -220,7 +223,7 @@ class OdooRepo(models.Model):
     _description = 'Odoo Repository'
 
     name = fields.Char(string='Name', required=True)
-    url = fields.Char(string='URL', help='url eg "https://api.github.com/repos/{self.owner}/{self.name}/git/trees/{branch_id.name}?recursive=1"')
+    # ~ url = fields.Char(string='URL', help='url eg "https://api.github.com/repos/{self.owner}/{self.name}/git/trees/{branch_id.name}?recursive=1"')
     path = fields.Char(string='Path', help='Filesystem path')
     module_ids = fields.One2many(
         comodel_name='prd.odoo_module',
@@ -230,69 +233,56 @@ class OdooRepo(models.Model):
     )
     owner = fields.Char(string='Owner', size=64, trim=True, )
     repo_source = fields.Selection(selection=[('github','Github'),('gitlab','Gitlab')],string='Source')
-    branch_ids = fields.Many2many(comodel_name='prd.odoo_branch',string='Branch',help="") 
-
-    def list_files(self,branch_id):
-        # url = f"https://api.github.com/repos/{self.owner}/{self.name}/git/trees/{branch_id.name}?recursive=1"
-        resp = requests.get(eval(self.url))
-        resp.raise_for_status()
-        data = resp.json()
-        files = []
-        for item in data.get("tree", []):
-            if item["type"] == "blob":
-                files.append({"path": item["path"], "sha": item["sha"], 'branch': branch_id.name})
-        return files
-
-    @api.model
-    def get_file_content(self,file):
-        resp = requests.get(file['url'])
-        resp.raise_for_status()
-        blob = resp.json()
-        content_b64 = blob["content"].replace("\n", "")
-        decoded_bytes = base64.b64decode(content_b64)
-        text = decoded_bytes.decode(encoding, errors="replace")
-        return text
-        
-    def get_branch(self):
-        """Get all branches for this repo"""
-        self.ensure_one()
+    branch_ids = fields.Many2many(comodel_name='prd.odoo_branch',string='Branch',help="")
+    
+    @api.onchange("repo_source",'name','owner')
+    def _repo_source(self):
         if self.repo_source == 'github':
-            # GitHub API: https://api.github.com/repos/{owner}/{repo}/branches
-            url = f"https://api.github.com/repos/{self.owner}/{self.name}/branches"
-        elif self.repo_source == 'gitlab':
-            # GitLab API: https://gitlab.com/api/v4/projects/{owner}%2F{repo}/repository/branches
-            url = f"https://gitlab.com/api/v4/projects/{self.owner}%2F{self.name}/repository/branches"
-        else:
-            return []
+            pass
+            # ~ self.url = "f\"" + f"https://api.github.com/repos/{self.owner}/{self.name}/git/trees/" + "{branch_id.name}?recursive=1\""
+    
+    def _get_auth_token(self):
+        authToken = self.env["ir.config_parameter"].sudo().get_param('prd.github_token')
+        if not authToken:
+            raise UserError("Github token missing, please create a parameter called github_token and paste an token.")
+        return authToken
+
+    def git_odoo_branches(self):
+        g = Github(auth=Auth.Token(self._get_auth_token().strip()))
         try:
-            resp = requests.get(url, timeout=10)
-            resp.raise_for_status()
-            branches = resp.json()
-            
-            branch_data = []
-            for branch in branches:
-                if self.repo_source == 'github':
-                    name = branch['name']
-                    commit_sha = branch['commit']['sha']
-                else:  # gitlab
-                    name = branch['name']
-                    commit_sha = branch['commit']['id']
-                b = self.env['ord.odoo_branch'].search([('name','=',name)],limit=1)
-                if not b:
-                    b = self.env['ord.odoo_branch'].create({'name': name})
-                self.branch_ids = [(6,0,[b.id])]
-                branch_data.append({
-                    'name': name,
-                    'commit_sha': commit_sha,
-                    'url': branch.get('links', {}).get('html', f"https://github.com/{self.owner}/{self.name}/tree/{name}")
-                })
-            return branch_data
-        except requests.exceptions.RequestException as e:
-            _logger.error(f"Failed to fetch branches for {self.name}: {e}")
-            return []
+            repo = g.get_repo(f"{self.owner}/{self.name}")
         except Exception as e:
-            _logger.error(f"Error processing branches for {self.name}: {e}")
-            return []
+            _logger.warning(f"Could not read {self.owner}/{self.name} {e}")
+        for name in sorted([b.name for b in repo.get_branches() if re.match("^\d*[.]0$", b.name)], key=float):
+            b = self.env['ord.odoo_branch'].search([('name','=',name)],limit=1)
+            if not b:
+                b = self.env['ord.odoo_branch'].create({'name': name})
+            self.branch_ids = [(6,0,[b.id])]
+
+    def _git_repo(self):
+        g = Github(auth=Auth.Token(self._get_auth_token().strip()))
+        try:
+            return g.get_repo(f"{self.owner}/{self.name}")
+        except Exception as e:
+            _logger.warning(f"Could not read {self.owner}/{self.name} {e}")
+            return None
+
+    def get_files(self, branch="14.0"):
+        filenames = []
+        files = self._git_repo().get_contents("", ref=branch)
+        while files:
+            file_content = files.pop(0)
+            if file_content.type == "dir":
+                files.extend(self._git_repo().get_contents(file_content.path,ref=branch))
+            else:
+                filenames.append('/'.join(file_content.path.split('/')[1:]))
+        p_files = set([f.replace('.p.','.') for f in filenames if '.p.' in f and (f.endswith('.p.py') or f.endswith('.p.xml'))])
+        _logger.warning(f"{filenames=} {p_files=}")
+        return [f for f in filenames if not f in p_files]
+
+    def get_file_content(self,filename,branch):
+        _logger.warning(f"{filename=} {branch=}")
+        return self._git_repo().get_contents(filename,ref=branch)[0].decoded_content.decode('utf-8')
 
 class OdooModule(models.Model):
     _name = 'prd.odoo_module'

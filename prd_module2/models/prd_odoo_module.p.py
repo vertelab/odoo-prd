@@ -9,6 +9,7 @@ class OdooModule(models.Model):
 
     files_count = fields.Integer(string="Total Files", compute='_compute_file_counts',store=True)
     file_ids = fields.One2many('prd.odoo_module.file', 'module_id', string="Files")
+    branch_id = fields.Many2one(comodel_name='prd.odoo_branch',string="Branch",help="")
     
     @api.depends('file_ids')
     def _compute_file_counts(self):
@@ -16,9 +17,8 @@ class OdooModule(models.Model):
             record.files_count = len(record.file_ids)
 
     def button_get_module_files(self):
-        for file in self.repo_id.list_files(self.branch_id)['tree']:
-            if file['type'] == 'blob':
-                self.env['prd.odoo_modoule.file']._create_update(file,self)
+        for file in self.repo_id.get_files(self.branch_id.name):
+            self.env['prd.odoo_module.file']._create_update(file,self)
         return self.action_files()
 
     def action_files(self):
@@ -28,9 +28,13 @@ class OdooModule(models.Model):
             'res_model': 'prd.odoo_module.file',  
             'domain': [('module_id', '=', self.id)],
             'context': {'default_module_id': self.id},
-            'view_mode': 'kanban,tree,form',
+            'view_mode': 'kanban,list,form',
             'target': 'current',
         }
+        
+    def get_files(self):
+        for m in self:
+            self.env['prd.odoo_module.file'].get_modules_files(m)
 
 class OdooModuleFile(models.Model):
     _name = 'prd.odoo_module.file'
@@ -54,30 +58,29 @@ class OdooModuleFile(models.Model):
         ('other','Other'),
             ],string='Type')
     content = fields.Text(string='Content')
-    
-    def get_modules_files(self):
-        selection = dict(self._fields['file_type'].selection or [])
-        for file in self.module_id.repo_id.list_files(self.branch_id)['tree']:
-            if file['type'] == 'blob':
-                content = self.module_id.repo_id.get_file_content(file)
+
+    def get_modules_files(self,module):
+        for file in module.repo_id.get_files(self.branch_id.name):
+            self._create_update(file,module)
 
     @api.model
-    def _create_update(self, file,module):
+    def _create_update(self,file,module):
         ft = 'other'
         for file_type in dict(self._fields['file_type'].selection).keys():
-            if file_type in file['path']:
+            if file_type in file:
                 ft = file_type
         vals = {
-            'name': file['path'].split('/')[-1],
+            # ~ 'name': file['path'].split('/')[-1],
+            'name': file,
             'module_id': module.id,
-            'git_url': file['url'],
+            # ~ 'git_url': file['url'],
             'file_type': ft,
-            'content': module.repo_id.get_file_content(file),
+            # ~ 'content': module.repo_id.get_file_content(file,module.branch_id.name),
             # ~ 'path': file['path'], 
         }
         file_rec = self.env['prd.odoo_module.file'].search([
             ('module_id', '=', module.id), 
-            ('path', '=', file['path'])
+            ('name', '=', file)
         ], limit=1)
         if file_rec:
             file_rec.write(vals)
