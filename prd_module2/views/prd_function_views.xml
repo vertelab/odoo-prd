@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_prd_function_form" model="ir.ui.view">
+    <field name="name">prd.function.form.module</field>
+    <field name="model">prd.function</field>
+    <field name="inherit_id" ref="prd.view_prd_function_form" />
+    <field name="arch" type="xml">
+      <div name="options" position="inside">
+        <span class="d-inline-flex">
+          <field name="has_models" invisible="implementation_type != 'module'" />
+          <label for="has_models" />
+        </span>
+        <span class="d-inline-flex">
+          <field name="has_views" invisible="implementation_type != 'module'" />
+          <label for="has_views"  invisible="implementation_type != 'module'"/>
+        </span>
+        <span class="d-inline-flex">
+          <field name="has_data" invisible="implementation_type != 'module'" />
+          <label for="has_data" invisible="implementation_type != 'module'"/>
+        </span>
+        <span class="d-inline-flex">
+          <field name="has_controllers" invisible="implementation_type != 'module'" />
+          <label for="has_controllers" invisible="implementation_type != 'module'"/>
+        </span>
+      </div>
+      <notebook position="inside">
+        <page id="models" string="Models" invisible="not (implementation_type == 'module' and has_models)">
+          <group>
+            <field name="models_filename" />
+            <field name="models_src" />
+          </group>
+        </page>
+        <page id="views" string="Views" invisible="not (implementation_type == 'module' and has_views)">
+          <group>
+            <field name="odoo_view_ids" widget="many2many_tags" />
+            <field name="views_filename" placeholder="views.xml"/>
+            <field name="views_xml" nolabel="1" placeholder="&lt;odoo&gt; ... &lt;/odoo&gt;"/>
+          </group>
+        </page>
+        <page id="data" string="Data" invisible="not (implementation_type == 'module' and has_data)">
+          <group>
+            <field name="data_filename" />
+            <field name="data_xml" />
+          </group>
+        </page>
+        <page id="controllers" string="Controllers" invisible="not (implementation_type == 'module' and has_controllers)">
+          <group>
+            <field name="controllers_filename" />
+            <field name="controllers_src" />
+          </group>
+        </page>
+      </notebook>
+    </field>
+  </record>
+</odoo>

@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_prd_odoo_module_file,prd.odoo_branches user,model_prd_odoo_module_file,base.group_user,1,1,1,1
+
+

@@ -49,6 +49,7 @@
         'views/prd_function_views.xml',
         'views/prd_requirement_views.xml',
         'views/prd_configuration_views.xml',
+        'views/res_config_settings_views.xml',
         'wizard/prd_requirement_wizard_views.xml',
         'security/prd_security.xml',
         'security/ir.model.access.csv',

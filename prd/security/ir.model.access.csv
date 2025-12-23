@@ -27,4 +27,5 @@ access_prd_requirement_wizard,access_prd_requirement_wizard,prd.model_prd_requir
 access_prd_model_access,access_prd_model_access,model_prd_model_access,base.group_user,1,1,1,1
 access_prd_rule,access_prd_rule,model_prd_rule,base.group_user,1,1,1,1
 access_prd_rule_groups,access_prd_rule_groups,model_prd_rule_groups,base.group_user,1,1,1,1
-prd.access_prd_odoo_licence,access_prd_odoo_licence,prd.model_prd_odoo_licence,base.group_user,1,1,1,1
+access_prd_odoo_licence,access_prd_odoo_licence,prd.model_prd_odoo_licence,base.group_user,1,1,1,1
+access_prd_odoo_branch,access_prd_odoo_branch,prd.model_prd_odoo_branch,base.group_user,1,1,1,1

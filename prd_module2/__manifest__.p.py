@@ -20,42 +20,38 @@
 ##############################################################################
 
 {
-    'name': 'PRD: Product Requirement Document',
+    'name': 'Project: PRD Odoo moudle',
     'version': '1.0',
-    'summary': 'A Product Requirements Document (PRD) is a formal document that outlines the purpose, features, and requirements.',
+    'summary': 'Create Odoo module from Product Requirements Document (PRD)',
     'category': 'Productivity',
     'description': """
+        Using PRD to create a tar-file
         A Product Requirement Document (PRD), is a central guiding document in product development that describes what a product should do, 
         which needs it should fulfill, and which features it should contain — without specifying how these should be solved technically. 
         The purpose is to ensure that all stakeholders – from product owners and developers to designers and testers – have a shared 
         understanding of the product's goals, functionality, and priorities.
     """,
     'author': 'Vertel AB',
-    'website': 'https://vertel.se/apps/odoo-project/prd',
+    'website': 'https://vertel.se/apps/odoo-prd/prd_module',
     'license': 'AGPL-3',
     'contributor': '',
     'maintainer': 'Vertel AB',
-    'depends': [
-        'mail',
-        'web_mermaid'
-    ],
+    'depends': ['prd',],
     'data': [
-        # ~ 'data/cron.xml',
         'data/server_action.xml',
-        'data/odoo_repo.xml',
-        'data/odoo_view_types.xml',
-        'data/prd_function_types.xml',
-        'views/prd_views.xml',
-        'views/prd_function_views.xml',
-        'views/prd_requirement_views.xml',
-        'views/prd_configuration_views.xml',
-        'views/res_config_settings_views.xml',
-        'wizard/prd_requirement_wizard_views.xml',
-        'security/prd_security.xml',
+        # ~ 'data/odoo_branches.xml',
+        # ~ 'data/odoo_library.xml',
+        # ~ 'data/odoo_licence.xml',
+        # ~ 'data/odoo_module.xml',
+        # ~ 'data/odoo_project.xml',
+        # ~ 'data/odoo_repo.xml',
         'security/ir.model.access.csv',
-        'report/prd_requirement_report.xml'
+        # ~ 'views/prd_views.xml',
+        # ~ 'views/prd_function_views.xml',
+        # ~ 'views/prd_configuration_views.xml',
+        'views/prd_odoo_module_file_views.xml',
+        # ~ 'views/users_views.xml',
     ],
-    'post_init_hook': 'post_init_hook',
-    'application': True,
+    'application': False,
 }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
