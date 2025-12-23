@@ -27,26 +27,26 @@
         <page id="models" string="Models" invisible="not (implementation_type == 'module' and has_models)">
           <group>
             <field name="models_filename" />
-            <field name="models_src" />
+            <field name="models_src" widget="ace" options="{'mode': 'python','theme': 'solarized_dark', 'tabSize': 4, 'showGutter': true}"/>
           </group>
         </page>
         <page id="views" string="Views" invisible="not (implementation_type == 'module' and has_views)">
           <group>
             <field name="odoo_view_ids" widget="many2many_tags" />
             <field name="views_filename" placeholder="views.xml"/>
-            <field name="views_xml" nolabel="1" placeholder="&lt;odoo&gt; ... &lt;/odoo&gt;"/>
+            <field name="views_xml" nolabel="1" placeholder="&lt;odoo&gt; ... &lt;/odoo&gt;" widget="ace" options="{'mode': 'xml','theme': 'solarized_dark', 'tabSize': 4, 'showGutter': true}"/>
           </group>
         </page>
         <page id="data" string="Data" invisible="not (implementation_type == 'module' and has_data)">
           <group>
             <field name="data_filename" />
-            <field name="data_xml" />
+            <field name="data_xml" widget="ace" options="{'mode': 'xml','theme': 'solarized_dark', 'tabSize': 4, 'showGutter': true}"/>
           </group>
         </page>
         <page id="controllers" string="Controllers" invisible="not (implementation_type == 'module' and has_controllers)">
           <group>
             <field name="controllers_filename" />
-            <field name="controllers_src" />
+            <field name="controllers_src" widget="ace" options="{'mode': 'python','theme': 'solarized_dark', 'tabSize': 4, 'showGutter': true}"/>
           </group>
         </page>
       </notebook>
