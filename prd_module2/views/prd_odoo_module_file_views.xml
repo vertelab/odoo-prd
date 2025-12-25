@@ -63,16 +63,23 @@
           </group>
           <notebook>
             <page string="Content" id="content">
+                <group>
               <field name="content_py"   nolabel="1" widget="ace" options="{'mode': 'python'}"     invisible="content_type != 'py'"/>
               <field name="content_xml"  nolabel="1" widget="ace" options="{'mode': 'qweb'}"       invisible="content_type != 'xml'"/>
               <field name="content_js"   nolabel="1" widget="ace" options="{'mode': 'javascript'}" invisible="content_type != 'js'"/>
               <field name="content_scss" nolabel="1" widget="ace" options="{'mode': 'scss'}"       invisible="content_type != 'scss'"/>
               <field name="content_json" nolabel="1" widget="ace" options="{'mode': 'json'}"       invisible="content_type != 'json'"/>
-              <field name="content_txt"  nolabel="1" widget="ace" options="{'mode': 'json'}"       invisible="content_type != 'txt'"/>
+              <field name="content_txt"  nolabel="1" widget="ace" options="{'mode': 'text'}"       invisible="content_type != 'txt'"/>
+              </group>
+              <group>
               <field name="content_bin"  nolabel="1" widget="image"                   invisible="not 'image/' in content_mime"/>
               <field name="content_bin"  nolabel="1" widget="pdf_viewer"              invisible="not 'application/pdf' in content_mime"/>
-              <field name="content_bin"  nolabel="1" widget="binary"                  invisible="'image/' in content_mime or 'application/pdf' in content_mime"/>
-              <field name="content_mime" invisible="content_mime == False" />
+              <field name="content_bin"  nolabel="1" widget="binary"                  invisible="not ('image/' in content_mime or 'application/pdf' in content_mime)"/>
+              </group>
+              <group>
+              <field name="content_mime" readinly="1" />
+              <field name="content_type"  />
+              </group>
             </page>
           </notebook>
         </sheet>

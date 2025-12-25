@@ -74,7 +74,8 @@ class OdooModuleFile(models.Model):
             ('xml','XML'),
             ('js','Javascript'),
             ('json','Json'),
-            ('scss','SCSS')
+            ('scss','SCSS'),
+            ('bin','Binary')
         ],
         string='Content Type',
         compute='_compute_content_type',
@@ -117,19 +118,22 @@ class OdooModuleFile(models.Model):
         ct = filetype.guess(base64.b64decode(file.content))
         _logger.warning(f"{ct=}")
         _logger.warning(f"{ct=} {ct and ct.extension=} {ct and ct.mime=}")
+        content_mime = ct.mime if ct else ('image/svg+xml' if "<svg" in getattr(file, 'decoded_content', '').decode('utf-8') else 'text/plain')
+        ct = 'bin' if content_mime != 'text/plain' else ct
         vals = {
-            'name': file.path,
+            'name': '/'.join(file.path.split('/')[1:]),
             'module_id': module.id,
             'file_type': ft,
-            'content': file.decoded_content.decode('utf-8') if not ct or ct.mime.startswith('text/') else False,
-            'content_bin': file.content if not (ct and ct.mime.startswith('text/')) else False,
-            'content_mime': 'text/text' if not ct else ct.mime,
+            'content': file.decoded_content.decode('utf-8') if ct != 'bin' else False,
+            'content_bin': file.content if ct == 'bin' else False,
+            'content_mime': content_mime,
+            'content_type': ct,
             'git_url': file.download_url, 
         }
         _logger.warning(f"{vals=}")
         file_rec = self.search([
             ('module_id', '=', module.id), 
-            ('name', '=', file.path)
+            ('name', '=', '/'.join(file.path.split('/')[1:]))
         ], limit=1)
         if file_rec:
             file_rec.write(vals)
