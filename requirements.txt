@@ -1,3 +1,4 @@
 mermaid-python
 paramiko
 PyGithub
+filetype

@@ -47,27 +47,35 @@
     <field name="arch" type="xml">
       <form string="Module File">
         <sheet>
-        <div class="oe_button_box" name="button_box">
-          <button name="get_modules_files" type="object" string="Refresh Files" class="oe_stat_button" icon="fa-refresh" />
-        </div>
-            
+          <div class="oe_button_box" name="button_box">
+            <button name="get_modules_files" type="object" string="Refresh Files" class="oe_stat_button" icon="fa-refresh" />
+          </div>
           <group>
             <group>
               <field name="name" />
               <field name="file_type" widget="badge" />
-              <field name="module_id" options="{'no_create': True}" />
+              <field name="module_id" options="{'no_create': True}" invisible="1"/>
+              <field name="content_type" invisible="1"/>
             </group>
             <group>
               <field name="git_url" widget="copy_clipboard" readonly="1" />
             </group>
           </group>
           <notebook>
-            <page string="Content" name="content">
-              <field name="content" />
+            <page string="Content" id="content">
+              <field name="content_py"   nolabel="1" widget="ace" options="{'mode': 'python'}"     invisible="content_type != 'py'"/>
+              <field name="content_xml"  nolabel="1" widget="ace" options="{'mode': 'qweb'}"       invisible="content_type != 'xml'"/>
+              <field name="content_js"   nolabel="1" widget="ace" options="{'mode': 'javascript'}" invisible="content_type != 'js'"/>
+              <field name="content_scss" nolabel="1" widget="ace" options="{'mode': 'scss'}"       invisible="content_type != 'scss'"/>
+              <field name="content_json" nolabel="1" widget="ace" options="{'mode': 'json'}"       invisible="content_type != 'json'"/>
+              <field name="content_txt"  nolabel="1" widget="ace" options="{'mode': 'json'}"       invisible="content_type != 'txt'"/>
+              <field name="content_bin"  nolabel="1" widget="image"                   invisible="not 'image/' in content_mime"/>
+              <field name="content_bin"  nolabel="1" widget="pdf_viewer"              invisible="not 'application/pdf' in content_mime"/>
+              <field name="content_bin"  nolabel="1" widget="binary"                  invisible="'image/' in content_mime or 'application/pdf' in content_mime"/>
+              <field name="content_mime" invisible="content_mime == False" />
             </page>
           </notebook>
         </sheet>
-
       </form>
     </field>
   </record>
@@ -76,39 +84,36 @@
     <field name="name">prd.odoo_module.file.kanban</field>
     <field name="model">prd.odoo_module.file</field>
     <field name="arch" type="xml">
-     
-     <kanban class="o_kanban_dashboard" default_group_by="file_type">
-    <field name="name"/>
-    <field name="module_id"/>
-    <field name="file_type"/>
-    <field name="git_url"/>
-
-    <templates>
-        <t t-name="kanban-box">
+      <kanban class="o_kanban_dashboard" default_group_by="file_type">
+        <field name="name" />
+        <field name="module_id" />
+        <field name="file_type" />
+        <field name="git_url" />
+        <templates>
+          <t t-name="kanban-box">
             <div class="oe_kanban_global_click">
-                <div class="oe_kanban_details">
-                    <field name="file_type" widget="badge" class="oe_kanban_badge"/>
-                    <strong class="oe_kanban_title">
-                        <span><field name="name"/></span>
-                    </strong>
-                    <div class="oe_kanban_subtitle">
-                        <span><field name="module_id"/></span>
-                    </div>
+              <div class="oe_kanban_details">
+                <field name="file_type" widget="badge" class="oe_kanban_badge" />
+                <strong class="oe_kanban_title">
+                  <span>
+                    <field name="name" />
+                  </span>
+                </strong>
+                <div class="oe_kanban_subtitle">
+                  <span>
+                    <field name="module_id" />
+                  </span>
                 </div>
-                <div class="oe_kanban_bottom_left">
-                    <a t-att-href="record.git_url.value or '#'"
-                       target="_blank"
-                       class="btn btn-sm btn-link p0"
-                       title="Git URL">
-                        <i class="fa fa-external-link"/>
-                    </a>
-                </div>
+              </div>
+              <div class="oe_kanban_bottom_left">
+                <a t-att-href="record.git_url.value or '#'" target="_blank" class="btn btn-sm btn-link p0" title="Git URL">
+                  <i class="fa fa-external-link" />
+                </a>
+              </div>
             </div>
-        </t>
-    </templates>
-</kanban>
-
-     
+          </t>
+        </templates>
+      </kanban>
     </field>
   </record>
   <!-- Action -->

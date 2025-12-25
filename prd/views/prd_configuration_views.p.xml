@@ -179,7 +179,7 @@
         <field name="contributors" optional="show" />
         <field name="website" optional="show" />
         <field name="sequence" optional="show" />
-        <field name="dependencies_id" widget="many2many_tags" optional="show" />
+        <field name="dependency_ids" widget="many2many_tags" optional="show" />
         <!--
              <field name="country_ids" widget="many2many_tags" optional="show" />
         -->
@@ -198,19 +198,88 @@
     <field name="name">prd.odoo_module.form</field>
     <field name="model">prd.odoo_module</field>
     <field name="arch" type="xml">
-      <form string="Odoo Module">
-        <header />
+        <form string="Odoo Module">
+        <header>
+          <button name="sftp_upload" string="SFTP Upload" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
+        </header>
         <sheet>
           <div class="oe_button_box" name="button_box" groups="base.group_user" />
           <group>
-            <field name="name" required="1" />
-            <field name="technical_name" required="1" />
-            <field name="module_id" />
-            <field name="application" />
-            <field name="repo_id" />
+            <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
+            <div class="oe_title">
+              <h1 class="d-flex flex-row">
+                <field name="name" options="{'line_breaks': False}" widget="text" class="flex-grow-1 o_text_overflow" placeholder="e.g. Office Party" style="width: 32em; font-size: 1.1em; xline-height: 2;" />
+              </h1>
+            </div>
           </group>
+          <group>
+            <group id="c1">
+              <field name="name" required="1" />
+              <field name="technical_name" required="1" />
+              <field name="module_id" />
+              <field name="application" />
+              <field name="author" placeholder="Author..." />
+              <field name="repo_id" />
+            </group>
+            <group id="c2" name="c2" string="General">
+              <field name="application" help="Is this an application?" />
+              <field name="auto_install" help="Auto-installation when the modules that this module depends on is installed" />
+              <field name="app_category_id" help="Category" />
+              <field name="licence_id" />
+              <field name="maintainer" placeholder="Maintainer..." />
+              <field name="website" placeholder="https://example.com" widget="url" />
+              <field name="repo_id" string="Repository" />
+              <field name="description_html" string="Beskrivning" placeholder="Detaljerad beskrivning..." />
+              <field name="contributors" placeholder="Bidragsgivare (en per rad)..." />
+            </group>
+            <group id="technical" string="Technical">
+              <field name="module_id" string="Modul (ir.module.module)" />
+              <field name="technical_name" string="Tekniskt namn" readonly="1" />
+<!--
+              <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" />
+-->
+              <field name="dependency_ids"  >
+                  <list editable="bottom"><field name="dep_module_id" /></list>
+              </field>
+
+            </group>
+          </group>
+          <notebook position="inside">
+            <page string="Index-file" id="index">
+              <field name="description_html" />
+            </page>
+            <page string="Access Rights" id="access_rights">
+              <field name="model_access_ids">
+                <list string="Access Rights" editable="top">
+                  <field name="name" />
+                  <field name="model_id" />
+                  <field name="group_id" />
+                  <field name="perm_read" />
+                  <field name="perm_write" />
+                  <field name="perm_create" />
+                  <field name="perm_unlink" />
+                </list>
+              </field>
+            </page>
+            <page string="Record Rules" name="record_rules">
+              <field name="rule_ids">
+                <list string="Record Rules" editable="top">
+                  <field name="name" />
+                  <field name="model_id" />
+                  <field name="domain_force" />
+                  <field name="groups" widget="many2many_tags" />
+                  <field name="perm_read" />
+                  <field name="perm_write" />
+                  <field name="perm_create" />
+                  <field name="perm_unlink" />
+                </list>
+              </field>
+            </page>
+          </notebook>
         </sheet>
+      <chatter reload_on_follower="True" />
       </form>
+     
     </field>
   </record>
   <!-- List View -->
@@ -230,16 +299,15 @@
     <field name="model">prd.odoo_repo</field>
     <field name="arch" type="xml">
       <form string="Odoo Repository">
-          <header>
-                           <button name="git_odoo_branches" string="Get Branches" type="object" class="oe_highlight" />
-          </header>
+        <header>
+          <button name="git_odoo_branches" string="Get Branches" type="object" class="oe_highlight" />
+        </header>
         <sheet>
           <group>
             <field name="name" />
-<!--
-            <field name="path" />
--->
-            
+            <!--
+                 <field name="path" />
+            -->
             <field name="owner" />
             <field name="repo_source" />
             <field name="branch_ids" widget="many2many_tags" />

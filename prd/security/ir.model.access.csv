@@ -29,3 +29,4 @@ access_prd_rule,access_prd_rule,model_prd_rule,base.group_user,1,1,1,1
 access_prd_rule_groups,access_prd_rule_groups,model_prd_rule_groups,base.group_user,1,1,1,1
 access_prd_odoo_licence,access_prd_odoo_licence,prd.model_prd_odoo_licence,base.group_user,1,1,1,1
 access_prd_odoo_branch,access_prd_odoo_branch,prd.model_prd_odoo_branch,base.group_user,1,1,1,1
+access_prd_odoo_module_dependency,access_prd_odoo_module_dependency,prd.model_prd_odoo_module_dependency,base.group_user,1,1,1,1

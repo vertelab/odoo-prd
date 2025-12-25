@@ -1,6 +1,8 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError, AccessError
 import logging
+import filetype
+import base64
 
 _logger = logging.getLogger(__name__)
 
@@ -17,7 +19,15 @@ class OdooModule(models.Model):
             record.files_count = len(record.file_ids)
 
     def button_get_module_files(self):
-        for file in self.repo_id.get_files(self.branch_id.name):
+        self.ensure_one()
+        if not all([self.repo_id, self.repo_id.owner, self.branch_id]):
+            raise UserError(_("Missing repo, branch or owner"))
+        files = self.repo_id.get_files(self.technical_name,self.branch_id.name)
+        self.message_post(
+            body=_(f"Get Module files {files=}"),
+            subtype_xmlid="mail.mt_note",  # intern anteckning
+        )
+        for file in files:
             self.env['prd.odoo_module.file']._create_update(file,self)
         return self.action_files()
 
@@ -57,7 +67,41 @@ class OdooModuleFile(models.Model):
         ('wizard','Wizard'),
         ('other','Other'),
             ],string='Type')
+    content_type = fields.Selection(
+        selection=[
+            ('txt','Text'),
+            ('py','Python'), 
+            ('xml','XML'),
+            ('js','Javascript'),
+            ('json','Json'),
+            ('scss','SCSS')
+        ],
+        string='Content Type',
+        compute='_compute_content_type',
+        store=True
+    )
     content = fields.Text(string='Content')
+    content_js = fields.Text(string='Content',related="content",readonly=False)
+    content_json = fields.Text(string='Content',related="content",readonly=False)
+    content_py = fields.Text(string='Content',related="content",readonly=False)
+    content_scss = fields.Text(string='Content',related="content",readonly=False)
+    content_txt = fields.Text(string='Content',related="content",readonly=False)
+    content_xml = fields.Text(string='Content',related="content",readonly=False)
+    content_bin = fields.Binary()
+    content_mime = fields.Char(string='Mime')
+
+    @api.depends('name')
+    def _compute_content_type(self):
+        for rec in self:
+            if not rec.name:
+                rec.content_type = 'txt'
+                continue
+            ext = rec.name.lower().split('.')[-1]
+            if ext in dict(self._fields['content_type'].selection).keys():
+                rec.content_type = ext
+            else:
+                rec.content_type = 'txt'
+
 
     def get_modules_files(self,module):
         for file in module.repo_id.get_files(self.branch_id.name):
@@ -65,42 +109,99 @@ class OdooModuleFile(models.Model):
 
     @api.model
     def _create_update(self,file,module):
+        _logger.warning(f"{file=} {module.name=}")
         ft = 'other'
         for file_type in dict(self._fields['file_type'].selection).keys():
-            if file_type in file:
+            if file_type in file.path:
                 ft = file_type
+        ct = filetype.guess(base64.b64decode(file.content))
+        _logger.warning(f"{ct=}")
+        _logger.warning(f"{ct=} {ct and ct.extension=} {ct and ct.mime=}")
         vals = {
-            # ~ 'name': file['path'].split('/')[-1],
-            'name': file,
+            'name': file.path,
             'module_id': module.id,
-            # ~ 'git_url': file['url'],
             'file_type': ft,
-            # ~ 'content': module.repo_id.get_file_content(file,module.branch_id.name),
-            # ~ 'path': file['path'], 
+            'content': file.decoded_content.decode('utf-8') if not ct or ct.mime.startswith('text/') else False,
+            'content_bin': file.content if not (ct and ct.mime.startswith('text/')) else False,
+            'content_mime': 'text/text' if not ct else ct.mime,
+            'git_url': file.download_url, 
         }
-        file_rec = self.env['prd.odoo_module.file'].search([
+        _logger.warning(f"{vals=}")
+        file_rec = self.search([
             ('module_id', '=', module.id), 
-            ('name', '=', file)
+            ('name', '=', file.path)
         ], limit=1)
         if file_rec:
             file_rec.write(vals)
         else:
-            self.env['prd.odoo_module.file'].create(vals)
+            self.create(vals)
 
-                
-    # ~ {
-        # ~ "sha": "10d4dafbd2ae5c0478a7563352e9ef850f6a2cd2",
-        # ~ "url": "https://api.github.com/repos/vertelab/odoo-prd/git/trees/10d4dafbd2ae5c0478a7563352e9ef850f6a2cd2",
-        # ~ "tree": [
- 
-    # ~ {
-      # ~ "path": "prd_scrum/views/project_views.xml",
-      # ~ "mode": "100644",
-      # ~ "type": "blob",
-      # ~ "sha": "754639b30dc8410dccec520a684d7947e23c7971",
-      # ~ "size": 1313,
-      # ~ "url": "https://api.github.com/repos/vertelab/odoo-prd/git/blobs/754639b30dc8410dccec520a684d7947e23c7971"
-    # ~ },
+    def build_python_dir(self):
+        init = {}
+        for file_type in ['controllers','models','tests']:
+            for file in self.search():
+                pass
+        
+
+    def _build_module_structure(self, writer):
+        data = []
+        models_init = []
+        controllers_init = []
+        main_init = []
+
+        # Process all functions
+        for file in self.function_ids:
+            if function.has_views and function.views_filename:
+                writer.write_file("views/", function.views_filename, function.views_xml)
+                data.append(f"views/{function.views_filename}")
+
+            if function.has_models and function.models_filename:
+                writer.write_file("models/", function.models_filename, function.models_src)
+                split_filename = function.models_filename.split(".")[0]
+                models_init.append(f"from . import {split_filename}")
+
+            if function.has_data and function.data_filename:
+                writer.write_file("data/", function.data_filename, function.data_xml)
+                data.append(f"data/{function.data_filename}")
+
+            if function.has_controllers and function.controllers_filename:
+                writer.write_file("controllers/", function.controllers_filename, function.controllers_src)
+                split_filename = function.controllers_filename.split(".")[0]
+                controllers_init.append(f"from . import {split_filename}")
+
+        # Create __init__.py files for models
+        if models_init:
+            content = "\n".join(models_init)
+            writer.write_file("models/", "__init__.py", content)
+            main_init.append("from . import models")
+
+        # Create __init__.py files for controllers
+        if controllers_init:
+            content = "\n".join(controllers_init)
+            writer.write_file("controllers/", "__init__.py", content)
+            main_init.append("from . import controllers")
+
+        # Create security files
+        writer.write_file("security/", "ir.model.access.csv", self.create_ir_model_access())
+
+        rec_rule_path = writer.write_file(
+            "security/",
+            f"{self.name}_record_rules.xml",
+            self.create_record_rules()
+        )
+        # Extract relative path for manifest (remove module path prefix)
+        rec_rule_relative = "/".join(rec_rule_path.split("/")[1:])
+        data.append(rec_rule_relative)
+
+        # Create main __init__.py
+        main_init_content = "\n".join(main_init)
+        writer.write_file("", "__init__.py", main_init_content)
+
+        # Create manifest
+        writer.write_file("", "__manifest__.py", self.create_manifest(data))
+
+        return data
+
 
             
 class ProductRequirementDocument(models.Model):

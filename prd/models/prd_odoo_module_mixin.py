@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta 
+from datetime import datetime, timedelta
+from github import Github, Auth
 from odoo import api, fields, models, modules, tools, _
 from odoo.addons.base.models.avatar_mixin import get_hsl_from_seed
 from odoo.exceptions import UserError, ValidationError, AccessError
@@ -8,6 +9,9 @@ from secrets import choice
 import base64
 import logging
 import os
+import re
+import requests
+
 
 _logger = logging.getLogger(__name__)
   
@@ -16,7 +20,7 @@ class OdooModuleMixin(models.AbstractModel):
     _name = 'prd.odoo_module.mixin'
     _description = 'Odoo Module Mixin'
 
-
+    active = fields.Boolean(string='Active', default=True)
     app_category_id = fields.Many2one('ir.module.category', string="Category")
     application = fields.Boolean(string='Application')
     auto_install = fields.Boolean('Automatic Installation',
@@ -41,7 +45,7 @@ class OdooModuleMixin(models.AbstractModel):
     website = fields.Char(string='Website')
     # ~ url = fields.Char('URL', )
     sequence = fields.Integer('Sequence', default=100)
-    dependencies_id = fields.One2many(  comodel_name='ir.module.module.dependency', 
+    dependency_ids = fields.One2many(  comodel_name='prd.odoo_module.dependency', 
                                         inverse_name='module_id',
                                         string='Dependencies',)
 
@@ -99,6 +103,15 @@ class OdooModuleMixin(models.AbstractModel):
             # ~ elif record.icon_flag == 'has-icon-image':
                 # ~ record.icon = False  # Rensa URL om bild väljs
 
+
+class PrdDependency(models.Model):
+    _name = 'prd.odoo_module.dependency'
+    # ~ _inherit = "ir.module.module.dependency"
+    _description = 'PRD dependencies for modules'
+
+    module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Module",help="")
+    dep_module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Depends",help="Module that is a dependency")
+
 class PrdRule(models.Model):
     _name = 'prd.rule'
     _inherit = "ir.rule"
@@ -126,3 +139,169 @@ class PrdRuleGroups(models.Model):
 
     rule_id = fields.Many2one(comodel_name="prd.rule")
     groups_id = fields.Many2one(comodel_name="res.groups")
+    
+    
+class OdooBranch(models.Model):
+    _name = 'prd.odoo_branch'
+    _description = 'Odoo Branch'
+
+    name = fields.Char(string='Name', required=True)
+
+
+class OdooRepo(models.Model):
+    _name = 'prd.odoo_repo'
+    _description = 'Odoo Repository'
+
+    name = fields.Char(string='Name', required=True)
+    # ~ url = fields.Char(string='URL', help='url eg "https://api.github.com/repos/{self.owner}/{self.name}/git/trees/{branch_id.name}?recursive=1"')
+    path = fields.Char(string='Path', help='Filesystem path')
+    module_ids = fields.One2many(
+        comodel_name='prd.odoo_module',
+        inverse_name='repo_id',
+        string='Modules',
+        help=''
+    )
+    owner = fields.Char(string='Owner', size=64, trim=True, )
+    repo_source = fields.Selection(selection=[('github','Github'),('gitlab','Gitlab')],string='Source')
+    branch_ids = fields.Many2many(comodel_name='prd.odoo_branch',string='Branch',help="")
+    
+    @api.onchange("repo_source",'name','owner')
+    def _repo_source(self):
+        if self.repo_source == 'github':
+            pass
+            # ~ self.url = "f\"" + f"https://api.github.com/repos/{self.owner}/{self.name}/git/trees/" + "{branch_id.name}?recursive=1\""
+    
+    def _get_auth_token(self):
+        authToken = self.env["ir.config_parameter"].sudo().get_param('prd.github_token')
+        if not authToken:
+            raise UserError("Github token missing, please create a parameter called github_token and paste an token.")
+        return authToken
+
+    def git_odoo_branches(self):
+        g = Github(auth=Auth.Token(self._get_auth_token().strip()))
+        try:
+            repo = g.get_repo(f"{self.owner}/{self.name}")
+        except Exception as e:
+            _logger.warning(f"Could not read {self.owner}/{self.name} {e}")
+            return None
+            
+        for name in sorted([b.name for b in repo.get_branches() if re.match("^\d*[.]0$", b.name)], key=float):
+            b = self.env['prd.odoo_branch'].search([('name','=',name)],limit=1)
+            if not b:
+                b = self.env['prd.odoo_branch'].create({'name': name})
+            self.branch_ids = [(6,0,[b.id])]
+
+    def _git_repo(self):
+        g = Github(auth=Auth.Token(self._get_auth_token().strip()))
+        try:
+            return g.get_repo(f"{self.owner}/{self.name}")
+        except Exception as e:
+            _logger.warning(f"Could not read {self.owner}/{self.name} {e}")
+            return None
+
+    def get_files(self,filename, branch="14.0"):
+        mfiles = []
+        try:
+            files = self._git_repo().get_contents(filename, ref=branch)
+        except Exception as e:
+            _logger.warning(f"Could not read {fielname}/{branch} {e}")
+            return []
+        while files:
+            file_content = files.pop(0)
+            if file_content.type == "dir":
+                files.extend(self._git_repo().get_contents(file_content.path,ref=branch))
+            elif file_content.path not in ['.gitignore']:
+                mfiles.append(file_content)
+        p_files = set([f.path.replace('.p.','.') for f in mfiles if '.p.' in f.path and (f.path.endswith('.p.py') or f.path.endswith('.p.xml'))])
+        _logger.warning(f"{mfiles=} {p_files=}")
+        return [f for f in mfiles if not f.path in p_files]
+
+    def get_file_content(self,filename,branch):
+        _logger.warning(f"{filename=} {branch=}")
+        try:
+            content = self._git_repo().get_contents(filename,ref=branch)[0].decoded_content.decode('utf-8')
+        except Exception as e:
+            content = f"{filename} Error {e}" 
+        return content
+
+class OdooModule(models.Model):
+    _name = 'prd.odoo_module'
+    _inherit = ['prd.odoo_module.mixin', 'mail.thread', 'mail.activity.mixin', ]
+    _description = 'Odoo Module'
+
+    name = fields.Char(string='Name', required=True)
+    branch_id = fields.Many2one(comodel_name='prd.odoo_branch',string="Branch",help="") # TODO Domain repo_id.branch_ids
+
+    @api.model
+    def get_modules(self):
+        for mod in self.env['ir.module.module'].search([]):
+            if self.search([('technical_name', '=', mod.name)], limit=1):
+                continue
+            vals = self._module2dict(mod)
+            vals['technical_name'] = vals['name']
+            vals['name'] = mod.shortdesc
+            vals['module_id'] = mod.id
+            vals['dependencies_id'] = [(6, 0, [x.id for x in vals['dependencies_id'] if x._name == 'ir.module.module' and x.id])]
+            if not (hasattr(mod.dependencies_id, '_name') and mod.dependencies_id._name == 'ir.module.module.dependency'):
+                vals['dependencies_id'] = None
+            # ~ print(f"DEBUG: type(mod.dependencies_id) = {type(mod.dependencies_id)}") <class 'odoo.api.ir.module.module.dependency'>
+            
+            new_mod = self.create(vals)
+            # ~ if mod.dependencies_id:
+                # ~ new_mod.write({'dependencies_id': [(4, dep.id) for dep in mod.dependencies_id]})
+
+
+    def sftp_upload(self):
+        """Upload module directly to server via SFTP"""
+        hostname = self.env.user.sftp_hostname
+        port = self.env.user.sftp_port
+        username = self.env.user.sftp_username
+
+        if not hostname or not port or not username:
+            raise UserError(
+                f"One of the following values are not set on the user {self.env.user.name}\n\n"
+                f"Hostname: {hostname}\nPort: {port}\nUsername: {username}"
+            )
+
+        if self.app_module.repo_id:
+            module_path = f"/usr/share/{self.app_module.repo_id.name}/{self.app_module.technical_name}/"
+        else:
+            module_path = f"/usr/share/{self.name}/{self.app_module.technical_name}/"
+
+        try:
+            writer = SFTPFileWriter(
+                username=username,
+                hostname=hostname,
+                port=port,
+                module_path=module_path
+            )
+            self._build_module_structure(writer)
+            writer.close()
+
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Success'),
+                    'message': _('Module uploaded successfully to %s:%s%s') % (hostname, port, module_path),
+                    'type': 'success',
+                    'sticky': False,
+                }
+            }
+        except Exception as e:
+            _logger.error(f"SFTP upload failed: {str(e)}")
+            raise UserError(f"Failed to upload module via SFTP:\n\n{str(e)}")
+
+
+
+
+class OdooViewType(models.Model):
+    _name = 'prd.odoo_view_type'
+    _description = 'Odoo View Type'
+
+    name = fields.Char(string='View Type Name', required=True)
+    code = fields.Char(string='View Type Code', required=True)
+    description = fields.Text(string='Description')
+    prompt = fields.Text(string='Prompt')
+    active = fields.Boolean(string='Active', default=True)
+
