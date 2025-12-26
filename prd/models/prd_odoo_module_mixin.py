@@ -185,7 +185,7 @@ class OdooRepo(models.Model):
             _logger.warning(f"Could not read {self.owner}/{self.name} {e}")
             return None
             
-        for name in sorted([b.name for b in repo.get_branches() if re.match("^\d*[.]0$", b.name)], key=float):
+        for name in sorted([b.name for b in repo.get_branches() if re.match(r"^\d*[.]0$", b.name)], key=float):
             b = self.env['prd.odoo_branch'].search([('name','=',name)],limit=1)
             if not b:
                 b = self.env['prd.odoo_branch'].create({'name': name})
@@ -201,10 +201,13 @@ class OdooRepo(models.Model):
 
     def get_files(self,filename, branch="14.0"):
         mfiles = []
-        try:
+        try: 
             files = self._git_repo().get_contents(filename, ref=branch)
+            if not isinstance(files, list):
+                files=[files]
+            _logger.warning(f"Read {files=}")
         except Exception as e:
-            _logger.warning(f"Could not read {fielname}/{branch} {e}")
+            _logger.warning(f"Could not read {filename=} {branch=} {e}")
             return []
         while files:
             file_content = files.pop(0)
@@ -216,6 +219,13 @@ class OdooRepo(models.Model):
         _logger.warning(f"{mfiles=} {p_files=}")
         return [f for f in mfiles if not f.path in p_files]
 
+    def get_contents(self,filename,branch):
+        try:
+            content = self._git_repo().get_contents(filename,ref=branch)
+        except Exception as e:
+            content = f"{filename} Error {e}" 
+        return content
+    
     def get_file_content(self,filename,branch):
         _logger.warning(f"{filename=} {branch=}")
         try:

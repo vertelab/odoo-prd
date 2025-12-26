@@ -3,6 +3,7 @@ from odoo.exceptions import UserError, ValidationError, AccessError
 import logging
 import filetype
 import base64
+from github.ContentFile import ContentFile
 
 _logger = logging.getLogger(__name__)
 
@@ -58,7 +59,7 @@ class OdooModuleFile(models.Model):
         ('controllers','Controllers'),
         ('data','Data'),
         ('manifest','Manifest'),
-        ('models','Model'),
+        ('models','Models'),
         ('report','Report'),
         ('security','Security'),
         ('static','Static'),
@@ -77,9 +78,10 @@ class OdooModuleFile(models.Model):
             ('scss','SCSS'),
             ('bin','Binary')
         ],
-        string='Content Type',
         compute='_compute_content_type',
-        store=True
+        store=True,           
+        inverse='_inverse_content_type',
+        string='Content Type',
     )
     content = fields.Text(string='Content')
     content_js = fields.Text(string='Content',related="content",readonly=False)
@@ -91,7 +93,7 @@ class OdooModuleFile(models.Model):
     content_bin = fields.Binary()
     content_mime = fields.Char(string='Mime')
 
-    @api.depends('name')
+    @api.depends('name','content_mime')
     def _compute_content_type(self):
         for rec in self:
             if not rec.name:
@@ -100,34 +102,42 @@ class OdooModuleFile(models.Model):
             ext = rec.name.lower().split('.')[-1]
             if ext in dict(self._fields['content_type'].selection).keys():
                 rec.content_type = ext
+            elif rec.content_mime != 'text/plain':
+                rec.content_type = 'bin'
             else:
                 rec.content_type = 'txt'
+    def _inverse_content_type(self):
+        for rec in self:
+            rec.content_type = rec.content_type
 
-
-    def get_modules_files(self,module):
-        for file in module.repo_id.get_files(self.branch_id.name):
-            self._create_update(file,module)
-
+    def get_modules_files(self):
+        for file in self:
+            module = file.module_id
+            _logger.warning(f"{module.technical_name}/{file.name}")
+            f = module.repo_id.get_contents(f"{module.technical_name}/{file.name}",module.branch_id.name)
+            if isinstance(f, ContentFile):
+                file._create_update(f,module)
+            else:
+                raise UserError(f"{f}")
+            
+            
     @api.model
-    def _create_update(self,file,module):
+    def _create_update(self,file: ContentFile,module):
         _logger.warning(f"{file=} {module.name=}")
         ft = 'other'
         for file_type in dict(self._fields['file_type'].selection).keys():
             if file_type in file.path:
                 ft = file_type
-        ct = filetype.guess(base64.b64decode(file.content))
-        _logger.warning(f"{ct=}")
-        _logger.warning(f"{ct=} {ct and ct.extension=} {ct and ct.mime=}")
-        content_mime = ct.mime if ct else ('image/svg+xml' if "<svg" in getattr(file, 'decoded_content', '').decode('utf-8') else 'text/plain')
-        ct = 'bin' if content_mime != 'text/plain' else ct
+        mime = filetype.guess(base64.b64decode(file.content))
+        content_mime = mime.mime if mime else ('image/svg+xml' if "<svg" in getattr(file, 'decoded_content', '').decode('utf-8') else 'text/plain')
+        
         vals = {
             'name': '/'.join(file.path.split('/')[1:]),
             'module_id': module.id,
             'file_type': ft,
-            'content': file.decoded_content.decode('utf-8') if ct != 'bin' else False,
-            'content_bin': file.content if ct == 'bin' else False,
+            'content': file.decoded_content.decode('utf-8') if content_mime == 'text/plain' else False,
+            'content_bin': file.content if content_mime != 'text/plain' else False,
             'content_mime': content_mime,
-            'content_type': ct,
             'git_url': file.download_url, 
         }
         _logger.warning(f"{vals=}")
