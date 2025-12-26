@@ -108,6 +108,9 @@ class OdooModuleFile(models.Model):
         string='View Types',
         help=""
     )
+    related_model = fields.Many2one(comodel_name='prd.odoo_module.file',string="Related Model",help="",domain="[('module_id','=',module_id),('file_type','=','models')]") 
+    views_prompt = fields.Text(string='Prompt')
+    content_related_model =  fields.Text(string='Content',compute="_compute_related_model",inverse="_inverse_related_model",store=True)
 
     @api.depends('name','content_mime')
     def _compute_content_type(self):
@@ -125,6 +128,15 @@ class OdooModuleFile(models.Model):
     def _inverse_content_type(self):
         for rec in self:
             rec.content_type = rec.content_type
+            
+    @api.depends('related_model')
+    def _compute_related_model(self):
+        for rec in self:
+            if rec.related_model:
+                rec.content_related_model = rec.related_model.content
+    def _inverse_related_model(self):
+        for rec in self:
+            rec.related_model.content = rec.content_related_model
 
     def get_modules_files(self):
         for file in self:
@@ -136,7 +148,12 @@ class OdooModuleFile(models.Model):
             else:
                 raise UserError(f"{f}")
             
-            
+         
+    def views_prompt_do(self):
+        pass
+        
+        
+        
     @api.model
     def _create_update(self,file: ContentFile,module):
         _logger.warning(f"{file=} {module.name=}")

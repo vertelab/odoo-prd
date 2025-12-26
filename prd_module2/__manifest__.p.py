@@ -36,9 +36,10 @@
     'license': 'AGPL-3',
     'contributor': '',
     'maintainer': 'Vertel AB',
-    'depends': ['prd',],
+    'depends': ['prd','ai_agent'],
     'data': [
         'data/server_action.xml',
+        'data/ai_data.xml',
         # ~ 'data/odoo_branches.xml',
         # ~ 'data/odoo_library.xml',
         # ~ 'data/odoo_licence.xml',
