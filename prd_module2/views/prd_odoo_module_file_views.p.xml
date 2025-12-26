@@ -66,6 +66,11 @@
           </group>
           <notebook>
             <page string="Content" id="content">
+              
+                <group invisible="not (file_type in ['views','wizards'] and content_type == 'xml') " >
+                    <field name="odoo_view_ids" widget="many2many_tags" />
+                </group>
+                
                 <group>
               <field name="content_py"   nolabel="1" widget="ace" options="{'mode': 'python'}"     invisible="content_type != 'py'"/>
               <field name="content_xml"  nolabel="1" widget="ace" options="{'mode': 'qweb'}"       invisible="content_type != 'xml'"/>
@@ -101,6 +106,8 @@
             <div class="oe_kanban_global_click">
               <div class="oe_kanban_details">
                 <field name="file_type" widget="badge" class="oe_kanban_badge" />
+                <field name="content_type" widget="badge" class="oe_kanban_badge" />
+                <field name="content_mime" widget="badge" class="oe_kanban_badge" />
                 <strong class="oe_kanban_title">
                   <span>
                     <field name="name" />
@@ -173,7 +180,11 @@
       </div>
       <field name="repo_id" position="after">
         <field name="branch_id" />
+        <field name="banner_file" widget="image" nolabel="1"/>
       </field>
+       <field name="icon_image" position="replace">
+           <field name="icon_file" widget="image" nolabel="1" />
+           </field>
     </field>
   </record>
   <!-- Menu -->

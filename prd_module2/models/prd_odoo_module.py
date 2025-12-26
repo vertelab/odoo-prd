@@ -13,6 +13,17 @@ class OdooModule(models.Model):
     files_count = fields.Integer(string="Total Files", compute='_compute_file_counts',store=True)
     file_ids = fields.One2many('prd.odoo_module.file', 'module_id', string="Files")
     branch_id = fields.Many2one(comodel_name='prd.odoo_branch',string="Branch",help="")
+    icon_file = fields.Binary(compute="_get_file_image")
+    banner_file = fields.Binary(compute="_get_file_image")
+
+    
+    @api.depends('file_ids')
+    def _get_file_image(self):
+        for record in self:
+            icon_file = record.file_ids.filtered(lambda f: f.name == 'static/description/icon.png')
+            record.icon_file = icon_file.content_bin if icon_file else False
+            banner_file = record.file_ids.filtered(lambda f: f.name == 'static/description/banner.png')
+            record.banner_file = banner_file.content_bin if banner_file else False
     
     @api.depends('file_ids')
     def _compute_file_counts(self):
@@ -92,6 +103,11 @@ class OdooModuleFile(models.Model):
     content_xml = fields.Text(string='Content',related="content",readonly=False)
     content_bin = fields.Binary()
     content_mime = fields.Char(string='Mime')
+    odoo_view_ids = fields.Many2many(
+        comodel_name='prd.odoo_view_type',
+        string='View Types',
+        help=""
+    )
 
     @api.depends('name','content_mime')
     def _compute_content_type(self):

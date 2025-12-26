@@ -33,6 +33,7 @@ class OdooModuleMixin(models.AbstractModel):
     description_html = fields.Html(string='Index')
     icon = fields.Char(string='Icon URL')
     icon_image = fields.Binary(string='Icon', compute='_get_icon_image')
+    banner_image = fields.Binary(string='Banner', compute='_get_icon_image')
     icon_flag = fields.Char(string='Flag', compute='_get_icon_image',  inverse='_inverse_icon_flag')
     licence_id = fields.Many2one(comodel_name='prd.odoo_licence', string="Licence", help="")
     maintainer = fields.Char('Maintainer')
@@ -88,6 +89,7 @@ class OdooModuleMixin(models.AbstractModel):
                     module.icon_image = ''
             countries = self.module_id.get_module_info(module.name).get('countries', [])
             country_code = len(countries) == 1 and countries[0]
+            module.banner_image = False
             # ~ module.icon_flag = get_flag(country_code.upper()) if country_code else ''
 
 

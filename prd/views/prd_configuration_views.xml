@@ -204,45 +204,45 @@
         </header>
         <sheet>
           <div class="oe_button_box" name="button_box" groups="base.group_user" />
+          
           <group>
             <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
+                    <field name="icon_image" nolabel="1" widget="image" class="oe_avatar"   />
+
             <div class="oe_title">
               <h1 class="d-flex flex-row">
                 <field name="name" options="{'line_breaks': False}" widget="text" class="flex-grow-1 o_text_overflow" placeholder="e.g. Office Party" style="width: 32em; font-size: 1.1em; xline-height: 2;" />
               </h1>
+               <field name="technical_name" required="1" />
             </div>
           </group>
           <group>
             <group id="c1">
-              <field name="name" required="1" />
-              <field name="technical_name" required="1" />
-              <field name="module_id" />
-              <field name="application" />
-              <field name="author" placeholder="Author..." />
+<field name="summary" />
+<field name="app_category_id" />
+<field name="author" />
+<field name="repo_id" />
+<field name="branch_id" />
+
+   
+                
+          
               <field name="repo_id" />
             </group>
-            <group id="c2" name="c2" string="General">
+            <group id="c2" name="c2" string="Technical">
               <field name="application" help="Is this an application?" />
               <field name="auto_install" help="Auto-installation when the modules that this module depends on is installed" />
-              <field name="app_category_id" help="Category" />
               <field name="licence_id" />
               <field name="maintainer" placeholder="Maintainer..." />
               <field name="website" placeholder="https://example.com" widget="url" />
-              <field name="repo_id" string="Repository" />
-              <field name="description_html" string="Beskrivning" placeholder="Detaljerad beskrivning..." />
+                    <field name="module_id" string="Modul (ir.module.module)" />
               <field name="contributors" placeholder="Bidragsgivare (en per rad)..." />
+        
             </group>
-            <group id="technical" string="Technical">
-              <field name="module_id" string="Modul (ir.module.module)" />
-              <field name="technical_name" string="Tekniskt namn" readonly="1" />
-<!--
-              <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" />
--->
-              <field name="dependency_ids"  >
-                  <list editable="bottom"><field name="dep_module_id" /></list>
-              </field>
-
-            </group>
+            
+          </group>
+          <group>
+          <field name="banner_image" />
           </group>
           <notebook position="inside">
             <page string="Index-file" id="index">
@@ -273,6 +273,11 @@
                   <field name="perm_create" />
                   <field name="perm_unlink" />
                 </list>
+              </field>
+            </page>
+            <page string="Dependencies" name="dependency">
+             <field name="dependency_ids"  >
+                  <list editable="bottom"><field name="dep_module_id" /></list>
               </field>
             </page>
           </notebook>
