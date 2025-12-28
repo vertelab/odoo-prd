@@ -70,6 +70,7 @@
               </group>
               <group invisible="not (file_type in ['views','wizards'] and content_type == 'xml') ">
                 <button name="views_prompt_do" string="Do" type="object" />
+                <field name="views_replace" />
                 <field name="views_prompt" />
               </group>
               <group>

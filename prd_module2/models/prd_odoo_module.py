@@ -1,11 +1,88 @@
+from github.ContentFile import ContentFile
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError, AccessError
-import logging
-import filetype
 import base64
-from github.ContentFile import ContentFile
+import filetype
+import logging
+import markdown
+import ast
+import re
 
 _logger = logging.getLogger(__name__)
+
+
+
+VIEW_FIELD_WIDGETS = """
+| Widget | Description | Suitable Field Types | Odoo Versions |
+| :-- | :-- | :-- | :-- |
+| attachment_image | Displays attachments as images | binary | 16,17,18,19 |
+| badge | Colored badges for status display | char,selection | 16,17,18,19 |
+| badge_selection | Badge-style selection display | many2one,selection | 16,17,18,19 |
+| badge_selection_with_filter | Badge with filtering capabilities | many2one | 17,18,19 |
+| binary | File upload and download | binary | 14,15,16,17,18,19 |
+| boolean | Standard checkbox | boolean | 14+ |
+| boolean_favorite | Star icon for favorites | boolean | 16,17,18,19 |
+| boolean_icon | Icon representation of boolean | boolean | 15+ |
+| boolean_toggle | Toggle switch for boolean | boolean | 16,17,18,19 |
+| char | Text input field | char | 14+ |
+| color | Color display | integer,char | 14+ |
+| color_picker | Color picker interface | char,integer | 16+ |
+| contact_image | Contact profile image | binary,image | 17,18,19 |
+| contact_statistics | Contact statistics display | many2one | 18,19 |
+| copy_clipboard | Copy to clipboard button | char,text | 15+ |
+| datetime | Date and time picker | datetime | 14+ |
+| domain | Domain editor | char | 16+ |
+| email | Email link with mailto | char | 14+ |
+| field_selector | Field selection dropdown | char | 17+ |
+| float | Decimal number input | float | 14+ |
+| float_factor | Multiplier/percentage factor | float | 14+ |
+| float_time | Time in decimal hours | float | 14+ |
+| float_toggle | Toggle with float values | float | 16+ |
+| gauge | Gauge chart visualization | float,integer | 15+ |
+| google_slide_viewer | Google Slides viewer | char,url | 16+ |
+| handle | Drag handle for reordering | integer | 14+ |
+| html | Rich text/HTML editor | html | 14+ |
+| iframe_wrapper | iFrame embedding wrapper | char | 16+ |
+| image | Image display and upload | binary | 14+ |
+| image_url | Image from external URL | char,url | 15+ |
+| integer | Integer number input | integer | 14+ |
+| ir_ui_view_ace | ACE editor for view XML | text | 16+ |
+| journal_dashboard_graph | Journal dashboard graph | many2one | 15+ |
+| json | JSON data editor | json | 17+ |
+| json_checkboxes | JSON as checkbox list | json | 18,19 |
+| kanban_color_picker | Kanban color picker | integer | 18,19 |
+| label_selection | Selection with labels | selection | 15+ |
+| many2many_binary | Many2many file attachments | many2many(binary) | 15+ |
+| many2many_checkboxes | Many2many as checkboxes | many2many | 16+ |
+| many2many_tags | Tag-style many2many | many2many | 14+ |
+| many2many_tags_avatar | Tags with user avatars | many2many | 17+ |
+| many2one | Standard many2one dropdown | many2one | 14+ |
+| many2one_avatar | Many2one with avatar | many2one | 16+ |
+| many2one_barcode | Many2one with barcode scan | many2one | 16+ |
+| many2one_reference | Dynamic model reference | reference | 15+ |
+| many2one_reference_integer | Integer-based reference | reference | 16+ |
+| monetary | Currency amount display | monetary | 14+ |
+| pdf_viewer | PDF document viewer | binary | 15+ |
+| percent_pie | Percentage pie chart | float | 15+ |
+| percentage | Percentage input | float | 14+ |
+| phone | Phone link with tel protocol | char | 14+ |
+| priority | Priority stars rating | selection | 14+ |
+| progress_bar | Progress bar visualization | float,integer | 14+ |
+| properties | Dynamic properties editor | properties | 18,19 |
+| radio | Radio button selection | selection | 14+ |
+| reference | Reference field to any model | reference | 14+ |
+| remaining_days | Days remaining counter | integer,float | 16+ |
+| selection | Dropdown selection | selection | 14+ |
+| signature | Signature pad drawing | binary | 15+ |
+| stat_info | Statistical information display | char,many2one | 16+ |
+| state_selection | State-based selection | selection | 16+ |
+| statusbar | Horizontal status bar | selection | 14+ |
+| text | Multi-line text area | text | 14+ |
+| timezone_mismatch | Timezone mismatch warning | datetime | 17+ |
+| url | Clickable URL link | char | 14+ |
+| x2many | Embedded relational lists | one2many,many2many | 14+ |
+"""
+
 
 class OdooModule(models.Model):
     _inherit = 'prd.odoo_module'
@@ -57,6 +134,9 @@ class OdooModule(models.Model):
     def get_files(self):
         for m in self:
             self.env['prd.odoo_module.file'].get_modules_files(m)
+
+
+
 
 class OdooModuleFile(models.Model):
     _name = 'prd.odoo_module.file'
@@ -110,7 +190,11 @@ class OdooModuleFile(models.Model):
     )
     related_model = fields.Many2one(comodel_name='prd.odoo_module.file',string="Related Model",help="",domain="[('module_id','=',module_id),('file_type','=','models')]") 
     views_prompt = fields.Text(string='Prompt')
+    views_replace = fields.Boolean(string='Replace',help="replace code or add to the bottom")
+    views_fields_widgets = fields.Text(string='Fields Widgets',default=VIEW_FIELD_WIDGETS)
     content_related_model =  fields.Text(string='Content',compute="_compute_related_model",inverse="_inverse_related_model",store=True)
+    views_instructions = fields.Text(string='Instructions for choosen views',compute="_views_instructions")
+    branch_name = fields.Char(string='module_id.branch_id.name',)
 
     @api.depends('name','content_mime')
     def _compute_content_type(self):
@@ -147,10 +231,73 @@ class OdooModuleFile(models.Model):
                 file._create_update(f,module)
             else:
                 raise UserError(f"{f}")
+                
+                
+    def _views_instructions(self):
+        vi = "### VIEWS INSTRUCTIONS\n" + '\n'.join([
+            f"View type {v.name}: special instructions for this view {v.prompt}" 
+            for v in self.odoo_view_ids
+        ])
+        
+        models = self.identify_all_odoo_models()
+        raise UserError(f"{models=}")
+        
+        for model_info in models.get('_inherit', []):
+            fields = '\n'.join([f"{f.name}: {f.type}" for f in model_info.get('fields', [])])
+            vi += f"""### INHERITED MODELS - USE INHERITED VIEWS
+    - **ALWAYS** inherit from standard views with correct names
+
+    #### MODEL: {model_info['model_name']}
+    {model_info.get('description', '')}
+
+    {fields}
+
+    Use appropriate widgets"""
+        
+        for model_info in models.get('_name', []):
+            fields = '\n'.join([f"{f.name}: {f.type}" for f in model_info.get('fields', [])])
+            vi += f"""### NEW MODELS - BUILD NEW VIEWS, RECORDS, ACTIONS AND MENU
+
+    #### MODEL: {model_info['model_name']}
+    {model_info.get('description', '')}
+
+    {fields}
+
+    Use appropriate widgets"""
             
-         
+            if model_info.get('has_chatter') and self.odoo_view_ids.filtered(lambda f: f.code == 'form'):
+                vi += "\nAdd chatter to the form view\n"
+        
+        self.views_instructions = vi
+
+    
+    
+
     def views_prompt_do(self):
-        pass
+        quest = self.env.ref('prd_module2.build_views_bot_28')
+        result = quest.run(record=self)
+        # ~ raise UserError(f"{self.views_prompt=} {self=} {result=}")
+        if result:
+            ai_messages = quest._get_last_ai_message(result.get('result', {}).get('messages', False))
+            if self.views_replace:
+                self.content =  ai_messages.content
+            else:
+                self.content +=  ai_messages.content
+            # ~ raise UserError(f"{ai_messages=}")
+            # ~ if not ai_messages:
+                # ~ raise UserError(_("OBS: An error occurred, you should contact administrator to look into the quest"))
+
+            # ~ if ai_quest.debug:
+                # ~ answer = markdown.markdown(ai_messages.content)
+            # ~ else:
+                # ~ answer = re.sub(
+                    # ~ r'<think>.*?</think>', '', markdown.markdown(ai_messages.content), flags=re.DOTALL)
+
+            # ~ return answer
+        # ~ raise UserError(_("OBS: An error occurred, you should contact administrator to look into the quest"))
+
+        
+        # ~ pass
         
         
         
@@ -248,6 +395,83 @@ class OdooModuleFile(models.Model):
         writer.write_file("", "__manifest__.py", self.create_manifest(data))
 
         return data
+
+    def identify_all_odoo_models(self) -> dict:
+        """
+        Finds all Odoo models referenced or defined in the code.
+        
+        Args:
+            code (str): Python source code containing Odoo model definitions
+            
+        Returns:
+            dict: Dictionary with model information:
+                {
+                    '_name': [list_of_new_models],
+                    '_inherit': [list_of_inherited_models]
+                }
+                Each model contains:
+                - 'model_name': str (technical model name)
+                - 'has_chatter': bool
+                - 'description': str | None (class docstring)
+        """
+        
+        def has_mail_thread(code: str, model_name: str) -> bool:
+            """
+            Detects if model has chatter support via mail.thread or mail.activity.mixin inheritance.
+            """
+            # Direct _inherit = 'mail.thread' or 'mail.activity.mixin'
+            direct_inherit = re.search(
+                rf"_inherit\s*=\s*['\"]mail\.(thread|activity\.mixin)['\"]", 
+                code
+            )
+            if direct_inherit:
+                return True
+            
+            # Multiple inheritance in class definition
+            class_pattern = rf'class\s+\w+\s*\([^)]*[\'"]{re.escape(model_name)}[\'"]'
+            class_match = re.search(class_pattern, code, re.MULTILINE | re.DOTALL)
+            
+            if class_match:
+                # Look for mail.thread or mail.activity.mixin in inheritance tuple
+                inherit_pattern = r"['\"]mail\.(thread|activity\.mixin)['\"]"
+                if re.search(inherit_pattern, class_match.group(0)):
+                    return True
+            
+            # Check _inherit list/tuple containing mail.thread
+            inherit_list_pattern = r"_inherit\s*=\s*\[(?:.*?['\"]mail\.(thread|activity\.mixin)['\"].*?)*\]"
+            if re.search(inherit_list_pattern, code):
+                return True
+            
+            return False
+
+        def extract_fields(code: str, model_name: str) -> list[dict]:
+            fields = []
+            fields_re = re.findall(r'^(\s*)([a-z_][a-z0-9_]*)?\s*=\s*fields\.([A-Za-z_][a-zA-Z0-9_]*)', code, re.MULTILINE)
+            for tab,name,ftype in fields_re:
+                fields.append(f"{name}: {ftype}")
+            return fields
+        
+        models = {'_name': [], '_inherit': []}
+        code = self.related_model.content
+        
+        name_matches = re.findall(r"_name\s*=\s*['\"]([^'\"]+)['\"]", code)
+        inherit_matches = re.findall(r"_inherit\s*=\s*['\"]([^'\"]+)['\"]", code)
+                
+        for model in list(set(name_matches + inherit_matches)):
+            docstring_match = re.search(
+                rf'class\s+\w+\s*\([^)]*[\'"]{re.escape(model)}[\'"]\s*:\s*"""\s*(.*?)\s*"""',
+                code, re.DOTALL | re.MULTILINE
+            )
+            models['_name' if model in name_matches else '_inherit'].append(
+                        {
+                            'model_name': model,
+                            'description': docstring_match.group(1).strip() if docstring_match else None,
+                            'fields': extract_fields(code, model),
+                            'has_chatter': has_mail_thread(code, model),
+                        }
+                    )
+        
+        return models
 
 
             

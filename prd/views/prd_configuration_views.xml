@@ -103,6 +103,7 @@
             <field name="name" required="1" />
             <field name="code" required="1" />
             <field name="description" />
+            <field name="prompt" />
             <field name="active" />
           </group>
         </sheet>
