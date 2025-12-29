@@ -194,7 +194,7 @@ class OdooModuleFile(models.Model):
     views_fields_widgets = fields.Text(string='Fields Widgets',default=VIEW_FIELD_WIDGETS)
     content_related_model =  fields.Text(string='Content',compute="_compute_related_model",inverse="_inverse_related_model",store=True)
     views_instructions = fields.Text(string='Instructions for choosen views',compute="_views_instructions")
-    branch_name = fields.Char(string='module_id.branch_id.name',)
+    branch_name = fields.Char(string='module_id.branch_id.name',related="module_id.branch_id.name")
 
     @api.depends('name','content_mime')
     def _compute_content_type(self):
@@ -235,22 +235,22 @@ class OdooModuleFile(models.Model):
                 
     def _views_instructions(self):
         vi = "### VIEWS INSTRUCTIONS\n" + '\n'.join([
-            f"View type {v.name}: special instructions for this view {v.prompt}" 
-            for v in self.odoo_view_ids
-        ])
+                f"View type {v.name}: special instructions for this view {v.prompt}" 
+                for v in self.odoo_view_ids
+            ])
         
         models = self.identify_all_odoo_models()
-        raise UserError(f"{models=}")
-        
         for model_info in models.get('_inherit', []):
-            fields = '\n'.join([f"{f.name}: {f.type}" for f in model_info.get('fields', [])])
+            fields = '\n'.join(model_info.get('fields', []))
             vi += f"""### INHERITED MODELS - USE INHERITED VIEWS
     - **ALWAYS** inherit from standard views with correct names
 
-    #### MODEL: {model_info['model_name']}
+    #### MODEL: {model_info['model_name']} (inherit)
     {model_info.get('description', '')}
-
+    Fields in the model
     {fields}
+
+    use these fields in these views: {','.join([v.name for v in self.odoo_view_ids])}
 
     Use appropriate widgets"""
         
@@ -258,9 +258,9 @@ class OdooModuleFile(models.Model):
             fields = '\n'.join([f"{f.name}: {f.type}" for f in model_info.get('fields', [])])
             vi += f"""### NEW MODELS - BUILD NEW VIEWS, RECORDS, ACTIONS AND MENU
 
-    #### MODEL: {model_info['model_name']}
+    #### MODEL: {model_info['model_name']} 
     {model_info.get('description', '')}
-
+    Fields in the model
     {fields}
 
     Use appropriate widgets"""
@@ -283,6 +283,8 @@ class OdooModuleFile(models.Model):
                 self.content =  ai_messages.content
             else:
                 self.content +=  ai_messages.content
+        else:
+            raise UserError(_(f"OBS: An error occurred, you should contact administrator to look into the quest {result=}"))
             # ~ raise UserError(f"{ai_messages=}")
             # ~ if not ai_messages:
                 # ~ raise UserError(_("OBS: An error occurred, you should contact administrator to look into the quest"))
