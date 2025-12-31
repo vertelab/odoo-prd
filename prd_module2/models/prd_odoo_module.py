@@ -242,7 +242,7 @@ class OdooModuleFile(models.Model):
         models = self.identify_all_odoo_models()
         for model_info in models.get('_inherit', []):
             fields = '\n'.join(model_info.get('fields', []))
-            vi += f"""### INHERITED MODELS - USE INHERITED VIEWS
+            vi += f"""\n\n### INHERITED MODELS - USE INHERITED VIEWS
     - **ALWAYS** inherit from standard views with correct names
 
     #### MODEL: {model_info['model_name']} (inherit)
@@ -256,7 +256,7 @@ class OdooModuleFile(models.Model):
         
         for model_info in models.get('_name', []):
             fields = '\n'.join([f"{f.name}: {f.type}" for f in model_info.get('fields', [])])
-            vi += f"""### NEW MODELS - BUILD NEW VIEWS, RECORDS, ACTIONS AND MENU
+            vi += f"""\n### NEW MODELS - BUILD NEW VIEWS, RECORDS, ACTIONS AND MENU
 
     #### MODEL: {model_info['model_name']} 
     {model_info.get('description', '')}
