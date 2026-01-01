@@ -189,6 +189,7 @@ class OdooModuleFile(models.Model):
         help=""
     )
     related_model = fields.Many2one(comodel_name='prd.odoo_module.file',string="Related Model",help="",domain="[('module_id','=',module_id),('file_type','=','models')]") 
+    related_views_ids = fields.Many2one(comodel_name='prd.odoo_module.file',string="Related Model",help="",compute="_related_views_ids") 
     views_prompt = fields.Text(string='Prompt')
     views_replace = fields.Boolean(string='Replace',help="replace code or add to the bottom")
     views_fields_widgets = fields.Text(string='Fields Widgets',default=VIEW_FIELD_WIDGETS)
@@ -233,6 +234,13 @@ class OdooModuleFile(models.Model):
                 raise UserError(f"{f}")
                 
                 
+    def _related_views_ids(self):
+        view_ids = self.mapped('prd_id.dependency_ids.dep_module_id.file_ids').filtered(
+                                            lambda f: f.file_type == 'views'
+                                    ).ids
+        for rec in self:
+            rec.related_views_ids = [(6, 0, view_ids)]
+                
     def _views_instructions(self):
         
         
@@ -240,8 +248,11 @@ class OdooModuleFile(models.Model):
                 f"View type {v.name}: special instructions for this view {v.prompt}" 
                 for v in self.odoo_view_ids
             ])
-        
-        views_dependent = '\n'.join([self.prd_id.dependent_ids.mapped('file_ids').filered(lambda f: f.file_type == 'views').mapped('content')])
+        dependency_ids = self.prd_id.dependency_ids.mapped('dep_module_id')
+        file_ids = dependency_ids.mapped('file_ids').filered(lambda f: f.file_type == 'views') if dependency_ids else None
+        content_list = file_ids.mapped('content') if file_ids else []
+        views_dependent = '\n'.join(content_list)
+        raise UserError(f"{self.related_views_ids=} {dependency_ids=}{file_ids=}{content_list=}{views_dependent=}")
         if len(views_dependent) > 0:
             views_dependent = f"\n\n### Views from dependent modules\n\n{views_dependent}"
         
