@@ -182,11 +182,11 @@ class OdooRepo(models.Model):
     def git_odoo_branches(self):
         g = Github(auth=Auth.Token(self._get_auth_token().strip()))
         try:
-            repo = g.get_repo(f"{self.owner}/{self.name}")
+            repo_name = f"odoo/odoo" if self.owner == 'odoo' else f"{self.owner}/{self.name}"
+            repo = g.get_repo(repo_name)
         except Exception as e:
-            _logger.warning(f"Could not read {self.owner}/{self.name} {e}")
+            _logger.warning(f"Could not read {repo_name} {e}")
             return None
-            
         for name in sorted([b.name for b in repo.get_branches() if re.match(r"^\d*[.]0$", b.name)], key=float):
             b = self.env['prd.odoo_branch'].search([('name','=',name)],limit=1)
             if not b:
@@ -196,30 +196,38 @@ class OdooRepo(models.Model):
     def _git_repo(self):
         g = Github(auth=Auth.Token(self._get_auth_token().strip()))
         try:
-            return g.get_repo(f"{self.owner}/{self.name}")
+            repo_name = f"odoo/odoo" if self.owner == 'odoo' else f"{self.owner}/{self.name}"
+            repo = g.get_repo(repo_name)
         except Exception as e:
-            _logger.warning(f"Could not read {self.owner}/{self.name} {e}")
-            return None
+            _logger.warning(f"Could not read {repo_name} {e}")
+            raise
+        return repo
 
     def get_files(self,filename, branch="14.0"):
         mfiles = []
+        if self.owner == 'odoo':
+            filename = f"addons/{filename}"
         try: 
             files = self._git_repo().get_contents(filename, ref=branch)
             if not isinstance(files, list):
                 files=[files]
             _logger.warning(f"Read {files=}")
         except Exception as e:
-            _logger.warning(f"Could not read {filename=} {branch=} {e}")
+            _logger.warning(f"Could not read  {filename=} {branch=} {self._git_repo()=} {e}")
+            raise
             return []
         while files:
             file_content = files.pop(0)
+            pos = 1 if self.owner != 'odoo' else 2
+            if file_content.type == "dir" and "i18n" == path_list[pos] if len(path_list := file_content.path.split('/')) > pos else path_list[pos-1]:
+                continue
             if file_content.type == "dir":
                 files.extend(self._git_repo().get_contents(file_content.path,ref=branch))
             elif file_content.path not in ['.gitignore']:
                 mfiles.append(file_content)
         p_files = set([f.path.replace('.p.','.') for f in mfiles if '.p.' in f.path and (f.path.endswith('.p.py') or f.path.endswith('.p.xml'))])
-        _logger.warning(f"{mfiles=} {p_files=}")
-        return [f for f in mfiles if not f.path in p_files]
+        # ~ _logger.warning(f"{mfiles=} {p_files=}\n\n{[f for f in mfiles if not f.path in p_files]=}")
+        return [f for f in mfiles if not f.path in list(p_files)]
 
     def get_contents(self,filename,branch):
         try:

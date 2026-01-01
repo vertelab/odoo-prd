@@ -113,7 +113,7 @@ class OdooModule(models.Model):
             raise UserError(_("Missing repo, branch or owner"))
         files = self.repo_id.get_files(self.technical_name,self.branch_id.name)
         self.message_post(
-            body=_(f"Get Module files {files=}"),
+            body=_(f"Get Module files {len(files)}"),
             subtype_xmlid="mail.mt_note",  # intern anteckning
         )
         for file in files:
@@ -234,10 +234,16 @@ class OdooModuleFile(models.Model):
                 
                 
     def _views_instructions(self):
+        
+        
         vi = "### VIEWS INSTRUCTIONS\n" + '\n'.join([
                 f"View type {v.name}: special instructions for this view {v.prompt}" 
                 for v in self.odoo_view_ids
             ])
+        
+        views_dependent = '\n'.join([self.prd_id.dependent_ids.mapped('file_ids').filered(lambda f: f.file_type == 'views').mapped('content')])
+        if len(views_dependent) > 0:
+            views_dependent = f"\n\n### Views from dependent modules\n\n{views_dependent}"
         
         models = self.identify_all_odoo_models()
         for model_info in models.get('_inherit', []):
@@ -251,6 +257,9 @@ class OdooModuleFile(models.Model):
     {fields}
 
     use these fields in these views: {','.join([v.name for v in self.odoo_view_ids])}
+    
+    ### Views from dependent modules
+    {views_dependent}
 
     Use appropriate widgets"""
         
@@ -274,7 +283,8 @@ class OdooModuleFile(models.Model):
     
 
     def views_prompt_do(self):
-        quest = self.env.ref('prd_module2.build_views_bot_28')
+        # ~ quest = self.env.ref('prd_module2.build_views_bot_28')	__custom__.rpd
+        quest = self.env.ref('__custom__.rpd')	
         result = quest.run(record=self)
         # ~ raise UserError(f"{self.views_prompt=} {self=} {result=}")
         if result:
@@ -307,8 +317,9 @@ class OdooModuleFile(models.Model):
     def _create_update(self,file: ContentFile,module):
         _logger.warning(f"{file=} {module.name=}")
         ft = 'other'
+        pos = 1 if module.repo_id.owner != 'odoo' else 2
         for file_type in dict(self._fields['file_type'].selection).keys():
-            if file_type in file.path:
+            if file_type in path_list[pos] if len(path_list := file.path.split('/')) > pos else path_list[pos-1]:
                 ft = file_type
         mime = filetype.guess(base64.b64decode(file.content))
         content_mime = mime.mime if mime else ('image/svg+xml' if "<svg" in getattr(file, 'decoded_content', '').decode('utf-8') else 'text/plain')
