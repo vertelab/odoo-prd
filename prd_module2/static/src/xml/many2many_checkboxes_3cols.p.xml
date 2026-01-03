@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="FieldMany2ManyCheckBoxes3Cols" inherit_id="web.FieldMany2ManyCheckBoxes">
+        <xpath expr="//div[hasclass('o_field_many2many_checkboxes')]" position="attributes">
+            <attribute name="class">o_field_many2many_checkboxes row</attribute>
+            <attribute name="style">column-count: 3; column-gap: 20px; -moz-column-count: 3; -webkit-column-count: 3;</attribute>
+        </xpath>
+    </template>
+</odoo>

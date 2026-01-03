@@ -144,7 +144,7 @@ class OdooModuleFile(models.Model):
     
     name = fields.Char(string='Name', trim=True, )
     module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Odoo Module",help="") 
-    prd_id = fields.Many2one(comodel_name='prd.document',string="Odoo Module",help="") 
+    prd_id = fields.Many2one(comodel_name='prd.document',string="PRD",help="") 
     git_url = fields.Char(string='Git', trim=True, )
     file_type = fields.Selection(selection=[
         ('controllers','Controllers'),
@@ -196,6 +196,31 @@ class OdooModuleFile(models.Model):
     content_related_model =  fields.Text(string='Content',compute="_compute_related_model",inverse="_inverse_related_model",store=True)
     views_instructions = fields.Text(string='Instructions for choosen views',compute="_views_instructions")
     branch_name = fields.Char(string='module_id.branch_id.name',related="module_id.branch_id.name")
+    related_view_file_ids = fields.Many2many(
+        comodel_name='prd.odoo_module.file',
+        relation='prd_odoo_module_file_related_views_rel',  # Unik relationstabell
+        column1='file_id',
+        column2='related_view_id',
+        string='Related View Files',
+        help='Välj relaterade vy-filer',
+        domain="[('file_type', '=', 'views')]" 
+    )
+    selectable_related_views = fields.Many2many(
+        'prd.odoo_module.file',
+        compute='_compute_selectable_related_views',
+        string='Selectable Related Views'
+    )
+
+    @api.depends('module_id', 'module_id.dependency_ids')
+    def _compute_selectable_related_views(self):
+        for rec in self:
+            dep_modules = rec.module_id.dependency_ids.mapped('dep_module_id')
+            view_ids = (dep_modules.file_ids).filtered(
+                lambda f: f.file_type == 'views'
+            ).ids
+            rec.selectable_related_views = [(6, 0, view_ids)]
+
+
 
     @api.depends('name','content_mime')
     def _compute_content_type(self):
@@ -235,7 +260,7 @@ class OdooModuleFile(models.Model):
                 
                 
     def _related_views_ids(self):
-        view_ids = self.mapped('prd_id.dependency_ids.dep_module_id.file_ids').filtered(
+        view_ids = self.mapped('module_id.dependency_ids.dep_module_id.file_ids').filtered(
                                             lambda f: f.file_type == 'views'
                                     ).ids
         for rec in self:
@@ -247,17 +272,23 @@ class OdooModuleFile(models.Model):
         vi = "### VIEWS INSTRUCTIONS\n" + '\n'.join([
                 f"View type {v.name}: special instructions for this view {v.prompt}" 
                 for v in self.odoo_view_ids
-            ])
-        dependency_ids = self.prd_id.dependency_ids.mapped('dep_module_id')
-        file_ids = dependency_ids.mapped('file_ids').filered(lambda f: f.file_type == 'views') if dependency_ids else None
-        content_list = file_ids.mapped('content') if file_ids else []
-        views_dependent = '\n'.join(content_list)
-        raise UserError(f"{self.related_views_ids=} {dependency_ids=}{file_ids=}{content_list=}{views_dependent=}")
-        if len(views_dependent) > 0:
-            views_dependent = f"\n\n### Views from dependent modules\n\n{views_dependent}"
-        
+            ])        
+
+        views_dependent = ""
         models = self.identify_all_odoo_models()
         for model_info in models.get('_inherit', []):
+            if len(self.related_view_file_ids)>0:
+                views_dependent = f"""
+### Views from dependent modules
+
+{'\n'.join(self.related_view_file_ids.mapped('content'))}
+
+* When inheriting a view, set the record id equal to the last part of the inherit_id ref, without the module name.
+         For example, if <field name="inherit_id" ref="project.edit_project" /> then write <record id="edit_project" model="ir.ui.view">.
+* Do not include the module name in the new view’s id.
+* In the name field, add a significant part from the module name {self.module_id.technical_name}
+
+"""
             fields = '\n'.join(model_info.get('fields', []))
             vi += f"""\n\n### INHERITED MODELS - USE INHERITED VIEWS
     - **ALWAYS** inherit from standard views with correct names
@@ -267,9 +298,9 @@ class OdooModuleFile(models.Model):
     Fields in the model
     {fields}
 
-    use these fields in these views: {','.join([v.name for v in self.odoo_view_ids])}
+    use these fields in these views: 
+    {','.join([v.name for v in self.odoo_view_ids])}
     
-    ### Views from dependent modules
     {views_dependent}
 
     Use appropriate widgets"""
@@ -497,6 +528,35 @@ class OdooModuleFile(models.Model):
         
         return models
 
+
+class PrdViewDependency(models.Model):
+    _name = 'prd.odoo_view.dependency'
+    _description = 'PRD Views dependencies for modules'
+
+    module_id = fields.Many2one(
+        comodel_name='prd.odoo_module',
+        string="Module",
+        help=""
+    )
+
+    file_id = fields.Many2one(
+        comodel_name='prd.odoo_module.file',
+        string="Depends",
+        help="View that is a dependency",
+    )
+
+    related_view_ids = fields.Many2many(
+        comodel_name='prd.odoo_module.file',
+        compute='_compute_related_view_ids',
+        string='Related views',
+    )
+
+    @api.depends('module_id', 'module_id.dependency_ids', 'module_id.dependency_ids.dep_module_id.file_ids')
+    def _compute_related_view_ids(self):
+        for rec in self:
+            view_ids = rec.mapped('module_id.dependency_ids.dep_module_id.file_ids')\
+                         .filtered(lambda f: f.file_type == 'views').ids
+            rec.related_view_ids = [(6, 0, view_ids)]
 
             
 class ProductRequirementDocument(models.Model):

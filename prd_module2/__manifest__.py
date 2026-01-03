@@ -53,6 +53,7 @@
         'views/prd_odoo_module_file_views.xml',
         # ~ 'views/users_views.xml',
     ],
+    'qweb': ['static/src/xml/many2many_checkboxes_3cols.xml'],
     'application': False,
 }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

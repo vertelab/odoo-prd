@@ -56,7 +56,8 @@
               <field name="file_type" widget="badge" />
               <field name="content_type" />
               <field name="content_mime" />
-              <field name="module_id" options="{'no_create': True}" invisible="1" />
+              <field name="module_id" options="{'no_create': True}" invisible="0" />
+              <field name="prd_id" options="{'no_create': True}" invisible="0" />
             </group>
             <group>
               <field name="git_url" widget="copy_clipboard" readonly="1" />
@@ -67,6 +68,22 @@
               <group invisible="not (file_type in ['views','wizards'] and content_type == 'xml') ">
                 <field name="odoo_view_ids" widget="many2many_tags" />
                 <field name="related_model" />
+                <field name="selectable_related_views" invisible="1"/>
+<!--
+                <field name="related_view_file_ids" 
+                        widget="many2many_checkboxes" 
+                        domain="[('id', 'in', selectable_related_views)]"
+                               class="o_field_many2many_checkboxes_3cols"
+       options="{'cols': 3}"
+                         />
+-->
+                <field name="related_view_file_ids" 
+                        widget="many2many_tags" 
+                        domain="[('id', 'in', selectable_related_views)]"
+                               class="o_field_many2many_checkboxes_3cols"
+       options="{'cols': 3}"
+                         />
+                
               </group>
               <group invisible="not (file_type in ['views','wizards'] and content_type == 'xml') ">
                 <button name="views_prompt_do" string="Do" type="object" />
