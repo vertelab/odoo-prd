@@ -48,7 +48,7 @@
         # ~ 'data/odoo_repo.xml',
         'security/ir.model.access.csv',
         # ~ 'views/prd_views.xml',
-        # ~ 'views/prd_function_views.xml',
+        'views/prd_function_views.xml',
         # ~ 'views/prd_configuration_views.xml',
         'views/prd_odoo_module_file_views.xml',
         # ~ 'views/users_views.xml',

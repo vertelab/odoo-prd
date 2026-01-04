@@ -5,50 +5,65 @@
     <field name="model">prd.function</field>
     <field name="inherit_id" ref="prd.view_prd_function_form" />
     <field name="arch" type="xml">
-      <div name="options" position="inside">
-        <span class="d-inline-flex">
-          <field name="has_models" invisible="implementation_type != 'module'" />
-          <label for="has_models" />
-        </span>
-        <span class="d-inline-flex">
-          <field name="has_views" invisible="implementation_type != 'module'" />
-          <label for="has_views"  invisible="implementation_type != 'module'"/>
-        </span>
-        <span class="d-inline-flex">
-          <field name="has_data" invisible="implementation_type != 'module'" />
-          <label for="has_data" invisible="implementation_type != 'module'"/>
-        </span>
-        <span class="d-inline-flex">
-          <field name="has_controllers" invisible="implementation_type != 'module'" />
-          <label for="has_controllers" invisible="implementation_type != 'module'"/>
-        </span>
-      </div>
+      <header position="inside">
+        <button name="create_mv_prompt" string="Create Model/View Prompt" type="object" class="oe_highlight" data-hotkey="m"  invisible="implementation_type != 'mv'" />
+        <button name="create_wizard_prompt" string="Create Wizard Prompt" type="object" class="oe_highlight" data-hotkey="m"  invisible="implementation_type != 'wizard'" />
+        <button name="create_report_prompt" string="Create Report Prompt" type="object" class="oe_highlight" data-hotkey="m"  invisible="implementation_type != 'report'" />
+      </header>
+      <group id="c1" position="inside">
+        <separator string="Data/tests" invisible="implementation_type != 'mv'"  />
+        <field name="data_file_id" invisible="implementation_type != 'mv'" />
+        <field name="tests_file_id" invisible="implementation_type != 'mv'" />
+      </group>
+      <group id="c2" position="inside">
+        <separator string="Models" invisible="implementation_type != 'mv'"  />
+        <field name="dependency_ids" widget="many2many_tags" invisible="implementation_type != 'mv'" />
+        <field name="model_file_id" invisible="implementation_type != 'mv'" />
+<!--
+        <field name="library_ids" invisible="implementation_type != 'mv'" />
+-->
+        <separator string="Views" invisible="implementation_type != 'mv'" />
+        <field name="views_file_id" invisible="implementation_type != 'mv'" />
+        <field name="odoo_view_ids" widget="many2many_tags" invisible="not (implementation_type == 'mv' and views_file_id)" />
+        <field name="selectable_related_views" invisible="1" />
+        <field name="views_file_related_ids" widget="many2many_tags" domain="[('id', 'in', selectable_related_views)]" invisible="not (implementation_type == 'mv' and views_file_id and dependency_ids)" />
+      </group>
       <notebook position="inside">
-        <page id="models" string="Models" invisible="not (implementation_type == 'module' and has_models)">
+        <page string="Model" id="model" invisible="not (implementation_type == 'mv' and model_file_id)">
+          <group invisible="implementation_type != 'mv'">
+            <button name="model_prompt_do" string="Create Models" type="object" />
+            <field name="prompt_model" />
+          </group>
           <group>
-            <field name="models_filename" />
-            <field name="models_src" />
+            <field name="content_model" nolabel="1" widget="ace" options="{'mode': 'python'}" />
           </group>
         </page>
-        <page id="views" string="Views" invisible="not (implementation_type == 'module' and has_views)">
+        <page string="Views" id="views" invisible="not (implementation_type == 'mv' and views_file_id)">
+          <group />
           <group>
-            <field name="odoo_view_ids" widget="many2many_tags" />
-            <field name="views_filename" placeholder="views.xml"/>
-            <field name="views_xml" nolabel="1" placeholder="&lt;odoo&gt; ... &lt;/odoo&gt;"/>
+            <button name="views_prompt_do" string="Create Views" type="object" />
+            <field name="views_replace" />
+            <field name="prompt_views" />
+          </group>
+          <group>
+            <field name="content_views" nolabel="1" widget="ace" options="{'mode': 'xml'}" />
           </group>
         </page>
-        <page id="data" string="Data" invisible="not (implementation_type == 'module' and has_data)">
-          <group>
-            <field name="data_filename" />
-            <field name="data_xml" />
-          </group>
+        <page id="data" string="Data" invisible="not (implementation_type == 'mv' and data_file_id)">
+          <field name="prompt_tests" />
+          <button name="data_prompt_do" string="Create Data-records" type="object" />
+          <field name="content_data" />
         </page>
-        <page id="controllers" string="Controllers" invisible="not (implementation_type == 'module' and has_controllers)">
-          <group>
-            <field name="controllers_filename" />
-            <field name="controllers_src" />
-          </group>
+        <page id="tests" string="Tests" invisible="not (implementation_type == 'mv' and tests_file_id)">
+          <field name="prompt_tests" />
+          <button name="tests_prompt_do" string="Create Tests" type="object" />
+          <field name="content_tests" />
         </page>
+        
+        
+        
+        
+        
       </notebook>
     </field>
   </record>

@@ -136,7 +136,26 @@ class OdooModule(models.Model):
             self.env['prd.odoo_module.file'].get_modules_files(m)
 
 
+    manifest_file_id = fields.Many2one(comodel_name='prd.odoo_module.file',
+                    string="Manifest",
+                    help="", 
+                    )
 
+    icon_image_file_id = fields.Many2one(comodel_name='prd.odoo_module.file',
+                    string="Icon",
+                    help="", 
+ 
+                    ) 
+    banner_image_file_id = fields.Many2one(comodel_name='prd.odoo_module.file',
+                    string="Banner",
+                    help="", 
+                    ) 
+    index_file_id = fields.Many2one(comodel_name='prd.odoo_module.file',
+                    string="Index",
+                    help="", 
+                    ) 
+
+    index_content = fields.Text(string='Index',related="index_file_id.content",readonly=False)
 
 class OdooModuleFile(models.Model):
     _name = 'prd.odoo_module.file'
@@ -167,6 +186,7 @@ class OdooModuleFile(models.Model):
             ('js','Javascript'),
             ('json','Json'),
             ('scss','SCSS'),
+            ('svg','SVG'),
             ('bin','Binary')
         ],
         compute='_compute_content_type',
@@ -211,7 +231,7 @@ class OdooModuleFile(models.Model):
         string='Selectable Related Views'
     )
 
-    @api.depends('module_id', 'module_id.dependency_ids')
+    @api.depends('module_id','module_id.dependency_ids')
     def _compute_selectable_related_views(self):
         for rec in self:
             dep_modules = rec.module_id.dependency_ids.mapped('dep_module_id')
@@ -260,7 +280,7 @@ class OdooModuleFile(models.Model):
                 
                 
     def _related_views_ids(self):
-        view_ids = self.mapped('module_id.dependency_ids.dep_module_id.file_ids').filtered(
+        view_ids = self.mapped('dependency_ids.module_id.file_ids').filtered(
                                             lambda f: f.file_type == 'views'
                                     ).ids
         for rec in self:
@@ -527,37 +547,6 @@ class OdooModuleFile(models.Model):
                     )
         
         return models
-
-
-class PrdViewDependency(models.Model):
-    _name = 'prd.odoo_view.dependency'
-    _description = 'PRD Views dependencies for modules'
-
-    module_id = fields.Many2one(
-        comodel_name='prd.odoo_module',
-        string="Module",
-        help=""
-    )
-
-    file_id = fields.Many2one(
-        comodel_name='prd.odoo_module.file',
-        string="Depends",
-        help="View that is a dependency",
-    )
-
-    related_view_ids = fields.Many2many(
-        comodel_name='prd.odoo_module.file',
-        compute='_compute_related_view_ids',
-        string='Related views',
-    )
-
-    @api.depends('module_id', 'module_id.dependency_ids', 'module_id.dependency_ids.dep_module_id.file_ids')
-    def _compute_related_view_ids(self):
-        for rec in self:
-            view_ids = rec.mapped('module_id.dependency_ids.dep_module_id.file_ids')\
-                         .filtered(lambda f: f.file_type == 'views').ids
-            rec.related_view_ids = [(6, 0, view_ids)]
-
             
 class ProductRequirementDocument(models.Model):
     _inherit = 'prd.document'
@@ -579,3 +568,24 @@ class ProductRequirementDocument(models.Model):
         else:
             action.update({'view_mode': 'form,list,kanban'})
         return action
+
+    manifest_file_id = fields.Many2one(comodel_name='prd.odoo_module.file',
+                    string="Manifest",
+                    help="", 
+                    )
+
+    icon_image_file_id = fields.Many2one(comodel_name='prd.odoo_module.file',
+                    string="Icon",
+                    help="", 
+
+                    ) 
+    banner_image_file_id = fields.Many2one(comodel_name='prd.odoo_module.file',
+                    string="Banner",
+                    help="", 
+                    ) 
+    index_file_id = fields.Many2one(comodel_name='prd.odoo_module.file',
+                    string="Index",
+                    help="", 
+                    ) 
+
+    branch_id = fields.Many2one(comodel_name='prd.odoo_branch',string='Branch',help="")

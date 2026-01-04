@@ -49,6 +49,20 @@ class OdooModuleMixin(models.AbstractModel):
     dependency_ids = fields.One2many(  comodel_name='prd.odoo_module.dependency', 
                                         inverse_name='module_id',
                                         string='Dependencies',)
+                                        
+                                        
+
+    
+    # ~ icon_image = fields.Binary(string='Icon', compute='_get_icon_image')
+    # ~ banner_image = fields.Binary(string='Banner', compute='_get_icon_image')
+    # ~ icon_flag = fields.Char(string='Flag', compute='_get_icon_image',  inverse='_inverse_icon_flag')
+    def _get_icon_image(self):
+        for module in self:
+            icon_image =  module.icon_image_file_id.content if module.icon_image_file_id else None
+            banner_image =  module.banner_image_file_id.content if module.icon_image_file_id else None
+            module.icon_flag = get_flag((self.module_id.get_module_info(module.name).get('countries', [])[0] or '').upper()) if len(self.module_id.get_module_info(module.name).get('countries', [])) == 1 else ''
+
+
 
     @api.model
     def _module2dict(self,module):
@@ -56,7 +70,7 @@ class OdooModuleMixin(models.AbstractModel):
                   "contributors","description","description_html","icon",
                   "icon_image","licence_id","maintainer","name",
                   "summary","technical_name","website",'sequience',
-                  'dependencies_id',]
+                  'dependencies_ids',]
                                     
         return {field_name: module[field_name] 
                     for field_name in module.fields_get() if field_name in fields}
@@ -64,8 +78,10 @@ class OdooModuleMixin(models.AbstractModel):
     @api.onchange('module_id')
     def _onchange_module_id(self):
         for record in self:
-            if record.module_id:
-                d = {field_name: record[field_name] for field_name in record.fields_get()}
+            if record.module_id and record._name == 'prd.document':
+                for key, value in self._module2dict(record.module_id).items():
+                    setattr(record, key, value)
+                # ~ d = {field_name: record[field_name] for field_name in record.fields_get()}
                 # ~ raise UserError(f"{d}")            
             if record.module_id and record._name != 'prd.document':
                 for key, value in self._module2dict(record.module_id).items():

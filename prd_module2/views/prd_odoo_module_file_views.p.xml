@@ -68,36 +68,32 @@
               <group invisible="not (file_type in ['views','wizards'] and content_type == 'xml') ">
                 <field name="odoo_view_ids" widget="many2many_tags" />
                 <field name="related_model" />
-                <field name="selectable_related_views" invisible="1"/>
-<!--
-                <field name="related_view_file_ids" 
-                        widget="many2many_checkboxes" 
-                        domain="[('id', 'in', selectable_related_views)]"
-                               class="o_field_many2many_checkboxes_3cols"
-       options="{'cols': 3}"
-                         />
--->
-                <field name="related_view_file_ids" 
-                        widget="many2many_tags" 
-                        domain="[('id', 'in', selectable_related_views)]"
-                               class="o_field_many2many_checkboxes_3cols"
-       options="{'cols': 3}"
-                         />
-                
+                <field name="selectable_related_views" invisible="1" />
+                <!--
+                     <field name="related_view_file_ids" 
+                     widget="many2many_checkboxes" 
+                     domain="[('id', 'in', selectable_related_views)]"
+                     class="o_field_many2many_checkboxes_3cols"
+                     options="{'cols': 3}"
+                     />
+                -->
+                <field name="related_view_file_ids" widget="many2many_tags" domain="[('id', 'in', selectable_related_views)]" class="o_field_many2many_checkboxes_3cols" options="{'cols': 3}" />
               </group>
               <group invisible="not (file_type in ['views','wizards'] and content_type == 'xml') ">
-                <button name="views_prompt_do" string="Do" type="object" />
+                <button name="views_prompt_do" string="Create Views" type="object" />
                 <field name="views_replace" />
                 <field name="related_views_ids" />
                 <field name="views_prompt" />
               </group>
               <group>
                 <field name="content_py" nolabel="1" widget="ace" options="{'mode': 'python'}" invisible="content_type != 'py'" />
-                <field name="content_xml" nolabel="1" widget="ace" options="{'mode': 'qweb'}" invisible="content_type != 'xml'" />
+                <field name="content_xml" nolabel="1" widget="ace" options="{'mode': 'qweb'}" invisible="content_type not in ('xml','json','txt')" />
                 <field name="content_js" nolabel="1" widget="ace" options="{'mode': 'javascript'}" invisible="content_type != 'js'" />
                 <field name="content_scss" nolabel="1" widget="ace" options="{'mode': 'scss'}" invisible="content_type != 'scss'" />
-                <field name="content_json" nolabel="1" widget="ace" options="{'mode': 'json'}" invisible="content_type != 'json'" />
-                <field name="content_txt" nolabel="1" widget="ace" options="{'mode': 'text'}" invisible="content_type != 'txt'" />
+                <!--
+                     <field name="content_json" nolabel="1" widget="ace" options="{'mode': 'json'}" invisible="content_type != 'json'" />
+                     <field name="content_txt" nolabel="1" widget="ace" options="{'mode': 'text'}" invisible="content_type != 'txt'" />
+                -->
               </group>
               <group>
                 <field name="content_bin" nolabel="1" widget="image" invisible="not 'image/' in content_mime" />
@@ -202,11 +198,24 @@
       </div>
       <field name="repo_id" position="after">
         <field name="branch_id" />
+        <field name="manifest_file_id" />
         <field name="banner_file" widget="image" nolabel="1" />
+        <field name="banner_image_file_id" domain="[('file_type', '=', 'static'),('name','ilike','banner'),('module_id','=',id)]" />
       </field>
       <field name="icon_image" position="replace">
         <field name="icon_file" widget="image" nolabel="1" />
+        <field name="id" invisible="1" />
+        <field name="icon_image_file_id" domain="[('file_type', '=', 'static'),('name','ilike','icon'),('module_id','=',id)]" />
       </field>
+      <field name="contributors" position="after">
+        <field name="manifest_file_id" domain="[('file_type', '=', 'manifest'),('module_id','=',id)]" />
+      </field>
+      <notebook position="inside">
+        <page name="index" string="index.html">
+          <field name="index_file_id" domain="[('file_type', '=', 'static'),('name','ilike','index'),('module_id','=',id)]" />
+          <field name="index_content" widget="ace" options="{'mode': 'qweb'}" />
+        </page>
+      </notebook>
     </field>
   </record>
   <!-- Menu -->
@@ -217,4 +226,18 @@
        parent="prd.menu_prd_root"
        sequence="20"/>
   -->
+  <!-- Form View -->
+  <record id="view_prd_document_form" model="ir.ui.view">
+    <field name="name">prd.document.form</field>
+    <field name="model">prd.document</field>
+    <field name="inherit_id" ref="prd.view_prd_document_form" />
+    <field name="arch" type="xml">
+      <field name="contributors" position="after">
+        <field name="manifest_file_id" domain="[('file_type', '=', 'manifest'),('module_id','=',id)]" />
+        <field name="banner_image_file_id" domain="[('file_type', '=', 'static'),('name','ilike','banner'),('module_id','=',id)]" />
+        <field name="icon_image_file_id" domain="[('file_type', '=', 'static'),('name','ilike','icon'),('module_id','=',id)]" />
+        <field name="index_file_id" domain="[('file_type', '=', 'static'),('name','ilike','index'),('module_id','=',id)]" />
+      </field>
+    </field>
+  </record>
 </odoo>

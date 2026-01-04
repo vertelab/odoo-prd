@@ -199,7 +199,9 @@ class FunctionTypes(models.Model):
     name = fields.Char(string='Type', required=True)
     implementation_type = fields.Selection(
         selection=[('module', 'Module'), ('odoo_module', 'Odoo Module'), ('prd', 'Product Requirement Document'),
-                   ('other', 'Other')], string='Type', default="other", required=True)
+                   ('other', 'Other'),('mv', 'Model/View'),('security', 'Security'),('controller', 'Controller'),
+                   ('wizard', 'Wizard'),('report', 'Report'),
+                   ], string='Type', default="other", required=True)
 
 
 class FunctionCategory(models.Model):
