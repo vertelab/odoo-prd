@@ -180,7 +180,6 @@
         <field name="contributors" optional="show" />
         <field name="website" optional="show" />
         <field name="sequence" optional="show" />
-        <field name="dependency_ids" widget="many2many_tags" optional="show" />
         <!--
              <field name="country_ids" widget="many2many_tags" optional="show" />
         -->
@@ -276,11 +275,7 @@
                 </list>
               </field>
             </page>
-            <page string="Dependencies" name="dependency">
-             <field name="dependency_ids"  >
-                  <list editable="bottom"><field name="dep_module_id" /></list>
-              </field>
-            </page>
+
           </notebook>
         </sheet>
       <chatter reload_on_follower="True" />

@@ -90,7 +90,7 @@ function_icon = """<svg height="800px" width="800px" version="1.1" id="图层_1"
 
 class PrdFunction(models.Model):
     _name = 'prd.function'
-    _inherit = ['mermaid.mixin', 'mail.thread', 'mail.activity.mixin', 'prd.odoo_module.mixin']
+    _inherit = ['mermaid.mixin', 'mail.thread', 'mail.activity.mixin',]
     _description = 'PRD Functions'
 
     # models / data / sequrity / sequirity.xml / views /
@@ -199,7 +199,7 @@ class FunctionTypes(models.Model):
     name = fields.Char(string='Type', required=True)
     implementation_type = fields.Selection(
         selection=[('module', 'Module'), ('odoo_module', 'Odoo Module'), ('prd', 'Product Requirement Document'),
-                   ('other', 'Other'),('mv', 'Model/View'),('security', 'Security'),('controller', 'Controller'),
+                   ('other', 'Other'),('mv', 'Model/View'),('controller', 'Controller'),
                    ('wizard', 'Wizard'),('report', 'Report'),
                    ], string='Type', default="other", required=True)
 

@@ -91,7 +91,8 @@
                                 <field name="approved_by_id" />
                                 <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" />
                             </group>
-                            <group id="c2" name="c2" string="General" invisible="not document_type == 'module'">
+                            <group id="c2" name="c2"  >
+<!--
                                 <field name="application" help="Is this an application?" invisible="not document_type == 'module'" />
                                 <field name="auto_install" help="Auto-installation when the modules that this module depends on is installed" invisible="not document_type == 'module'" />
                                 <field name="app_category_id" help="Category" invisible="not document_type == 'module'" />
@@ -102,14 +103,17 @@
                                 <field name="repo_id" string="Repository" invisible="not document_type == 'module'" />
                                 <field name="description_html" string="Beskrivning" placeholder="Detaljerad beskrivning..." invisible="not document_type == 'module'" />
                                 <field name="contributors" placeholder="Bidragsgivare (en per rad)..." invisible="not document_type == 'module'" />
+-->
                             </group>
-                            <group id="technical" string="Technical" invisible="not document_type == 'module'">
+                            <group id="c3" >
+<!--
                                 <field name="module_id" string="Modul (ir.module.module)" invisible="not document_type == 'module'" />
                                 <field name="technical_name" string="Tekniskt namn" readonly="1" invisible="not document_type == 'module'" />
                                 <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" />
                                 <field name="user_persona" />
                                 <field name="use_cases" />
                                 <field name="dependencies" />
+-->
                             </group>
                         </group>
                         <notebook>

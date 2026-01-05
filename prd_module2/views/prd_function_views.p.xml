@@ -12,20 +12,21 @@
       </header>
       <group id="c1" position="inside">
         <separator string="Data/tests" invisible="implementation_type != 'mv'"  />
-        <field name="data_file_id" invisible="implementation_type != 'mv'" />
-        <field name="tests_file_id" invisible="implementation_type != 'mv'" />
+        <field name="data_file_id" domain="[('file_type', '=', 'data'),('module_id','=',module_id)]" invisible="implementation_type != 'mv'" />
+        <field name="tests_file_id" domain="[('file_type', '=', 'tests'),('module_id','=',module_id)]" invisible="implementation_type != 'mv'" />
       </group>
       <group id="c2" position="inside">
         <separator string="Models" invisible="implementation_type != 'mv'"  />
+        <field name="module_id"  invisible="1" />
         <field name="dependency_ids" widget="many2many_tags" invisible="implementation_type != 'mv'" />
-        <field name="model_file_id" invisible="implementation_type != 'mv'" />
+        <field name="model_file_id" domain="[('file_type', '=', 'models'),('module_id','=',module_id)]" invisible="implementation_type != 'mv'" />
 <!--
         <field name="library_ids" invisible="implementation_type != 'mv'" />
 -->
         <separator string="Views" invisible="implementation_type != 'mv'" />
-        <field name="views_file_id" invisible="implementation_type != 'mv'" />
+        <field name="views_file_id"  domain="[('file_type', '=', 'views'),('module_id','=',module_id)]"  invisible="implementation_type != 'mv'"  />
         <field name="odoo_view_ids" widget="many2many_tags" invisible="not (implementation_type == 'mv' and views_file_id)" />
-        <field name="selectable_related_views" invisible="1" />
+        <field name="selectable_related_views" invisible="0" />
         <field name="views_file_related_ids" widget="many2many_tags" domain="[('id', 'in', selectable_related_views)]" invisible="not (implementation_type == 'mv' and views_file_id and dependency_ids)" />
       </group>
       <notebook position="inside">

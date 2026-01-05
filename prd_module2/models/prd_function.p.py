@@ -81,8 +81,8 @@ class PrdFunction(models.Model):
     _inherit = 'prd.function'
 
 
-
-
+    icon_image = fields.Binary(string='Icon',)
+    module_id = fields.Many2one(comodel_name='prd.odoo_module',related="prd_id.module_id")
     ## Model/View
     prompt_model = fields.Text(string='Prompt (model)')
     library_ids = fields.Many2many(comodel_name='prd.odoo_library',string='Libraries',help="")
@@ -101,6 +101,25 @@ class PrdFunction(models.Model):
     column1='func_id',      # func_id pekar på prd.function.id  
     column2='module_id'     # module_id pekar på prd.odoo_module.id
 )
+    # ~ app_category_id = fields.Many2one('ir.module.category', string="Category")
+    application = fields.Boolean(string='Application')
+    # ~ auto_install = fields.Boolean('Automatic Installation',
+        # ~ help='An auto-installable module is automatically installed by the '
+             # ~ 'system when all its dependencies are satisfied. '
+             # ~ 'If the module has no dependency, it is always installed.')
+    # ~ author = fields.Char("Author")
+
+    # ~ contributors = fields.Text('Contributors')
+    # ~ licence_id = fields.Many2one(comodel_name='prd.odoo_licence', string="Licence", help="")
+    # ~ maintainer = fields.Char('Maintainer')
+    repo_id = fields.Many2one(comodel_name='prd.odoo_repo', replated="module_id.repo_id",string="Repo", help="")
+    # ~ rule_ids = fields.One2many(comodel_name="prd.rule", inverse_name="prd_id")
+    summary = fields.Char(string='Summary')
+    technical_name = fields.Char(string='Technical Name')
+    website = fields.Char(string='Website')
+    description_html = fields.Text(string='_')
+                                        
+       
 
 
     ## Wizard
@@ -269,11 +288,15 @@ class PrdFunction(models.Model):
         for rec in self:
             file_records = self.env['prd.odoo_module.file']
             # SÄKERT: Kontrollera att module_id har file_ids
+            # ~ _logger.error(f"filer :::: {rec.dependency_ids.mapped('module_id.file_ids').filtered(lambda f: f.file_type in ['views', 'wizards'])}")
+            
             for dep in rec.dependency_ids:
                 module = dep.module_id  # eller dep.dep_module_id etc.
+                _logger.error(f"filer :::: {module._name=}  {module.name=}")
                 if module and hasattr(module, 'file_ids') and module.file_ids:
+                    _logger.error(f"filer :::: {module.file_ids}")
                     file_records |= module.file_ids.filtered(
-                        lambda f: f.file_type in ['views', 'wizards']  # Din logik
+                        lambda f: f.file_type in ['views', 'wizards']  
                     )
             rec.selectable_related_views = file_records
 

@@ -21,10 +21,6 @@
       <field name="name">Module: model/view</field>
       <field name="implementation_type">mv</field>
     </record>
-    <record id="function_type_security" model="prd.function_type">
-      <field name="name">Module: security</field>
-      <field name="implementation_type">security</field>
-    </record>
     <record id="function_type_controller" model="prd.function_type">
       <field name="name">Module: controller</field>
       <field name="implementation_type">controller</field>

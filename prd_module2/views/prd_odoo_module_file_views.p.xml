@@ -26,12 +26,6 @@
     <field name="name">prd.odoo_module.file.tree</field>
     <field name="model">prd.odoo_module.file</field>
     <field name="arch" type="xml">
-      <!--
-           <list string="Module Files" decoration-success="file_type=='views'" 
-           decoration-info="file_type=='models'" 
-           decoration-warning="file_type=='controllers'"
-           decoration-muted="file_type=='static'">
-      -->
       <list string="Module Files">
         <field name="name" />
         <field name="module_id" optional="hide" />
@@ -56,8 +50,7 @@
               <field name="file_type" widget="badge" />
               <field name="content_type" />
               <field name="content_mime" />
-              <field name="module_id" options="{'no_create': True}" invisible="0" />
-              <field name="prd_id" options="{'no_create': True}" invisible="0" />
+              <field name="module_id" options="{'no_create': True}" invisible="1" />
             </group>
             <group>
               <field name="git_url" widget="copy_clipboard" readonly="1" />
@@ -65,26 +58,7 @@
           </group>
           <notebook>
             <page string="Content" id="content">
-              <group invisible="not (file_type in ['views','wizards'] and content_type == 'xml') ">
-                <field name="odoo_view_ids" widget="many2many_tags" />
-                <field name="related_model" />
-                <field name="selectable_related_views" invisible="1" />
-                <!--
-                     <field name="related_view_file_ids" 
-                     widget="many2many_checkboxes" 
-                     domain="[('id', 'in', selectable_related_views)]"
-                     class="o_field_many2many_checkboxes_3cols"
-                     options="{'cols': 3}"
-                     />
-                -->
-                <field name="related_view_file_ids" widget="many2many_tags" domain="[('id', 'in', selectable_related_views)]" class="o_field_many2many_checkboxes_3cols" options="{'cols': 3}" />
-              </group>
-              <group invisible="not (file_type in ['views','wizards'] and content_type == 'xml') ">
-                <button name="views_prompt_do" string="Create Views" type="object" />
-                <field name="views_replace" />
-                <field name="related_views_ids" />
-                <field name="views_prompt" />
-              </group>
+             
               <group>
                 <field name="content_py" nolabel="1" widget="ace" options="{'mode': 'python'}" invisible="content_type != 'py'" />
                 <field name="content_xml" nolabel="1" widget="ace" options="{'mode': 'qweb'}" invisible="content_type not in ('xml','json','txt')" />
@@ -101,9 +75,7 @@
                 <field name="content_bin" nolabel="1" widget="binary" invisible="('image/' in content_mime or 'application/pdf' in content_mime or 'text/plain' in content_mime)" />
               </group>
             </page>
-            <page string="Model" name="model" invisible="not (file_type in ['views','wizards'] and content_type == 'xml') ">
-              <field name="content_related_model" nolabel="1" widget="ace" options="{'mode': 'python'}" />
-            </page>
+            
           </notebook>
         </sheet>
       </form>
@@ -159,25 +131,7 @@
       <p>Använd "Refresh Files" knappen på modulförälder för att ladda filer från Git.</p>
     </field>
   </record>
-  <record id="view_prd_document_form" model="ir.ui.view">
-    <field name="name">prd.document.form.files</field>
-    <field name="model">prd.document</field>
-    <field name="inherit_id" ref="prd.view_prd_document_form" />
-    <field name="arch" type="xml">
-      <div name="button_box" position="inside">
-        <button class="oe_stat_button" type="object" name="action_files" icon="fa-check" string="Files">
-          <div class="o_field_widget o_stat_info">
-            <span class="o_stat_text">Files</span>
-            <span class="o_stat_value">
-              <!--
-                   <field name="files_count" />
-              -->
-            </span>
-          </div>
-        </button>
-      </div>
-    </field>
-  </record>
+ 
   <record id="view_prd_odoo_module_form" model="ir.ui.view">
     <field name="name">prd.odoo_module.form.files</field>
     <field name="model">prd.odoo_module</field>
@@ -210,34 +164,9 @@
       <field name="contributors" position="after">
         <field name="manifest_file_id" domain="[('file_type', '=', 'manifest'),('module_id','=',id)]" />
       </field>
-      <notebook position="inside">
-        <page name="index" string="index.html">
-          <field name="index_file_id" domain="[('file_type', '=', 'static'),('name','ilike','index'),('module_id','=',id)]" />
-          <field name="index_content" widget="ace" options="{'mode': 'qweb'}" />
-        </page>
-      </notebook>
+
     </field>
   </record>
-  <!-- Menu -->
-  <!--
-       <menuitem id="menu_odoo_module_file_root" 
-       name="Module Files" 
-       action="action_odoo_module_file" 
-       parent="prd.menu_prd_root"
-       sequence="20"/>
-  -->
-  <!-- Form View -->
-  <record id="view_prd_document_form" model="ir.ui.view">
-    <field name="name">prd.document.form</field>
-    <field name="model">prd.document</field>
-    <field name="inherit_id" ref="prd.view_prd_document_form" />
-    <field name="arch" type="xml">
-      <field name="contributors" position="after">
-        <field name="manifest_file_id" domain="[('file_type', '=', 'manifest'),('module_id','=',id)]" />
-        <field name="banner_image_file_id" domain="[('file_type', '=', 'static'),('name','ilike','banner'),('module_id','=',id)]" />
-        <field name="icon_image_file_id" domain="[('file_type', '=', 'static'),('name','ilike','icon'),('module_id','=',id)]" />
-        <field name="index_file_id" domain="[('file_type', '=', 'static'),('name','ilike','index'),('module_id','=',id)]" />
-      </field>
-    </field>
-  </record>
+
+
 </odoo>
