@@ -34,7 +34,7 @@ class ProductRequirementDocument(models.Model):
     user_persona = fields.Text(string="Användarbeskrivning")
     use_cases = fields.Text(string="Användningsfall")
     success_criteria = fields.Text(string="Success Criteria")
-    dependencies = fields.Text(string="Dependencies")
+    dependencies = fields.Text(string="Module Dependencies")
     risks = fields.Text(string="Risks")
     document_type = fields.Selection([
         ('module', 'Module'),('procurement','Procurement/call-off'),

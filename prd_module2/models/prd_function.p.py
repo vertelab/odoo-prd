@@ -80,12 +80,9 @@ VIEW_FIELD_WIDGETS = """
 class PrdFunction(models.Model):
     _inherit = 'prd.function'
 
-
-    icon_image = fields.Binary(string='Icon',)
-    module_id = fields.Many2one(comodel_name='prd.odoo_module',related="prd_id.module_id")
     ## Model/View
-    prompt_model = fields.Text(string='Prompt (model)')
-    library_ids = fields.Many2many(comodel_name='prd.odoo_library',string='Libraries',help="")
+    prompt_model = fields.Text(string='Prompt (model)', placeholder="e.g. Promt for python code")
+    # ~ library_ids = fields.Many2many(comodel_name='prd.odoo_library',string='Libraries',help="")
     prompt_tests = fields.Text(string='Prompt (tests)')
     prompt_data = fields.Text(string='Prompt (tests)')
     model_file_id = fields.Many2one(comodel_name='prd.odoo_module.file',string="Model", help="", ) 
@@ -94,13 +91,14 @@ class PrdFunction(models.Model):
     content_model = fields.Text(string='Model',related="model_file_id.content",readonly=False)
     content_tests = fields.Text(string='Test',related="tests_file_id.content",readonly=False)
     content_data = fields.Text(string='Test',related="data_file_id.content",readonly=False)
-    # ~ dependency_ids = fields.Many2many(comodel_name='prd.odoo_module',string='Dependencies',)
-    dependency_ids = fields.Many2many(
-        comodel_name='prd.odoo_module',
-    relation='prd_odoo_module_function_dependencies_rel',
-    column1='func_id',      # func_id pekar på prd.function.id  
-    column2='module_id'     # module_id pekar på prd.odoo_module.id
-)
+    # ~ dep_ids = fields.Many2many(comodel_name='prd.odoo_module',string='Dependencies',)
+    dependency_ids = fields.Many2many(comodel_name='prd.odoo_module',string='Dependencies',)
+    # ~ dependency_ids = fields.Many2many(
+        # ~ comodel_name='prd.odoo_module',
+    # ~ relation='prd_odoo_module_function_dependenciesxxx_rel',
+    # ~ column1='func_id',      # func_id pekar på prd.function.id  
+    # ~ column2='module_id'     # module_id pekar på prd.odoo_module.id
+# ~ )
     # ~ app_category_id = fields.Many2one('ir.module.category', string="Category")
     application = fields.Boolean(string='Application')
     # ~ auto_install = fields.Boolean('Automatic Installation',
@@ -112,33 +110,39 @@ class PrdFunction(models.Model):
     # ~ contributors = fields.Text('Contributors')
     # ~ licence_id = fields.Many2one(comodel_name='prd.odoo_licence', string="Licence", help="")
     # ~ maintainer = fields.Char('Maintainer')
-    repo_id = fields.Many2one(comodel_name='prd.odoo_repo', replated="module_id.repo_id",string="Repo", help="")
+    repo_id = fields.Many2one(comodel_name='prd.odoo_repo', related="module_id.repo_id",string="Repo", help="")
     # ~ rule_ids = fields.One2many(comodel_name="prd.rule", inverse_name="prd_id")
     summary = fields.Char(string='Summary')
     technical_name = fields.Char(string='Technical Name')
     website = fields.Char(string='Website')
     description_html = fields.Text(string='_')
-                                        
-       
 
+    prd_information = fields.Text(string='PRD Information',compute="_compute_prd_information")
+    @api.depends('dependency_ids.module_id')
+    def _compute_prd_information(self):
+        for rec in self:
+            rec.prd_information = f"""#### PRD information for {rec.prd_id.name}
+{rec.prd_id.description}
+#### PRD Goals
+{rec.prd_id.goals}
+#### PRD Success Criteria 
+{rec.prd_id.success_criteria}
+#### PRD risks
+{rec.prd_id.risks}
+"""
 
     ## Wizard
     
     ## Report
     
     ## Security
-    
-    
-
-
     branch_name = fields.Char(string='Branch',related="prd_id.branch_id.name")
-    replace_model = fields.Boolean(string='Replace',help="replace code or add to the bottom")
+    replace_content = fields.Boolean(string='Replace',help="replace code or add to the bottom")
 
     def model_prompt_do(self):
-        # ~ quest = self.env.ref('prd_module2.build_views_bot_28')	__custom__.rpd
-        quest = self.env.ref('__custom__.rpd')	
+        quest = self.env['ai.quest'].get_ai_type('prd_module_model')
         result = quest.run(record=self)
-        # ~ raise UserError(f"{self.views_prompt=} {self=} {result=}")
+        raise UserError(f"{self.views_prompt=} {self=} {result=}")
         if result:
             ai_messages = quest._get_last_ai_message(result.get('result', {}).get('messages', False))
             if self.views_replace:
@@ -164,8 +168,13 @@ class PrdFunction(models.Model):
         # ~ pass
          
     def create_mv_prompt(self):
-        # ~ quest = self.env.ref('prd_module2.build_views_bot_28')	__custom__.rpd
-        quest = self.env.ref('__custom__.rpd')	
+        quest = self.env['ai.quest'].get_ai_type('prd_module_mv_prompt')
+        # ~ for f in self._fields.keys():
+            # ~ try:
+                # ~ foo = self.read([f])[0]
+                # ~ _logger.error(f"{f=}")
+            # ~ except Exception as e:
+                # ~ _logger.error(f"{f=} {e}")
         result = quest.run(record=self)
         if result:
             ai_messages = quest._get_last_ai_message(result.get('result', {}).get('messages', False))
@@ -204,10 +213,7 @@ class PrdFunction(models.Model):
 
             
     def data_prompt_do(self):
-        # ~ quest = self.env.ref('prd_module2.build_views_bot_28')	__custom__.rpd
-        quest = self.env.ref('__custom__.rpd')	
-        result = quest.run(record=self)
-        # ~ raise UserError(f"{self.views_prompt=} {self=} {result=}")
+        result = self.env['ai.quest'].get_ai_type('prd_module_data').run(record=self)
         if result:
             ai_messages = quest._get_last_ai_message(result.get('result', {}).get('messages', False))
             if self.views_replace:
@@ -230,9 +236,7 @@ class PrdFunction(models.Model):
         # ~ raise UserError(_("OBS: An error occurred, you should contact administrator to look into the quest"))
 
     def tests_prompt_do(self):
-        # ~ quest = self.env.ref('prd_module2.build_views_bot_28')	__custom__.rpd
-        quest = self.env.ref('__custom__.rpd')	
-        result = quest.run(record=self)
+        result = self.env['ai.quest'].get_ai_type('prd_module_tests').run(record=self)
         # ~ raise UserError(f"{self.views_prompt=} {self=} {result=}")
         if result:
             ai_messages = quest._get_last_ai_message(result.get('result', {}).get('messages', False))
@@ -283,6 +287,8 @@ class PrdFunction(models.Model):
         string='Selectable Related Views'
     )
 
+
+
     @api.depends('dependency_ids.module_id')
     def _compute_selectable_related_views(self):
         for rec in self:
@@ -298,6 +304,9 @@ class PrdFunction(models.Model):
                     file_records |= module.file_ids.filtered(
                         lambda f: f.file_type in ['views', 'wizards']  
                     )
+                else: # this should not be necessery
+                    prd_module = self.env['prd.odoo_module'].search([('technical_name','=',module.name)])
+                    file_records |= prd_module.file_ids.filtered(lambda f: f.file_type in ['views', 'wizards'])
             rec.selectable_related_views = file_records
 
     # ~ @api.depends('dependency_ids')
@@ -313,27 +322,26 @@ class PrdFunction(models.Model):
     views_instructions = fields.Text(string='Instructions for choosen views',compute="_views_instructions")
 
     def _views_file_related_ids(self):
-        view_ids = self.mapped('dependency_ids.module_id.file_ids').filtered(
+        view_ids = self.mapped('dep_ids.module_id.file_ids').filtered(
                                             lambda f: f.file_type == 'views'
                                     ).ids
         for rec in self:
             rec.views_file_related_ids = [(6, 0, view_ids)]
                 
     def _views_instructions(self):
-                
         vi = "### VIEWS INSTRUCTIONS\n" + '\n'.join([
                 f"View type {v.name}: special instructions for this view {v.prompt}" 
                 for v in self.odoo_view_ids
             ])        
-
         views_dependent = ""
         models = self.identify_all_odoo_models()
         for model_info in models.get('_inherit', []):
-            if len(self.related_view_file_ids)>0:
+            _logger.error(f"Has _inherit")
+            if len(self.views_file_related_ids)>0:
                 views_dependent = f"""
 ### Views from dependent modules
 
-{'\n'.join(self.related_view_file_ids.mapped('content'))}
+{'\n'.join(self.views_file_related_ids.mapped('content'))}
 
 * When inheriting a view, set the record id equal to the last part of the inherit_id ref, without the module name.
          For example, if <field name="inherit_id" ref="project.edit_project" /> then write <record id="edit_project" model="ir.ui.view">.
@@ -358,6 +366,7 @@ class PrdFunction(models.Model):
     Use appropriate widgets"""
         
         for model_info in models.get('_name', []):
+            _logger.error(f"Has _name")
             fields = '\n'.join([f"{f.name}: {f.type}" for f in model_info.get('fields', [])])
             vi += f"""\n### NEW MODELS - BUILD NEW VIEWS, RECORDS, ACTIONS AND MENU
 
@@ -373,12 +382,9 @@ class PrdFunction(models.Model):
         
         self.views_instructions = vi
 
-
     def views_prompt_do(self):
         # ~ quest = self.env.ref('prd_module2.build_views_bot_28')	__custom__.rpd
-        quest = self.env.ref('__custom__.rpd')	
-        result = quest.run(record=self)
-        # ~ raise UserError(f"{self.views_prompt=} {self=} {result=}")
+        result = self.env['ai.quest'].get_ai_type('prd_module_views').run(record=self)
         if result:
             ai_messages = quest._get_last_ai_message(result.get('result', {}).get('messages', False))
             if self.views_replace:
@@ -459,7 +465,9 @@ class PrdFunction(models.Model):
             return fields
         
         models = {'_name': [], '_inherit': []}
-        code = self.related_model.content
+        if not self.model_file_id:
+            raise UserError(f"Missing model file")
+        code = self.model_file_id.content
         
         name_matches = re.findall(r"_name\s*=\s*['\"]([^'\"]+)['\"]", code)
         inherit_matches = re.findall(r"_inherit\s*=\s*['\"]([^'\"]+)['\"]", code)

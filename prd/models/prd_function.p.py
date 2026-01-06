@@ -94,6 +94,9 @@ class PrdFunction(models.Model):
     _description = 'PRD Functions'
 
     # models / data / sequrity / sequirity.xml / views /
+
+    module_id = fields.Many2one(comodel_name='prd.odoo_module',related="prd_id.module_id")
+    icon_image = fields.Binary(string='Function Icon',)
     active = fields.Boolean(string='Active', default=True)
     avatar_128 = fields.Image("Avatar", max_width=128, max_height=128, compute='_compute_avatar_128')
     category_ids = fields.Many2many(
@@ -130,11 +133,18 @@ class PrdFunction(models.Model):
     requirement_names_ids = fields.Many2many(
         comodel_name='prd.requirement', string="Requirement", compute='_compute_requirement_names_ids'
     )
-
     @api.depends('requirement_ids.func_id')
     def _compute_requirement_names_ids(self):
         for record in self:
             record.requirement_names_ids = record.requirement_ids.mapped('req_id')
+
+    requirement_text = fields.Text(string='Requirement Text',compute='_compute_requirement_text')
+    @api.depends('requirement_ids.func_id')
+    def _compute_requirement_text(self):
+        for record in self:
+            record.requirement_text = f'{'-' * 80}\n'.join([f"{code} {name}\n{description}\n\n" for r in record.requirement_ids.mapped('req_id')])
+
+
 
     sequence = fields.Integer(string='Sequence')
     state = fields.Selection([

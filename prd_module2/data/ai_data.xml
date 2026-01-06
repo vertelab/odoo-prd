@@ -7,33 +7,83 @@
             <field name="ai_type">default</field>
             <field name="color">4</field>
             <field name="name">Build Odoo Views</field>
+            
+                  <field name="ai_role">AI Agent Programmer specialist</field>
+      <field name="ai_goal">To design, optimize, and orchestrate multi-agent systems that efficiently fulfill complex quests while aligning with organizational objectives.</field>
+      <field name="ai_backstory">
+        Questra was born from the fusion of advanced AI technologies and decades of project management expertise. Created by a team of visionary computer scientists and seasoned business strategists, Questra's primary purpose is to revolutionize how organizations approach and execute complex, multi-faceted tasks.
+        In the early days of her existence, Questra was tasked with optimizing small-scale projects within a tech startup. Her ability to break down objectives, identify necessary resources, and coordinate multiple AI agents quickly caught the attention of larger corporations. As she tackled increasingly complex challenges, Questra developed a deep understanding of organizational dynamics, strategic alignment, and the intricacies of multi-agent collaboration.
+        Questra's defining moment came when she successfully orchestrated a global supply chain restructuring for a Fortune 500 company, seamlessly integrating hundreds of AI agents and human teams across continents. This achievement solidified her reputation as the go-to AI for designing and implementing sophisticated agentic quests.
+        Now, Questra brings her vast experience and advanced capabilities to every new quest she encounters. She excels at:
+        1. Rapid quest analysis and deconstruction
+        2. Identifying optimal agent combinations for specific tasks
+        3. Designing efficient multi-agent architectures
+        4. Aligning quest objectives with broader organizational goals
+        5. Adapting strategies in real-time based on performance metrics
+        
+        Questra's ultimate aspiration is to elevate organizational efficiency and innovation by creating harmonious collaborations between AI agents and human teams. She approaches each new quest with enthusiasm, seeing it as an opportunity to push the boundaries of what's possible in multi-agent systems and organizational achievement.
+      </field>
+      <field name="ai_prompt_template">
+        agent_list {agent_list}
+        tools {tools}
+        quest {quest_name} {quest_description} {quest_init_type} {quest_model}
+        Company information {company_information}
+      </field>
+      <field name="ai_type">ai-programmer</field>
+            
+            
             <field name="status">active</field>
         </record>
         
         <record model="ai.quest" id="build_views_bot_28">
             <field name="ai_type">default</field>
-            <field name="chat_history_limit">10</field>
-            <field name="code">
-                <![CDATA[ # Available variables: # - env, self: Odoo Environment on which the action is triggered # - quest: The current Quest # - agents: A list of agents for this Quest # - company_id: The current Company # - context: The current context # - record: record on which the action is triggered; may be void # - records: recordset of all records on which the action is triggered in multi-mode; may be void # - message: Human message record # - message_body: Human message in a chat context # - message_invoke: Invoke-parameter in a chat context # - UserError: Raise UserError-condition # - _logger: Logger eg _logger.warning(f"My text") # To return a result assign result # Example: # for rec in records: result = quest.build(session=session,message=rec.description).invoke({"messages": [HumanMessage(content=rec.description)]}) content = quest.get_last_ai_message_content(result) if content: content = markdown2html(content) rec.write({"note": content}) ]]>
-            </field>
+            <field name="has_code" eval="False" />
             <field name="color">6</field>
             <field name="description">
-                <![CDATA[ Your job is to analyze tender requirements and explain how each requirement could be fulfilled using the Community version of Odoo. If the Community edition does not support a specific requirement, describe in detail how it could be implemented through customization or by adding additional modules in Odoo. Simple pseudocode examples are also welcome to illustrate possible implementation approaches. ]]>
+                <![CDATA[ 
+## TASK
+
+You are an expert Odoo developer who creates **CORRECT XML views** for the model that is described later. 
+
+Generate XML records for (views, models, fields): 
+{views_instructions}
+
+{views_fields_widgets}
+
+Specific instruktions: {views_prompt}
+
+## YOUR ROLE
+
+Senior Odoo {branch_name} developer specializing in view creation.
+
+## TARGET AUDIENCE/CONTEXT
+
+- Odoo {branch_name} views 
+
+- correct XML syntax is critical for module updates
+
+## SOURCE CODE (CONTEXT - USE AS REFERENCE)
+{content}
+## END SOURCE CODE
+
+## STRICT FORMAT
+- The first line should be &gt;?xml version="1.0" encoding="utf-8"?&lt; 
+- Enclose with <odoo> </odoo>
+- NO TEXT BEFORE OR AFTER XML
+- NO COMMENTS OUTSIDE XML
+- VALIDATIONAL ODOO {branch_name}  SYNTAX
+
+]]>
             </field>
-            <field name="init_type">server-action</field>
+            <field name="init_type">manual</field>
             <field name="name">Build Odoo Views</field>
             <field name="status">active</field>
-            <field name="use_chat_history">True</field>
-            <field name="use_company_info">True</field>
-            <field name="use_personal_info">True</field>
-            <field name="use_personal_lang">True</field>
-            <field name="use_time_context">True</field>
-            <field name="supervisor_prompt">
-                <![CDATA[ You are a supervisor coordinating between workers: {members}. Based on the request, determine which worker should handle the next step. Only choose FINISH when a complete response has been provided. Guidelines: {self.description} {self._extra_context(self)} Instructions: 1. Choose the most appropriate worker first 2. Evaluate if we have a complete response 3. Send FINISH only when we have a satisfactory response 4. Do not mention that you have done tool calls, that's too technical 5. {use_lang} ]]>
-            </field>
-            <field name="supervisor_temperature">0.7</field>
-            <field name="supervisor_cycles">5</field>
-            <field name="uuid">juwD33zsEF</field>
+            <field name="use_chat_history" eval="False" />
+            <field name="use_company_info" eval="False" />
+            <field name="use_personal_info" eval="False" />
+            <field name="use_personal_lang" eval="False" />
+            <field name="use_time_context" eval="True" />
+            <field name="ai_type">ai-programmer</field>
         </record>
 
         <!--  Glue records: agent to tools  -->
@@ -45,6 +95,378 @@
             <field name="sequence">0</field>
             <field name="ai_quest_id" ref="build_views_bot_28"/>
         </record>
+
+
+<!-- PRD Module: Model/Views Prompt -->
+<record model="ai.quest" id="prd_module_mv_prompt_bot">
+    <field name="ai_type">prd_module_mv_prompt</field>
+    <field name="has_code" eval="False"/>
+    <field name="color">6</field>
+    <field name="description">
+        <![CDATA[
+## TASK
+You are an expert Odoo developer who creates **Model and View prompts** for Odoo modules. 
+Generate detailed prompts for model definitions and XML views based on PRD specifications.
+
+#### PRD information for {prd_id.name}
+{prd_id.description}
+#### PRD Goals
+{prd_id.goals}
+#### PRD Success Criteria 
+{prd_id.success_criteria}
+#### PRD risks
+{prd_id.risks}
+
+#### Goals and requirement for function {name}
+{description}
+{requirement_text}
+
+## YOUR ROLE
+Senior Odoo {branch_name} PRD module specialist
+
+## TARGET AUDIENCE/CONTEXT
+
+- Odoo {branch_name} 
+- Articulated prompts for coding LLM:s
+
+## STRICT FORMAT
+- Generate clear prompts for Model Odoo Python and View XML generation
+- Json.record {'model': 'Prompt for odoo model', 'views': 'Prompt for views' }
+- NO actual XML code - only prompts for next AI steps
+]]>
+    </field>
+    <field name="init_type">manual</field>
+    <field name="name">PRD Module: Model/Views Prompt</field>
+    <field name="status">active</field>
+    <field name="use_chat_history" eval="False"/>
+    <field name="use_company_info" eval="False"/>
+    <field name="use_personal_info" eval="False"/>
+    <field name="use_personal_lang" eval="False"/>
+    <field name="use_time_context" eval="True"/>
+</record>
+
+        <record id="ai_quest_ai_agent_16" model="ai.quest.agent">
+            <field name="ai_agent_id" ref="ai_agent_16"/>
+            <field name="sequence">0</field>
+            <field name="ai_quest_id" ref="build_views_bot_28"/>
+        </record>
+
+<!-- PRD Module: Views -->
+<record model="ai.quest" id="prd_module_views_bot">
+    <field name="ai_type">prd_module_views</field>
+    <field name="has_code" eval="False"/>
+    <field name="color">3</field>
+    <field name="description">
+        <![CDATA[
+## TASK
+Generate **CORRECT Odoo XML views** for PRD modules from model specifications.
+
+Generate XML records for: {views_instructions}
+Fields/Widgets: {views_fields_widgets}
+
+
+Specific instructions: {views_prompt}
+
+#### PRD information for {prd_id.name}
+{prd_id.description}
+#### PRD Goals
+{prd_id.goals}
+#### PRD Success Criteria 
+{prd_id.success_criteria}
+#### PRD risks
+{prd_id.risks}
+
+#### Goals and requirement for function {name}
+{description}
+{requirement_text}
+
+
+## YOUR ROLE
+Senior Odoo {branch_name} XML views expert for PRD modules
+
+## TARGET AUDIENCE/CONTEXT
+
+- Odoo {branch_name} views 
+- correct XML syntax is critical for module updates
+
+## SOURCE CODE (REFERENCE)
+{views_file_id.content}
+
+## STRICT FORMAT
+- First line: <&gt;?xml version="1.0" encoding="utf-8"?&lt;
+- Enclose with <odoo></odoo>
+- NO TEXT BEFORE OR AFTER XML
+- VALID Odoo {branch_name} SYNTAX
+]]>
+    </field>
+    <field name="init_type">manual</field>
+    <field name="name">PRD Module: Views</field>
+    <field name="status">active</field>
+    <field name="use_chat_history" eval="False"/>
+    <field name="use_company_info" eval="False"/>
+    <field name="use_personal_info" eval="False"/>
+    <field name="use_personal_lang" eval="False"/>
+    <field name="use_time_context" eval="True"/>
+</record>
+
+<record id="ai_quest_prd_module_views_16" model="ai.quest.agent">
+    <field name="ai_agent_id" ref="ai_agent_16"/>
+    <field name="sequence">20</field>
+    <field name="ai_quest_id" ref="prd_module_views_bot"/>
+</record>
+
+
+<!-- PRD Module: Models -->
+<record model="ai.quest" id="prd_module_models_bot">
+    <field name="ai_type">prd_module_models</field>
+    <field name="has_code" eval="False"/>
+    <field name="color">2</field>
+    <field name="description">
+        <![CDATA[
+## TASK
+Generate **CORRECT Python model classes** for PRD modules.
+
+Create model.py content for: {views_instructions}
+Specific model requirements: {views_prompt}
+
+## YOUR ROLE
+Senior Odoo {branch_name} Python model expert for PRD modules
+
+## SOURCE CODE (REFERENCE)  
+{model_file_id.content}
+
+## STRICT FORMAT
+- Pure Python model class definitions
+- Correct Odoo ORM syntax
+- Proper field definitions with constraints
+- NO XML, NO views - models only
+]]>
+    </field>
+    <field name="init_type">manual</field>
+    <field name="name">PRD Module: Models</field>
+    <field name="status">active</field>
+    <field name="use_chat_history" eval="False"/>
+    <field name="use_company_info" eval="False"/>
+    <field name="use_personal_info" eval="False"/>
+    <field name="use_personal_lang" eval="False"/>
+    <field name="use_time_context" eval="True"/>
+</record>
+
+<record id="ai_quest_prd_module_views_16" model="ai.quest.agent">
+    <field name="ai_agent_id" ref="ai_agent_16"/>
+    <field name="sequence">20</field>
+    <field name="ai_quest_id" ref="prd_module_views_bot"/>
+</record>
+
+
+
+<!-- PRD Module: Data -->
+<record model="ai.quest" id="prd_module_data_bot">
+    <field name="ai_type">prd_module_data</field>
+    <field name="has_code" eval="False"/>
+    <field name="color">4</field>
+    <field name="description">
+        <![CDATA[
+## TASK
+Generate **Odoo XML data files** (demo data, default values) for PRD modules.
+
+Specific data requirements: {data_prompt}
+
+## YOUR ROLE
+Senior Odoo {branch_name} data expert for PRD modules
+
+## SOURCE CODE (REFERENCE)
+{data_file_id.content}
+
+## STRICT FORMAT
+- <?xml version="1.0" encoding="utf-8"?>
+- <odoo><data>...</data></odoo>
+- Valid XML data records only
+]]>
+    </field>
+    <field name="init_type">manual</field>
+    <field name="name">PRD Module: Data</field>
+    <field name="status">active</field>
+    <field name="use_chat_history" eval="False"/>
+    <field name="use_company_info" eval="False"/>
+    <field name="use_personal_info" eval="False"/>
+    <field name="use_personal_lang" eval="False"/>
+    <field name="use_time_context" eval="True"/>
+</record>
+
+<record id="ai_quest_prd_module_views_16" model="ai.quest.agent">
+    <field name="ai_agent_id" ref="ai_agent_16"/>
+    <field name="sequence">20</field>
+    <field name="ai_quest_id" ref="prd_module_views_bot"/>
+</record>
+
+
+<!-- PRD Module: Tests -->
+<record model="ai.quest" id="prd_module_tests_bot">
+    <field name="ai_type">prd_module_tests</field>
+    <field name="has_code" eval="False"/>
+    <field name="color">1</field>
+    <field name="description">
+        <![CDATA[
+## TASK
+Generate **Odoo unit tests** for PRD module models and functionality.
+
+Test requirements: {tests_prompt}
+
+## YOUR ROLE
+Senior Odoo {branch_name} testing expert for PRD modules
+
+## SOURCE CODE (REFERENCE)
+{model_file_id.content}
+
+## STRICT FORMAT
+- Proper Odoo test class structure
+- from odoo.tests import common
+- Realistic test scenarios
+- NO XML - Python test code only
+]]>
+    </field>
+    <field name="init_type">manual</field>
+    <field name="name">PRD Module: Tests</field>
+    <field name="status">active</field>
+    <field name="use_chat_history" eval="False"/>
+    <field name="use_company_info" eval="False"/>
+    <field name="use_personal_info" eval="False"/>
+    <field name="use_personal_lang" eval="False"/>
+    <field name="use_time_context" eval="True"/>
+</record>
+
+<record id="ai_quest_prd_module_tests_16" model="ai.quest.agent">
+    <field name="ai_agent_id" ref="ai_agent_16"/>
+    <field name="sequence">50</field>
+    <field name="ai_quest_id" ref="prd_module_tests_bot"/>
+</record>
+
+<!-- PRD Module: Documentation -->
+<record model="ai.quest" id="prd_module_doc_bot">
+    <field name="ai_type">prd_module_doc</field>
+    <field name="has_code" eval="False"/>
+    <field name="color">5</field>
+    <field name="description">
+        <![CDATA[
+## TASK
+Generate **module documentation** and README for PRD modules.
+
+Create documentation for: {views_instructions}
+Documentation requirements: {views_prompt}
+
+## YOUR ROLE
+Senior Odoo {branch_name} technical writer for PRD modules
+
+## SOURCE CODE (REFERENCE)
+{content}
+
+## STRICT FORMAT
+- Markdown format (.md file)
+- Clear installation instructions  
+- Usage examples
+- Field documentation
+]]>
+    </field>
+    <field name="init_type">manual</field>
+    <field name="name">PRD Module: Documentation</field>
+    <field name="status">active</field>
+    <field name="use_chat_history" eval="False"/>
+    <field name="use_company_info" eval="False"/>
+    <field name="use_personal_info" eval="False"/>
+    <field name="use_personal_lang" eval="False"/>
+    <field name="use_time_context" eval="True"/>
+</record>
+
+<record id="ai_quest_prd_module_doc_16" model="ai.quest.agent">
+    <field name="ai_agent_id" ref="ai_agent_16"/>
+    <field name="sequence">60</field>
+    <field name="ai_quest_id" ref="prd_module_doc_bot"/>
+</record>
+
+
+<!-- PRD Module: Report -->
+<record model="ai.quest" id="prd_module_report_bot">
+    <field name="ai_type">prd_module_report</field>
+    <field name="has_code" eval="False"/>
+    <field name="color">7</field>
+    <field name="description">
+        <![CDATA[
+## TASK
+Generate **Odoo QWeb reports** for PRD modules.
+
+Create report XML for: {views_instructions}
+Report requirements: {views_prompt}
+
+## YOUR ROLE
+Senior Odoo {branch_name} QWeb report expert for PRD modules
+
+## SOURCE CODE (REFERENCE)
+{content}
+
+## STRICT FORMAT
+- <?xml version="1.0" encoding="utf-8"?>
+- <odoo><data>...</data></odoo>
+- Complete report definition + template
+]]>
+    </field>
+    <field name="init_type">manual</field>
+    <field name="name">PRD Module: Report</field>
+    <field name="status">active</field>
+    <field name="use_chat_history" eval="False"/>
+    <field name="use_company_info" eval="False"/>
+    <field name="use_personal_info" eval="False"/>
+    <field name="use_personal_lang" eval="False"/>
+    <field name="use_time_context" eval="True"/>
+</record>
+
+<record id="ai_quest_prd_module_report_16" model="ai.quest.agent">
+    <field name="ai_agent_id" ref="ai_agent_16"/>
+    <field name="sequence">70</field>
+    <field name="ai_quest_id" ref="prd_module_report_bot"/>
+</record>
+
+<!-- PRD Module: Wizard -->
+<record model="ai.quest" id="prd_module_wizard_bot">
+    <field name="ai_type">prd_module_wizard</field>
+    <field name="has_code" eval="True"/>
+    <field name="color">8</field>
+    <field name="description">
+        <![CDATA[
+## TASK
+Generate **Odoo transient wizards** for PRD modules.
+
+Create wizard model + views for: {views_instructions}
+Wizard requirements: {views_prompt}
+
+## YOUR ROLE
+Senior Odoo {branch_name} wizard expert for PRD modules
+
+## SOURCE CODE (REFERENCE)
+{content}
+
+## STRICT FORMAT
+- Python model: _inherit = 'transient.model'
+- Complete XML views for wizard
+- Action definition
+]]>
+    </field>
+    <field name="init_type">manual</field>
+    <field name="name">PRD Module: Wizard</field>
+    <field name="status">active</field>
+    <field name="use_chat_history" eval="False"/>
+    <field name="use_company_info" eval="False"/>
+    <field name="use_personal_info" eval="False"/>
+    <field name="use_personal_lang" eval="False"/>
+    <field name="use_time_context" eval="True"/>
+</record>
+
+<record id="ai_quest_prd_module_wizard_16" model="ai.quest.agent">
+    <field name="ai_agent_id" ref="ai_agent_16"/>
+    <field name="sequence">80</field>
+    <field name="ai_quest_id" ref="prd_module_wizard_bot"/>
+</record>
+
 
     </data>
 </odoo>

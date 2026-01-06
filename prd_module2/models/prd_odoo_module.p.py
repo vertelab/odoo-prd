@@ -87,6 +87,12 @@ VIEW_FIELD_WIDGETS = """
 class OdooModule(models.Model):
     _inherit = 'prd.odoo_module'
 
+    # ~ function_ids = fields.Many2many(  # Inverse
+        # ~ 'prd.function',
+        # ~ string='Functions'
+    # ~ )
+
+
     files_count = fields.Integer(string="Total Files", compute='_compute_file_counts',store=True)
     file_ids = fields.One2many('prd.odoo_module.file', 'module_id', string="Files")
     branch_id = fields.Many2one(comodel_name='prd.odoo_branch',string="Branch",help="")
@@ -584,3 +590,33 @@ class ProductRequirementDocument(models.Model):
             action.update({'view_mode': 'form,list,kanban'})
         return action
     
+
+class AIQuest(models.Model):
+    _inherit = "ai.quest"
+
+    ai_type = fields.Selection(required=False,
+        selection_add=[
+            ('prd_module_mv_prompt', 'Prd_module: Model/views prompt'), 
+            ('prd_module_views', 'Prd_module: views'), 
+            ('prd_module_models', 'Prd_module: models'), 
+            ('prd_module_data', 'Prd_module: data'), 
+            ('prd_module_tests', 'Prd_module: tests'), 
+            ('prd_module_doc', 'Prd_module: documentation'), 
+            ('prd_module_report', 'Prd_module: report'), 
+            ('prd_module_wizard', 'Prd_module: wizard'), 
+        ],
+        ondelete={            # YOUR ORIGINAL VALUES (from base model - add these!)
+            'default': 'set default',
+            'ai-programmer': 'cascade',
+            'oos': 'cascade', 
+            'ai-staff': 'cascade',
+            'prd_module_mv_prompt': 'set null',
+            'prd_module_views': 'set null',
+            'prd_module_models': 'set null', 
+            'prd_module_data': 'set null',
+            'prd_module_tests': 'set null',
+            'prd_module_doc': 'set null',
+            'prd_module_report': 'set null',
+            'prd_module_wizard': 'set null',
+        }
+    )

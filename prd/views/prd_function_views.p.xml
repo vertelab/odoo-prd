@@ -53,7 +53,9 @@
             <group id="c1">
               <field name="func_type" />
               <field name="implementation_type" invisible="1" />
+<!--
               <field name="module_id" invisible="implementation_type != 'odoo_module'" required="implementation_type == 'odoo_module'" />
+-->
               <field name="module_prd_id" invisible="implementation_type != 'prd'" required="implementation_type == 'prd'" />
               <field name="user_id" />
               <field name="prd_id" invisible="1" />
@@ -62,17 +64,20 @@
                <field name="weight"  />
             </group>
             <group id="c2">
+<!--
               <field name="application" invisible="implementation_type != 'odoo_module'" />
               <field name="repo_id" invisible="implementation_type != 'odoo_module'" />
               <field name="summary" invisible="implementation_type != 'odoo_module'" />
               <field name="technical_name" invisible="implementation_type != 'odoo_module'" />
               <field name="website" invisible="implementation_type != 'odoo_module'" />
+-->
             </group>
           </group>
           <notebook>
             <page string="Description">
               <field name="description" nolabel="1" />
             </page>
+<!--
             <page string="Index" invisible="implementation_type != 'odoo_module'" >
               <field name="description_html" nolabel="1" />
             </page>
@@ -85,6 +90,7 @@
             <page string="Output Data"  invisible="implementation_type == 'odoo_module'">
               <field name="output_data" nolabel="1" />
             </page>
+-->
             <page string="Requirements">
               <field name="requirement_ids" context="{
     'default_func_id': id,
@@ -132,9 +138,13 @@
       <kanban>
         <field name="name" />
         <field name="state" />
+<!--
         <field name="summary" />
+-->
+<!--
         <field name="website" />
         <field name="application" />
+-->
         <field name="func_type" />
         <field name="requirement_ids" />
         <field name="requirement_names_ids" />
@@ -150,11 +160,15 @@
             </t>
 
             <a type="open" class="dropdown-item">Module Info</a>
+<!--
             <a t-if="record.website.raw_value" role="menuitem" class="dropdown-item o-hidden-ios" t-att-href="record.website.raw_value" target="_blank">Learn More</a>
+-->
           </t>
           <t t-name="card" class="flex-row align-items-center">
             <aside>
+<!--
               <field name="icon" widget="image_url" options="{'size': [50, 50]}" alt="Icon" t-if="record.implementation_type.raw_value == 'module'"/>
+-->
               <field name="avatar_128" alt="Contact image" widget="image" options="{'img_class': 'object-fit-cover'}" t-if="record.implementation_type.raw_value != 'module'" />
             </aside>
             <!--
@@ -187,7 +201,9 @@
                 <!--
         <field name="state" widget="label_selection"/>
 -->
+<!--
                 <a t-att-href="record.website.raw_value" target="_blank" invisible="website in (False, '')" class="btn btn-sm btn-secondary float-end o-hidden-ios" role="button">Learn More</a>
+-->
                 <!--
                 <a type="edit" class="btn btn-secondary btn-sm float-end" role="button" invisible="website != ''">Module Info</a>
 -->

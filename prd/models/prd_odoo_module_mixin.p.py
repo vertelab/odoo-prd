@@ -125,9 +125,9 @@ class OdooModuleMixin(models.AbstractModel):
     # ~ url = fields.Char('URL', )
     sequence = fields.Integer('Sequence', default=100)
     # ~ dependency_ids = fields.Many2many(comodel_name='prd.odoo_module',string='_',help="") # relation|column1|column2
-    dependency_ids = fields.One2many(  comodel_name='prd.odoo_module.dependency', 
-                                        inverse_name='module_id',
-                                        string='Dependencies',)
+    # ~ dependency_ids = fields.One2many(  comodel_name='prd.odoo_module.dependency', 
+                                        # ~ inverse_name='module_id',
+                                        # ~ string='Dependencies',)
                                         
                                         
 
@@ -201,13 +201,13 @@ class OdooModuleMixin(models.AbstractModel):
                 # ~ record.icon = False  # Rensa URL om bild väljs
 
 
-class PrdDependency(models.Model):
-    _name = 'prd.odoo_module.dependency'
+# ~ class PrdDependency(models.Model):
+    # ~ _name = 'prd.odoo_module.dependency'
     # ~ _inherit = "ir.module.module.dependency"
-    _description = 'PRD dependencies for modules'
+    # ~ _description = 'PRD dependencies for modules'
 
-    module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Module",help="")
-    dep_module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Depends",help="Module that is a dependency")
+    # ~ module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Module",help="")
+    # ~ dep_module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Depends",help="Module that is a dependency")
 
 class PrdRule(models.Model):
     _name = 'prd.rule'
@@ -365,9 +365,9 @@ class OdooModule(models.Model):
             vals['technical_name'] = vals['name']
             vals['name'] = mod.shortdesc
             vals['module_id'] = mod.id
-            vals['dependencies_id'] = [(6, 0, [x.id for x in vals['dependencies_id'] if x._name == 'ir.module.module' and x.id])]
-            if not (hasattr(mod.dependencies_id, '_name') and mod.dependencies_id._name == 'ir.module.module.dependency'):
-                vals['dependencies_id'] = None
+            # ~ vals['dependencies_id'] = [(6, 0, [x.id for x in vals['dependencies_id'] if x._name == 'ir.module.module' and x.id])]
+            # ~ if not (hasattr(mod.dependencies_id, '_name') and mod.dependencies_id._name == 'ir.module.module.dependency'):
+                # ~ vals['dependencies_id'] = None
             # ~ print(f"DEBUG: type(mod.dependencies_id) = {type(mod.dependencies_id)}") <class 'odoo.api.ir.module.module.dependency'>
             
             new_mod = self.create(vals)
