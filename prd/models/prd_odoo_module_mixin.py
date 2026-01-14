@@ -95,36 +95,45 @@ maintainer (str)
 
 
 class OdooModuleMixin(models.AbstractModel):
-    _name = 'prd.odoo_module.mixin'
-    _description = 'Odoo Module Mixin'
+    _name = "prd.odoo_module.mixin"
+    _description = "Odoo Module Mixin"
 
-    active = fields.Boolean(string='Active', default=True)
-    app_category_id = fields.Many2one('ir.module.category', string="Category")
-    application = fields.Boolean(string='Application')
-    auto_install = fields.Boolean('Automatic Installation',
-                                  help='An auto-installable module is automatically installed by the '
-                                       'system when all its dependencies are satisfied. '
-                                       'If the module has no dependency, it is always installed.')
+    active = fields.Boolean(string="Active", default=True)
+    app_category_id = fields.Many2one("ir.module.category", string="Category")
+    application = fields.Boolean(string="Application")
+    auto_install = fields.Boolean(
+        "Automatic Installation",
+        help="An auto-installable module is automatically installed by the "
+        "system when all its dependencies are satisfied. "
+        "If the module has no dependency, it is always installed.",
+    )
     author = fields.Char("Author")
-    contributors = fields.Text('Contributors')
-    description = fields.Text(string='Description')
-    description_html = fields.Html(string='Index')
-    icon = fields.Char(string='Icon URL')
-    icon_image = fields.Binary(string='Icon', compute='_get_icon_image')
-    banner_image = fields.Binary(string='Banner', compute='_get_icon_image')
-    icon_flag = fields.Char(string='Flag', compute='_get_icon_image', inverse='_inverse_icon_flag')
-    licence_id = fields.Many2one(comodel_name='prd.odoo_licence', string="Licence", help="")
-    maintainer = fields.Char('Maintainer')
-    model_access_ids = fields.One2many(comodel_name="prd.model.access", inverse_name="prd_id")
-    module_id = fields.Many2one(comodel_name='ir.module.module', string="Module", help="")
-    repo_id = fields.Many2one(comodel_name='prd.odoo_repo', string="Repo", help="")
+    contributors = fields.Text("Contributors")
+    description = fields.Text(string="Description")
+    description_html = fields.Html(string="Index")
+    icon = fields.Char(string="Icon URL")
+    icon_image = fields.Binary(string="Icon", compute="_get_icon_image")
+    banner_image = fields.Binary(string="Banner", compute="_get_icon_image")
+    icon_flag = fields.Char(
+        string="Flag", compute="_get_icon_image", inverse="_inverse_icon_flag"
+    )
+    licence_id = fields.Many2one(
+        comodel_name="prd.odoo_licence", string="Licence", help=""
+    )
+    maintainer = fields.Char("Maintainer")
+    model_access_ids = fields.One2many(
+        comodel_name="prd.model.access", inverse_name="prd_id"
+    )
+    module_id = fields.Many2one(
+        comodel_name="ir.module.module", string="Module", help=""
+    )
+    repo_id = fields.Many2one(comodel_name="prd.odoo_repo", string="Repo", help="")
     rule_ids = fields.One2many(comodel_name="prd.rule", inverse_name="prd_id")
-    summary = fields.Char(string='Summary')
-    technical_name = fields.Char(string='Technical Name')
-    website = fields.Char(string='Website')
+    summary = fields.Char(string="Summary")
+    technical_name = fields.Char(string="Technical Name")
+    website = fields.Char(string="Website")
     # ~ url = fields.Char('URL', )
-    sequence = fields.Integer('Sequence', default=100)
-
+    sequence = fields.Integer("Sequence", default=100)
     # ~ dependency_ids = fields.Many2many(comodel_name='prd.odoo_module',string='_',help="") # relation|column1|column2
     # ~ dependency_ids = fields.One2many(  comodel_name='prd.odoo_module.dependency',
     # ~ inverse_name='module_id',
@@ -135,38 +144,71 @@ class OdooModuleMixin(models.AbstractModel):
     # ~ icon_flag = fields.Char(string='Flag', compute='_get_icon_image',  inverse='_inverse_icon_flag')
     def _get_icon_image(self):
         for module in self:
-            icon_image = module.icon_image_file_id.content if module.icon_image_file_id else None
-            banner_image = module.banner_image_file_id.content if module.icon_image_file_id else None
-            module.icon_flag = get_flag(
-                (self.module_id.get_module_info(module.name).get('countries', [])[0] or '').upper()) if len(
-                self.module_id.get_module_info(module.name).get('countries', [])) == 1 else ''
+            icon_image = (
+                module.icon_image_file_id.content if module.icon_image_file_id else None
+            )
+            banner_image = (
+                module.banner_image_file_id.content
+                if module.icon_image_file_id
+                else None
+            )
+            module.icon_flag = (
+                get_flag(
+                    (
+                        self.module_id.get_module_info(module.name).get(
+                            "countries", []
+                        )[0]
+                        or ""
+                    ).upper()
+                )
+                if len(self.module_id.get_module_info(module.name).get("countries", []))
+                == 1
+                else ""
+            )
 
     @api.model
     def _module2dict(self, module):
-        fields = ["app_category_id", "application", "auto_install", "author",
-                  "contributors", "description", "description_html", "icon",
-                  "icon_image", "licence_id", "maintainer", "name",
-                  "summary", "technical_name", "website", 'sequience',
-                  'dependencies_ids', ]
+        fields = [
+            "app_category_id",
+            "application",
+            "auto_install",
+            "author",
+            "contributors",
+            "description",
+            "description_html",
+            "icon",
+            "icon_image",
+            "licence_id",
+            "maintainer",
+            "name",
+            "summary",
+            "technical_name",
+            "website",
+            "sequience",
+            "dependencies_ids",
+        ]
 
-        return {field_name: module[field_name]
-                for field_name in module.fields_get() if field_name in fields}
+        return {
+            field_name: module[field_name]
+            for field_name in module.fields_get()
+            if field_name in fields
+        }
 
-    @api.onchange('module_id')
+    @api.onchange("module_id")
     def _onchange_module_id(self):
         for record in self:
-            if record.module_id and record._name == 'prd.document':
+            if record.module_id and record._name == "prd.document":
                 for key, value in self._module2dict(record.module_id).items():
                     setattr(record, key, value)
                 # ~ d = {field_name: record[field_name] for field_name in record.fields_get()}
                 # ~ raise UserError(f"{d}")
-            if record.module_id and record._name != 'prd.document':
+            if record.module_id and record._name != "prd.document":
                 for key, value in self._module2dict(record.module_id).items():
                     setattr(record, key, value)
 
     # ~ @api.depends('icon')
     def _get_icon_image(self):
-        self.icon_image = ''
+        self.icon_image = ""
         for module in self:
             if not module.id:
                 continue
@@ -176,12 +218,13 @@ class OdooModuleMixin(models.AbstractModel):
                 path = modules.module.get_module_icon_path(module)
             if path:
                 try:
-                    with tools.file_open(path, 'rb',
-                                         filter_ext=('.png', '.svg', '.gif', '.jpeg', '.jpg')) as image_file:
+                    with tools.file_open(
+                        path, "rb", filter_ext=(".png", ".svg", ".gif", ".jpeg", ".jpg")
+                    ) as image_file:
                         module.icon_image = base64.b64encode(image_file.read())
                 except FileNotFoundError:
-                    module.icon_image = ''
-            countries = self.module_id.get_module_info(module.name).get('countries', [])
+                    module.icon_image = ""
+            countries = self.module_id.get_module_info(module.name).get("countries", [])
             country_code = len(countries) == 1 and countries[0]
             module.banner_image = False
             # ~ module.icon_flag = get_flag(country_code.upper()) if country_code else ''
@@ -207,34 +250,35 @@ class OdooModuleMixin(models.AbstractModel):
 # ~ module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Module",help="")
 # ~ dep_module_id = fields.Many2one(comodel_name='prd.odoo_module',string="Depends",help="Module that is a dependency")
 
+
 class PrdRule(models.Model):
-    _name = 'prd.rule'
+    _name = "prd.rule"
     _inherit = "ir.rule"
-    _description = 'PRD rules for modules'
+    _description = "PRD rules for modules"
 
     prd_id = fields.Many2one(comodel_name="prd.document")
     # ~ group_ids = fields.One2many(comodel_name="prd.rule.groups",inverse_name="rule_id")
 
     groups = fields.Many2many(
-        comodel_name='res.groups',
-        relation='prd_rule_group_rel',
-        column1='rule_id',
-        column2='group_id',
-        string='Groups'
+        comodel_name="res.groups",
+        relation="prd_rule_group_rel",
+        column1="rule_id",
+        column2="group_id",
+        string="Groups",
     )
 
 
 class PrdLicence(models.Model):
-    _name = 'prd.odoo_licence'
-    _description = 'PRD model licences'
+    _name = "prd.odoo_licence"
+    _description = "PRD model licences"
 
-    name = fields.Char(string='Licence')
+    name = fields.Char(string="Licence")
 
 
 class PrdModelAccess(models.Model):
-    _name = 'prd.model.access'
+    _name = "prd.model.access"
     _inherit = "ir.model.access"
-    _description = 'PRD model to set access rights for modules and models'
+    _description = "PRD model to set access rights for modules and models"
 
     prd_id = fields.Many2one(comodel_name="prd.document")
 
@@ -248,44 +292,54 @@ class PrdModelAccess(models.Model):
 
 
 class OdooBranch(models.Model):
-    _name = 'prd.odoo_branch'
-    _description = 'Odoo Branch'
+    _name = "prd.odoo_branch"
+    _description = "Odoo Branch"
 
-    name = fields.Char(string='Name', required=True)
+    name = fields.Char(string="Name", required=True)
 
 
 class OdooRepo(models.Model):
-    _name = 'prd.odoo_repo'
-    _description = 'Odoo Repository'
+    _name = "prd.odoo_repo"
+    _description = "Odoo Repository"
 
-    name = fields.Char(string='Name', required=True)
+    name = fields.Char(string="Name", required=True)
     # ~ url = fields.Char(string='URL', help='url eg "https://api.github.com/repos/{self.owner}/{self.name}/git/trees/{branch_id.name}?recursive=1"')
-    path = fields.Char(string='Path', help='Filesystem path')
+    path = fields.Char(string="Path", help="Filesystem path")
     module_ids = fields.One2many(
-        comodel_name='prd.odoo_module',
-        inverse_name='repo_id',
-        string='Modules',
-        help=''
+        comodel_name="prd.odoo_module",
+        inverse_name="repo_id",
+        string="Modules",
+        help="",
     )
-    owner = fields.Char(string='Owner', size=64, trim=True, )
-    repo_source = fields.Selection(selection=[('github', 'Github'), ('gitlab', 'Gitlab')], string='Source')
-    branch_ids = fields.Many2many(comodel_name='prd.odoo_branch', string='Branch', help="")
+    owner = fields.Char(
+        string="Owner",
+        size=64,
+        trim=True,
+    )
+    repo_source = fields.Selection(
+        selection=[("github", "Github"), ("gitlab", "Gitlab")], string="Source"
+    )
+    branch_ids = fields.Many2many(
+        comodel_name="prd.odoo_branch", string="Branch", help=""
+    )
 
-    @api.onchange("repo_source", 'name', 'owner')
+    @api.onchange("repo_source", "name", "owner")
     def _repo_source(self):
         """Validate repo source selection."""
-        if self.repo_source and self.repo_source not in ['github', 'gitlab']:
+        if self.repo_source and self.repo_source not in ["github", "gitlab"]:
             raise UserError(f"Unsupported repository source: {self.repo_source}")
 
     def _get_provider_adapter(self):
         """Factory method to get the appropriate git provider adapter."""
         if not self.repo_source:
-            raise UserError("Repository source not configured. Please select GitHub or GitLab.")
+            raise UserError(
+                "Repository source not configured. Please select GitHub or GitLab."
+            )
 
-        if self.repo_source == 'github':
-            return self.env['git.provider.github']
-        elif self.repo_source == 'gitlab':
-            return self.env['git.provider.gitlab']
+        if self.repo_source == "github":
+            return self.env["git.provider.github"]
+        elif self.repo_source == "gitlab":
+            return self.env["git.provider.gitlab"]
         else:
             raise UserError(f"Unsupported repository source: {self.repo_source}")
 
@@ -294,7 +348,7 @@ class OdooRepo(models.Model):
         if not self.repo_source:
             raise UserError("Repository source not configured")
 
-        param_name = f'prd.{self.repo_source}_token'
+        param_name = f"prd.{self.repo_source}_token"
         authToken = self.env["ir.config_parameter"].sudo().get_param(param_name)
 
         if not authToken:
@@ -315,19 +369,25 @@ class OdooRepo(models.Model):
             branches = adapter.get_branches(repo)
 
             # Filter for Odoo version branches (e.g., "14.0", "15.0")
-            odoo_branches = [b for b in branches if re.match(r"^\d+\.0$", b['name'])]
+            odoo_branches = [b for b in branches if re.match(r"^\d+\.0$", b["name"])]
 
             branch_ids = []
-            for branch_info in sorted(odoo_branches, key=lambda x: float(x['name'])):
-                b = self.env['prd.odoo_branch'].search([('name', '=', branch_info['name'])], limit=1)
+            for branch_info in sorted(odoo_branches, key=lambda x: float(x["name"])):
+                b = self.env["prd.odoo_branch"].search(
+                    [("name", "=", branch_info["name"])], limit=1
+                )
                 if not b:
-                    b = self.env['prd.odoo_branch'].create({'name': branch_info['name']})
+                    b = self.env["prd.odoo_branch"].create(
+                        {"name": branch_info["name"]}
+                    )
                 branch_ids.append(b.id)
 
             if branch_ids:
                 self.branch_ids = [(6, 0, branch_ids)]
 
-            _logger.info(f"Fetched {len(branch_ids)} Odoo branches from {self.repo_source}")
+            _logger.info(
+                f"Fetched {len(branch_ids)} Odoo branches from {self.repo_source}"
+            )
 
         except Exception as e:
             _logger.error(f"Failed to fetch branches from {self.repo_source}: {e}")
@@ -351,7 +411,7 @@ class OdooRepo(models.Model):
         repo = self._git_repo()
         mfiles = []
 
-        if self.owner == 'odoo':
+        if self.owner == "odoo":
             filename = f"addons/{filename}"
 
         try:
@@ -368,34 +428,40 @@ class OdooRepo(models.Model):
             file_obj = files.pop(0)
             file_info = adapter.normalize_file_object(file_obj)
 
-            pos = 1 if self.owner != 'odoo' else 2
-            path_parts = file_info['path'].split('/')
+            pos = 1 if self.owner != "odoo" else 2
+            path_parts = file_info["path"].split("/")
 
             # Skip i18n directories
-            if file_info['type'] in ['dir', 'tree']:
-                if len(path_parts) > pos and path_parts[pos] == 'i18n':
+            if file_info["type"] in ["dir", "tree"]:
+                if len(path_parts) > pos and path_parts[pos] == "i18n":
                     continue
                 # Get contents of subdirectory
                 try:
-                    subfiles = adapter.get_contents(repo, file_info['path'], branch)
+                    subfiles = adapter.get_contents(repo, file_info["path"], branch)
                     if isinstance(subfiles, list):
                         files.extend(subfiles)
                 except Exception as e:
-                    _logger.warning(f"Could not read subdirectory {file_info['path']}: {e}")
-            elif file_info['name'] not in ['.gitignore']:
+                    _logger.warning(
+                        f"Could not read subdirectory {file_info['path']}: {e}"
+                    )
+            elif file_info["name"] not in [".gitignore"]:
                 mfiles.append(file_obj)
 
         # Filter out .p.py and .p.xml duplicates
         normalized_files = [adapter.normalize_file_object(f) for f in mfiles]
-        p_files = set([
-            f['path'].replace('.p.', '.')
-            for f in normalized_files
-            if '.p.' in f['path'] and (f['path'].endswith('.p.py') or f['path'].endswith('.p.xml'))
-        ])
+        p_files = set(
+            [
+                f["path"].replace(".p.", ".")
+                for f in normalized_files
+                if ".p." in f["path"]
+                and (f["path"].endswith(".p.py") or f["path"].endswith(".p.xml"))
+            ]
+        )
 
         result = [
-            f for f, norm in zip(mfiles, normalized_files)
-            if norm['path'] not in p_files
+            f
+            for f, norm in zip(mfiles, normalized_files)
+            if norm["path"] not in p_files
         ]
 
         _logger.info(f"Returning {len(result)} files after filtering")
@@ -424,30 +490,35 @@ class OdooRepo(models.Model):
                 file_obj = file_obj[0]
 
             file_info = adapter.normalize_file_object(file_obj)
-            return file_info['decoded_content']
+            return file_info["decoded_content"]
         except Exception as e:
             _logger.error(f"Error getting file content {filename}: {e}")
             return f"{filename} Error {e}"
 
 
 class OdooModule(models.Model):
-    _name = 'prd.odoo_module'
-    _inherit = ['prd.odoo_module.mixin', 'mail.thread', 'mail.activity.mixin', ]
-    _description = 'Odoo Module'
+    _name = "prd.odoo_module"
+    _inherit = [
+        "prd.odoo_module.mixin",
+        "mail.thread",
+        "mail.activity.mixin",
+    ]
+    _description = "Odoo Module"
 
-    name = fields.Char(string='Name', required=True)
-    branch_id = fields.Many2one(comodel_name='prd.odoo_branch', string="Branch",
-                                help="")  # TODO Domain repo_id.branch_ids
+    name = fields.Char(string="Name", required=True)
+    branch_id = fields.Many2one(
+        comodel_name="prd.odoo_branch", string="Branch", help=""
+    )  # TODO Domain repo_id.branch_ids
 
     @api.model
     def get_modules(self):
-        for mod in self.env['ir.module.module'].search([]):
-            if self.search([('technical_name', '=', mod.name)], limit=1):
+        for mod in self.env["ir.module.module"].search([]):
+            if self.search([("technical_name", "=", mod.name)], limit=1):
                 continue
             vals = self._module2dict(mod)
-            vals['technical_name'] = vals['name']
-            vals['name'] = mod.shortdesc
-            vals['module_id'] = mod.id
+            vals["technical_name"] = vals["name"]
+            vals["name"] = mod.shortdesc
+            vals["module_id"] = mod.id
             # ~ vals['dependencies_id'] = [(6, 0, [x.id for x in vals['dependencies_id'] if x._name == 'ir.module.module' and x.id])]
             # ~ if not (hasattr(mod.dependencies_id, '_name') and mod.dependencies_id._name == 'ir.module.module.dependency'):
             # ~ vals['dependencies_id'] = None
@@ -476,23 +547,21 @@ class OdooModule(models.Model):
 
         try:
             writer = SFTPFileWriter(
-                username=username,
-                hostname=hostname,
-                port=port,
-                module_path=module_path
+                username=username, hostname=hostname, port=port, module_path=module_path
             )
             self._build_module_structure(writer)
             writer.close()
 
             return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('Success'),
-                    'message': _('Module uploaded successfully to %s:%s%s') % (hostname, port, module_path),
-                    'type': 'success',
-                    'sticky': False,
-                }
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": _("Success"),
+                    "message": _("Module uploaded successfully to %s:%s%s")
+                    % (hostname, port, module_path),
+                    "type": "success",
+                    "sticky": False,
+                },
             }
         except Exception as e:
             _logger.error(f"SFTP upload failed: {str(e)}")
@@ -500,11 +569,11 @@ class OdooModule(models.Model):
 
 
 class OdooViewType(models.Model):
-    _name = 'prd.odoo_view_type'
-    _description = 'Odoo View Type'
+    _name = "prd.odoo_view_type"
+    _description = "Odoo View Type"
 
-    name = fields.Char(string='View Type Name', required=True)
-    code = fields.Char(string='View Type Code', required=True)
-    description = fields.Text(string='Description')
-    prompt = fields.Text(string='Prompt')
-    active = fields.Boolean(string='Active', default=True)
+    name = fields.Char(string="View Type Name", required=True)
+    code = fields.Char(string="View Type Code", required=True)
+    description = fields.Text(string="Description")
+    prompt = fields.Text(string="Prompt")
+    active = fields.Boolean(string="Active", default=True)

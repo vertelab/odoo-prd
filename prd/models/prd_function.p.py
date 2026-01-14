@@ -89,71 +89,94 @@ function_icon = """<svg height="800px" width="800px" version="1.1" id="图层_1"
 
 
 class PrdFunction(models.Model):
-    _name = 'prd.function'
-    _inherit = ['mermaid.mixin', 'mail.thread', 'mail.activity.mixin',]
-    _description = 'PRD Functions'
+    _name = "prd.function"
+    _inherit = [
+        "mermaid.mixin",
+        "mail.thread",
+        "mail.activity.mixin",
+    ]
+    _description = "PRD Functions"
 
     # models / data / sequrity / sequirity.xml / views /
 
-    module_id = fields.Many2one(comodel_name='prd.odoo_module',related="prd_id.module_id")
-    icon_image = fields.Binary(string='Function Icon',)
-    active = fields.Boolean(string='Active', default=True)
-    avatar_128 = fields.Image("Avatar", max_width=128, max_height=128, compute='_compute_avatar_128')
+    module_id = fields.Many2one(
+        comodel_name="prd.odoo_module", related="prd_id.module_id"
+    )
+    icon_image = fields.Binary(
+        string="Function Icon",
+    )
+    active = fields.Boolean(string="Active", default=True)
+    avatar_128 = fields.Image(
+        "Avatar", max_width=128, max_height=128, compute="_compute_avatar_128"
+    )
     category_ids = fields.Many2many(
-        comodel_name='prd.function_category',
-        string='Tags',
-        help="Categories"
+        comodel_name="prd.function_category", string="Tags", help="Categories"
     )
     description = fields.Text(string="Description")
-    duration_tracking = fields.Float(string='Duration Tracking')
-    func_type = fields.Many2one(comodel_name='prd.function_type', string="Type", help="")
+    duration_tracking = fields.Float(string="Duration Tracking")
+    func_type = fields.Many2one(
+        comodel_name="prd.function_type", string="Type", help=""
+    )
     input_data = fields.Text(string="Input")
-    module_prd_id = fields.Many2one(comodel_name='prd.document', string="Product Requirement Document", help="")
+    module_prd_id = fields.Many2one(
+        comodel_name="prd.document", string="Product Requirement Document", help=""
+    )
     name = fields.Char(string="Name", required=True)
     odoo_view_ids = fields.Many2many(
-        comodel_name='prd.odoo_view_type',
-        string='View Types',
-        help=""
+        comodel_name="prd.odoo_view_type", string="View Types", help=""
     )
     output_data = fields.Text(string="Output")
-    prd_id = fields.Many2one('prd.document', string='PRD', ondelete='cascade', required=True)
+    prd_id = fields.Many2one(
+        "prd.document", string="PRD", ondelete="cascade", required=True
+    )
     process_data = fields.Text(string="Process")
-    requirement_ids = fields.One2many(comodel_name='prd.requirement.function', inverse_name='func_id')
+    requirement_ids = fields.One2many(
+        comodel_name="prd.requirement.function", inverse_name="func_id"
+    )
     weight = fields.Selection(
-    selection=[
-        ('1', 'Easy'),
-        ('2', 'Medium'),
-        ('4', 'Hard'),
-        ('8', 'Very hard'),
-    ],
-    string="Weight",
-    default='1',
-        )
+        selection=[
+            ("1", "Easy"),
+            ("2", "Medium"),
+            ("4", "Hard"),
+            ("8", "Very hard"),
+        ],
+        string="Weight",
+        default="1",
+    )
 
     requirement_names_ids = fields.Many2many(
-        comodel_name='prd.requirement', string="Requirement", compute='_compute_requirement_names_ids'
+        comodel_name="prd.requirement",
+        string="Requirement",
+        compute="_compute_requirement_names_ids",
     )
-    @api.depends('requirement_ids.func_id')
+
+    @api.depends("requirement_ids.func_id")
     def _compute_requirement_names_ids(self):
         for record in self:
-            record.requirement_names_ids = record.requirement_ids.mapped('req_id')
+            record.requirement_names_ids = record.requirement_ids.mapped("req_id")
 
-    requirement_text = fields.Text(string='Requirement Text',compute='_compute_requirement_text')
-    @api.depends('requirement_ids.func_id')
+    requirement_text = fields.Text(
+        string="Requirement Text", compute="_compute_requirement_text"
+    )
+
+    @api.depends("requirement_ids.func_id")
     def _compute_requirement_text(self):
         for record in self:
-            record.requirement_text = f'{'-' * 80}\n'.join([f"{code} {name}\n{description}\n\n" for r in record.requirement_ids.mapped('req_id')])
+            record.requirement_text = f"{'-' * 80}\n".join(
+                [
+                    f"{code} {name}\n{description}\n\n"
+                    for r in record.requirement_ids.mapped("req_id")
+                ]
+            )
 
-
-
-    sequence = fields.Integer(string='Sequence')
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('ongoing', 'Ongoing'),
-        ('done', 'Done')
-    ], string="State", default='draft')
+    sequence = fields.Integer(string="Sequence")
+    state = fields.Selection(
+        [("draft", "Draft"), ("ongoing", "Ongoing"), ("done", "Done")],
+        string="State",
+        default="draft",
+    )
     to_check = fields.Boolean()
-    user_id = fields.Many2one(comodel_name='res.users', string="Author", help="")
+    user_id = fields.Many2one(comodel_name="res.users", string="Author", help="")
     implementation_type = fields.Selection(
         related="func_type.implementation_type",
         string="Implementation Type",
@@ -165,11 +188,14 @@ class PrdFunction(models.Model):
 
     @api.model
     def _generate_random_token(self):
-        return ''.join(choice('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ23456789') for _i in range(10))
+        return "".join(
+            choice("abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ23456789")
+            for _i in range(10)
+        )
 
-    uuid = fields.Char('UUID', size=50, default=_generate_random_token, copy=False)
+    uuid = fields.Char("UUID", size=50, default=_generate_random_token, copy=False)
 
-    @api.depends('image_128', 'uuid')
+    @api.depends("image_128", "uuid")
     def _compute_avatar_128(self):
         for record in self:
             if record.image_128:
@@ -185,41 +211,53 @@ class PrdFunction(models.Model):
 
 
 class OdooView(models.Model):
-    _name = 'prd.odoo_view'
-    _description = 'Odoo View'
+    _name = "prd.odoo_view"
+    _description = "Odoo View"
 
-    func_id = fields.Many2one('prd.document', string='PRD', ondelete='cascade', required=True)
-    view_type_id = fields.Many2one('prd.odoo_view_type', string='View Type', ondelete='cascade', required=True)
-    prompt = fields.Text(string='Prompt')
+    func_id = fields.Many2one(
+        "prd.document", string="PRD", ondelete="cascade", required=True
+    )
+    view_type_id = fields.Many2one(
+        "prd.odoo_view_type", string="View Type", ondelete="cascade", required=True
+    )
+    prompt = fields.Text(string="Prompt")
     filename = fields.Char(string="Filename")
     source_code = fields.Text(string="Source Code")
 
-    @api.onchange('view_type_id')
+    @api.onchange("view_type_id")
     def _onchange_view_type_id(self):
         if self.view_type_id:
-            self.prompt = self.view_type_id.prompt or ''
+            self.prompt = self.view_type_id.prompt or ""
         else:
-            self.prompt = ''
+            self.prompt = ""
 
 
 class FunctionTypes(models.Model):
-    _name = 'prd.function_type'
-    _description = 'Function Type'
+    _name = "prd.function_type"
+    _description = "Function Type"
 
-    name = fields.Char(string='Type', required=True)
+    name = fields.Char(string="Type", required=True)
     implementation_type = fields.Selection(
-        selection=[('module', 'Module'), ('odoo_module', 'Odoo Module'), ('prd', 'Product Requirement Document'),
-                   ('other', 'Other'),('mv', 'Model/View'),('controller', 'Controller'),
-                   ('wizard', 'Wizard'),('report', 'Report'),
-                   ], string='Type', default="other", required=True)
+        selection=[
+            ("module", "Module"),
+            ("odoo_module", "Odoo Module"),
+            ("prd", "Product Requirement Document"),
+            ("other", "Other"),
+            ("mv", "Model/View"),
+            ("controller", "Controller"),
+            ("wizard", "Wizard"),
+            ("report", "Report"),
+        ],
+        string="Type",
+        default="other",
+        required=True,
+    )
 
 
 class FunctionCategory(models.Model):
-    _name = 'prd.function_category'
-    _description = 'Function Category'
+    _name = "prd.function_category"
+    _description = "Function Category"
 
-    name = fields.Char(string='Category', required=True)
-    color = fields.Integer(string='Color', default=lambda self: randint(0, 10))
-    active = fields.Boolean(string='Active', default=True)
-
-
+    name = fields.Char(string="Category", required=True)
+    color = fields.Integer(string="Color", default=lambda self: randint(0, 10))
+    active = fields.Boolean(string="Active", default=True)
