@@ -1,397 +1,393 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <!-- Views for prd.requirement_type -->
-  <record id="view_prd_requirement_type_search" model="ir.ui.view">
-    <field name="name">prd.requirement_type.search</field>
-    <field name="model">prd.requirement_type</field>
-    <field name="arch" type="xml">
-      <search string="Search Requirement Types">
-        <!-- Sökfält -->
-        <!--
-             <field name="name" filter_domain="[('name','ilike',self)] | [('description','ilike',self)] | [('prd_id.name','ilike',self)]" />
-        -->
-        <field name="name" filter_domain="['|','|',('name','ilike',self),('description','ilike',self),('prd_id.name','ilike',self)]" />
-        <field name="description" />
-        <field name="prd_id" />
-        <!-- Filter på active -->
-        <filter string="Archived" name="inactive" domain="[('active', '=', False)]" />
-        <!-- Separator och andra filter -->
-        <separator />
-        <filter string="Has PRD" name="has_prd" domain="[('prd_id', '!=', False)]" />
-        <!-- Group By -->
-        <group expand="0" string="Group By">
-          <filter string="PRD Document" name="group_prd_id" context="{'group_by': 'prd_id'}" />
-        </group>
-      </search>
-    </field>
-  </record>
-  <record id="view_prd_requirement_type_tree" model="ir.ui.view">
-    <field name="name">prd.requirement_type.tree</field>
-    <field name="model">prd.requirement_type</field>
-    <field name="arch" type="xml">
-      <list string="Requirement Types">
-        <field name="name" />
-        <field name="description" />
-        <field name="prd_id" />
-      </list>
-    </field>
-  </record>
-  <record id="view_prd_requirement_type_form" model="ir.ui.view">
-    <field name="name">prd.requirement_type.form</field>
-    <field name="model">prd.requirement_type</field>
-    <field name="arch" type="xml">
-      <form string="Requirement Type">
-        <header>
-          <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
-        </header>
-        <sheet>
-          <group>
-            <field name="name" required="1" />
-            <field name="description" />
-            <field name="prd_id" />
-            <field name="active" invisible="1" />
-          </group>
-        </sheet>
-      </form>
-    </field>
-  </record>
-  <!-- Views for prd.requirement_category -->
-  <record id="view_prd_requirement_category_tree" model="ir.ui.view">
-    <field name="name">prd.requirement_category.tree</field>
-    <field name="model">prd.requirement_category</field>
-    <field name="arch" type="xml">
-      <list string="Requirement Categories">
-        <field name="name" />
-        <field name="active" />
-      </list>
-    </field>
-  </record>
-  <record id="view_prd_requirement_category_form" model="ir.ui.view">
-    <field name="name">prd.requirement_category.form</field>
-    <field name="model">prd.requirement_category</field>
-    <field name="arch" type="xml">
-      <form string="Requirement Category">
-        <sheet>
-          <group>
-            <field name="name" required="1" />
-            <field name="active" />
-          </group>
-        </sheet>
-      </form>
-    </field>
-  </record>
-  <!-- Views for prd.odoo_view_type -->
-  <record id="view_prd_odoo_view_type_tree" model="ir.ui.view">
-    <field name="name">prd.odoo_view_type.tree</field>
-    <field name="model">prd.odoo_view_type</field>
-    <field name="arch" type="xml">
-      <list string="Odoo View Types">
-        <field name="name" />
-        <field name="code" />
-        <field name="description" />
-        <field name="active" />
-      </list>
-    </field>
-  </record>
-  <record id="view_prd_odoo_view_type_form" model="ir.ui.view">
-    <field name="name">prd.odoo_view_type.form</field>
-    <field name="model">prd.odoo_view_type</field>
-    <field name="arch" type="xml">
-      <form string="Odoo View Type">
-        <sheet>
-          <group>
-            <field name="name" required="1" />
-            <field name="code" required="1" />
-            <field name="description" />
-            <field name="prompt" />
-            <field name="active" />
-          </group>
-        </sheet>
-      </form>
-    </field>
-  </record>
-  <!-- List och form vy för prd.function_type -->
-  <record id="view_prd_function_type_list" model="ir.ui.view">
-    <field name="name">prd.function_type.list</field>
-    <field name="model">prd.function_type</field>
-    <field name="arch" type="xml">
-      <list string="Function Types">
-        <field name="name" />
-        <field name="implementation_type" />
-      </list>
-    </field>
-  </record>
-  <record id="view_prd_function_type_form" model="ir.ui.view">
-    <field name="name">prd.function_type.form</field>
-    <field name="model">prd.function_type</field>
-    <field name="arch" type="xml">
-      <form string="Function Type">
-        <sheet>
-          <group>
-            <field name="name" required="1" />
-            <field name="implementation_type" />
-          </group>
-        </sheet>
-      </form>
-    </field>
-  </record>
-  <!-- List och form vy för prd.function_category -->
-  <record id="view_prd_function_category_list" model="ir.ui.view">
-    <field name="name">prd.function_category.list</field>
-    <field name="model">prd.function_category</field>
-    <field name="arch" type="xml">
-      <list string="Function Categories">
-        <field name="name" />
-        <field name="color" widget="color_picker" />
-        <field name="active" />
-      </list>
-    </field>
-  </record>
-  <record id="view_prd_function_category_form" model="ir.ui.view">
-    <field name="name">prd.function_category.form</field>
-    <field name="model">prd.function_category</field>
-    <field name="arch" type="xml">
-      <form string="Function Category">
-        <sheet>
-          <group>
-            <field name="name" required="1" />
-            <field name="color" widget="color_picker" />
-            <field name="active" />
-          </group>
-        </sheet>
-      </form>
-    </field>
-  </record>
-  <!-- List och form vy för prd.odoo_module -->
-  <record id="view_prd_odoo_module_list" model="ir.ui.view">
-    <field name="name">prd.odoo_module.list</field>
-    <field name="model">prd.odoo_module</field>
-    <field name="arch" type="xml">
-      <list string="Odoo Modules">
-        <field name="technical_name" />
-        <field name="name" />
-        <field name="summary" optional="hide" />
-        <field name="module_id" optional="show" />
-        <field name="application" optional="show" />
-        <field name="repo_id" optional="hide" />
-        <field name="app_category_id" optional="hide" />
-        <field name="author" optional="show" />
-        <field name="maintainer" optional="show" />
-        <field name="contributors" optional="show" />
-        <field name="website" optional="show" />
-        <field name="sequence" optional="show" />
-        <!--
-             <field name="country_ids" widget="many2many_tags" optional="show" />
-        -->
-        <field name="auto_install" optional="show" />
-        <field name="licence_id" optional="show" />
-        <!--
-             <field name="menus_by_module" optional="show"/>
-             <field name="reports_by_module" optional="show"/>
-             <field name="views_by_module" optional="show"/>
-        -->
-        <field name="icon" optional="show" />
-      </list>
-    </field>
-  </record>
-  <record id="view_prd_odoo_module_form" model="ir.ui.view">
-    <field name="name">prd.odoo_module.form</field>
-    <field name="model">prd.odoo_module</field>
-    <field name="arch" type="xml">
-        <form string="Odoo Module">
-        <header>
-          <button name="sftp_upload" string="SFTP Upload" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
-        </header>
-        <sheet>
-          <div class="oe_button_box" name="button_box" groups="base.group_user" />
-          
-          <group>
-            <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
-                    <field name="icon_image" nolabel="1" widget="image" class="oe_avatar"   />
+    <!-- Views for prd.requirement_type -->
+    <record id="view_prd_requirement_type_search" model="ir.ui.view">
+        <field name="name">prd.requirement_type.search</field>
+        <field name="model">prd.requirement_type</field>
+        <field name="arch" type="xml">
+            <search string="Search Requirement Types">
+                <!-- Sökfält -->
+                <!--
+                     <field name="name" filter_domain="[('name','ilike',self)] | [('description','ilike',self)] | [('prd_id.name','ilike',self)]" />
+                -->
+                <field name="name" filter_domain="['|','|',('name','ilike',self),('description','ilike',self),('prd_id.name','ilike',self)]" />
+                <field name="description" />
+                <field name="prd_id" />
+                <!-- Filter på active -->
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]" />
+                <!-- Separator och andra filter -->
+                <separator />
+                <filter string="Has PRD" name="has_prd" domain="[('prd_id', '!=', False)]" />
+                <!-- Group By -->
+                <group expand="0" string="Group By">
+                    <filter string="PRD Document" name="group_prd_id" context="{'group_by': 'prd_id'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="view_prd_requirement_type_tree" model="ir.ui.view">
+        <field name="name">prd.requirement_type.tree</field>
+        <field name="model">prd.requirement_type</field>
+        <field name="arch" type="xml">
+            <list string="Requirement Types">
+                <field name="name" />
+                <field name="description" />
+                <field name="prd_id" />
+            </list>
+        </field>
+    </record>
+    <record id="view_prd_requirement_type_form" model="ir.ui.view">
+        <field name="name">prd.requirement_type.form</field>
+        <field name="model">prd.requirement_type</field>
+        <field name="arch" type="xml">
+            <form string="Requirement Type">
+                <header>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" required="1" />
+                        <field name="description" />
+                        <field name="prd_id" />
+                        <field name="active" invisible="1" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Views for prd.requirement_category -->
+    <record id="view_prd_requirement_category_tree" model="ir.ui.view">
+        <field name="name">prd.requirement_category.tree</field>
+        <field name="model">prd.requirement_category</field>
+        <field name="arch" type="xml">
+            <list string="Requirement Categories">
+                <field name="name" />
+                <field name="active" />
+            </list>
+        </field>
+    </record>
+    <record id="view_prd_requirement_category_form" model="ir.ui.view">
+        <field name="name">prd.requirement_category.form</field>
+        <field name="model">prd.requirement_category</field>
+        <field name="arch" type="xml">
+            <form string="Requirement Category">
+                <sheet>
+                    <group>
+                        <field name="name" required="1" />
+                        <field name="active" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Views for prd.odoo_view_type -->
+    <record id="view_prd_odoo_view_type_tree" model="ir.ui.view">
+        <field name="name">prd.odoo_view_type.tree</field>
+        <field name="model">prd.odoo_view_type</field>
+        <field name="arch" type="xml">
+            <list string="Odoo View Types">
+                <field name="name" />
+                <field name="code" />
+                <field name="description" />
+                <field name="active" />
+            </list>
+        </field>
+    </record>
+    <record id="view_prd_odoo_view_type_form" model="ir.ui.view">
+        <field name="name">prd.odoo_view_type.form</field>
+        <field name="model">prd.odoo_view_type</field>
+        <field name="arch" type="xml">
+            <form string="Odoo View Type">
+                <sheet>
+                    <group>
+                        <field name="name" required="1" />
+                        <field name="code" required="1" />
+                        <field name="description" />
+                        <field name="prompt" />
+                        <field name="active" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- List och form vy för prd.function_type -->
+    <record id="view_prd_function_type_list" model="ir.ui.view">
+        <field name="name">prd.function_type.list</field>
+        <field name="model">prd.function_type</field>
+        <field name="arch" type="xml">
+            <list string="Function Types">
+                <field name="name" />
+                <field name="implementation_type" />
+            </list>
+        </field>
+    </record>
+    <record id="view_prd_function_type_form" model="ir.ui.view">
+        <field name="name">prd.function_type.form</field>
+        <field name="model">prd.function_type</field>
+        <field name="arch" type="xml">
+            <form string="Function Type">
+                <sheet>
+                    <group>
+                        <field name="name" required="1" />
+                        <field name="implementation_type" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- List och form vy för prd.function_category -->
+    <record id="view_prd_function_category_list" model="ir.ui.view">
+        <field name="name">prd.function_category.list</field>
+        <field name="model">prd.function_category</field>
+        <field name="arch" type="xml">
+            <list string="Function Categories">
+                <field name="name" />
+                <field name="color" widget="color_picker" />
+                <field name="active" />
+            </list>
+        </field>
+    </record>
+    <record id="view_prd_function_category_form" model="ir.ui.view">
+        <field name="name">prd.function_category.form</field>
+        <field name="model">prd.function_category</field>
+        <field name="arch" type="xml">
+            <form string="Function Category">
+                <sheet>
+                    <group>
+                        <field name="name" required="1" />
+                        <field name="color" widget="color_picker" />
+                        <field name="active" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- List och form vy för prd.odoo_module -->
+    <record id="view_prd_odoo_module_list" model="ir.ui.view">
+        <field name="name">prd.odoo_module.list</field>
+        <field name="model">prd.odoo_module</field>
+        <field name="arch" type="xml">
+            <list string="Odoo Modules">
+                <field name="technical_name" />
+                <field name="name" />
+                <field name="summary" optional="hide" />
+                <field name="module_id" optional="show" />
+                <field name="application" optional="show" />
+                <field name="repo_id" optional="hide" />
+                <field name="app_category_id" optional="hide" />
+                <field name="author" optional="show" />
+                <field name="maintainer" optional="show" />
+                <field name="contributors" optional="show" />
+                <field name="website" optional="show" />
+                <field name="sequence" optional="show" />
+                <!--
+                     <field name="country_ids" widget="many2many_tags" optional="show" />
+                -->
+                <field name="auto_install" optional="show" />
+                <field name="licence_id" optional="show" />
+                <!--
+                     <field name="menus_by_module" optional="show"/>
+                     <field name="reports_by_module" optional="show"/>
+                     <field name="views_by_module" optional="show"/>
+                -->
+                <field name="icon" optional="show" />
+            </list>
+        </field>
+    </record>
 
-            <div class="oe_title">
-              <h1 class="d-flex flex-row">
-                <field name="name" options="{'line_breaks': False}" widget="text" class="flex-grow-1 o_text_overflow" placeholder="e.g. Office Party" style="width: 32em; font-size: 1.1em; xline-height: 2;" />
-              </h1>
-               <field name="technical_name" required="1" />
-            </div>
-          </group>
-          <group>
-            <group id="c1">
-<field name="summary" />
-<field name="app_category_id" />
-<field name="author" />
-<field name="repo_id" />
-<field name="branch_id" />
+    <record id="view_prd_odoo_module_form" model="ir.ui.view">
+        <field name="name">prd.odoo_module.form</field>
+        <field name="model">prd.odoo_module</field>
+        <field name="arch" type="xml">
+            <form string="Odoo Module">
+                <header>
+                    <button name="sftp_upload" string="SFTP Upload" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
+                </header>
+                <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
+                <sheet>
+                    <div class="oe_button_box" name="button_box" groups="base.group_user" />
 
-   
-                
-          
-              <field name="repo_id" />
-            </group>
-            <group id="c2" name="c2" string="Technical">
-              <field name="application" help="Is this an application?" />
-              <field name="auto_install" help="Auto-installation when the modules that this module depends on is installed" />
-              <field name="licence_id" />
-              <field name="maintainer" placeholder="Maintainer..." />
-              <field name="website" placeholder="https://example.com" widget="url" />
-                    <field name="module_id" string="Modul (ir.module.module)" />
-              <field name="contributors" placeholder="Bidragsgivare (en per rad)..." />
-        
-            </group>
-            
-          </group>
-          <group>
-          <field name="banner_image" />
-          </group>
-          <notebook position="inside">
-            <page string="Index-file" id="index">
-              <field name="description_html" />
-            </page>
-            <page string="Access Rights" id="access_rights">
-              <field name="model_access_ids">
-                <list string="Access Rights" editable="top">
-                  <field name="name" />
-                  <field name="model_id" />
-                  <field name="group_id" />
-                  <field name="perm_read" />
-                  <field name="perm_write" />
-                  <field name="perm_create" />
-                  <field name="perm_unlink" />
-                </list>
-              </field>
-            </page>
-            <page string="Record Rules" name="record_rules">
-              <field name="rule_ids">
-                <list string="Record Rules" editable="top">
-                  <field name="name" />
-                  <field name="model_id" />
-                  <field name="domain_force" />
-                  <field name="groups" widget="many2many_tags" />
-                  <field name="perm_read" />
-                  <field name="perm_write" />
-                  <field name="perm_create" />
-                  <field name="perm_unlink" />
-                </list>
-              </field>
-            </page>
+                    <group>
 
-          </notebook>
-        </sheet>
-      <chatter reload_on_follower="True" />
-      </form>
-     
-    </field>
-  </record>
-  <!-- List View -->
-  <record id="view_odoo_repo_list" model="ir.ui.view">
-    <field name="name">prd.odoo.repo.list</field>
-    <field name="model">prd.odoo_repo</field>
-    <field name="arch" type="xml">
-      <list string="Odoo Repositories">
-        <field name="name" />
-        <field name="branch_ids" widget="many2many_tags" />
-      </list>
-    </field>
-  </record>
-  <!-- Form View -->
-  <record id="view_odoo_repo_form" model="ir.ui.view">
-    <field name="name">prd.odoo.repo.form</field>
-    <field name="model">prd.odoo_repo</field>
-    <field name="arch" type="xml">
-      <form string="Odoo Repository">
-        <header>
-          <button name="git_odoo_branches" string="Get Branches" type="object" class="oe_highlight" />
-        </header>
-        <sheet>
-          <group>
-            <field name="name" />
-            <!--
-                 <field name="path" />
-            -->
-            <field name="owner" />
-            <field name="repo_source" />
-            <field name="branch_ids" widget="many2many_tags" />
-          </group>
-          <notebook>
-            <page string="Modules">
-              <field name="module_ids">
-                <list>
-                  <field name="technical_name" />
-                  <field name="name" />
-                  <field name="application" />
-                </list>
-              </field>
-            </page>
-          </notebook>
-        </sheet>
-      </form>
-    </field>
-  </record>
-  <!-- Actions -->
-  <record id="action_prd_requirement_type" model="ir.actions.act_window">
-    <field name="name">Requirement Types</field>
-    <field name="res_model">prd.requirement_type</field>
-    <field name="view_mode">list,form</field>
-    <field name="help" type="html">
-      <p class="oe_view_nocontent_create">Klicka här för att skapa en ny kravtyp.</p>
-    </field>
-  </record>
-  <record id="action_prd_requirement_category" model="ir.actions.act_window">
-    <field name="name">Requirement Categories</field>
-    <field name="res_model">prd.requirement_category</field>
-    <field name="view_mode">list,form</field>
-    <field name="help" type="html">
-      <p class="oe_view_nocontent_create">Klicka här för att skapa en ny kravkategori.</p>
-    </field>
-  </record>
-  <record id="action_prd_odoo_view_type" model="ir.actions.act_window">
-    <field name="name">Odoo View Types</field>
-    <field name="res_model">prd.odoo_view_type</field>
-    <field name="view_mode">list,form</field>
-    <field name="help" type="html">
-      <p class="oe_view_nocontent_create">Klicka här för att skapa en ny vytyp.</p>
-    </field>
-  </record>
-  <record id="action_prd_function_type" model="ir.actions.act_window">
-    <field name="name">Function Types</field>
-    <field name="res_model">prd.function_type</field>
-    <field name="view_mode">list,form</field>
-  </record>
-  <record id="action_prd_function_category" model="ir.actions.act_window">
-    <field name="name">Function Categories</field>
-    <field name="res_model">prd.function_category</field>
-    <field name="view_mode">list,form</field>
-  </record>
-  <record id="action_prd_odoo_module" model="ir.actions.act_window">
-    <field name="name">Odoo Modules</field>
-    <field name="res_model">prd.odoo_module</field>
-    <field name="view_mode">list,form</field>
-  </record>
-  <record id="action_odoo_repo" model="ir.actions.act_window">
-    <field name="name">Odoo Repositories</field>
-    <field name="res_model">prd.odoo_repo</field>
-    <field name="view_mode">list,form</field>
-  </record>
-  <record id="action_requirements" model="ir.actions.act_window">
-    <field name="name">PRD Requirements</field>
-    <field name="res_model">prd.requirement</field>
-    <field name="view_mode">list,form</field>
-  </record>
-  <record id="action_functions" model="ir.actions.act_window">
-    <field name="name">PRD Functions</field>
-    <field name="res_model">prd.function</field>
-    <field name="view_mode">list,form</field>
-  </record>
-  <!-- Meny under Configuration -->
-  <menuitem id="menu_prd_configuration_root" name="Configuration" sequence="90" parent="menu_prd_document_root" />
-  <menuitem id="menu_prd_requirement_types" name="Requirement Types" parent="menu_prd_configuration_root" sequence="1" action="action_prd_requirement_type" />
-  <menuitem id="menu_prd_requirement_categories" name="Requirement Categories" parent="menu_prd_configuration_root" sequence="2" action="action_prd_requirement_category" />
-  <menuitem id="menu_prd_function_types" name="Function Types" parent="menu_prd_configuration_root" sequence="4" action="action_prd_function_type" />
-  <menuitem id="menu_prd_function_categories" name="Function Categories" parent="menu_prd_configuration_root" sequence="5" action="action_prd_function_category" />
-  <menuitem id="menu_prd_odoo_view_types" name="Odoo View Types" parent="menu_prd_configuration_root" sequence="10" action="action_prd_odoo_view_type" />
-  <menuitem id="menu_prd_odoo_modules" name="Odoo Modules" parent="menu_prd_configuration_root" sequence="11" action="action_prd_odoo_module" />
-  <menuitem id="menu_prd_odoo_repo_root" name="Odoo Repository" parent="menu_prd_configuration_root" action="action_odoo_repo" sequence="20" />
-  <menuitem id="menu_prd_requirement" name="Requirement" parent="menu_prd_configuration_root" sequence="30" action="action_requirements" />
-  <menuitem id="menu_prd_function" name="Function" parent="menu_prd_configuration_root" sequence="31" action="action_functions" />
+                        <field name="icon_image" nolabel="1" widget="image" class="oe_avatar"/>
+
+                        <div class="oe_title">
+                            <h1 class="d-flex flex-row">
+                                <field name="name" options="{'line_breaks': False}" widget="text" class="flex-grow-1 o_text_overflow" placeholder="e.g. Office Party" style="width: 32em; font-size: 1.1em; xline-height: 2;" />
+                            </h1>
+                            <field name="technical_name" required="1" />
+                        </div>
+                    </group>
+                    <group>
+                        <group id="c1">
+                            <field name="summary" />
+                            <field name="app_category_id" />
+                            <field name="author" />
+                            <field name="repo_id" />
+                            <field name="branch_id" />
+                            <field name="repo_id" />
+                        </group>
+                        <group id="c2" name="c2" string="Technical">
+                            <field name="application" help="Is this an application?" />
+                            <field name="auto_install" help="Auto-installation when the modules that this module depends on is installed" />
+                            <field name="licence_id" />
+                            <field name="maintainer" placeholder="Maintainer..." />
+                            <field name="website" placeholder="https://example.com" widget="url" />
+                            <field name="module_id" string="Modul (ir.module.module)" />
+                            <field name="contributors" placeholder="Bidragsgivare (en per rad)..." />
+                        </group>
+                    </group>
+                    <group>
+                        <field name="banner_image" />
+                    </group>
+                    <notebook position="inside">
+                        <page string="Index-file" id="index">
+                            <field name="description_html" />
+                        </page>
+                        <page string="Access Rights" id="access_rights">
+                            <field name="model_access_ids">
+                                <list string="Access Rights" editable="top">
+                                    <field name="name" />
+                                    <field name="model_id" />
+                                    <field name="group_id" />
+                                    <field name="perm_read" />
+                                    <field name="perm_write" />
+                                    <field name="perm_create" />
+                                    <field name="perm_unlink" />
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Record Rules" name="record_rules">
+                            <field name="rule_ids">
+                                <list string="Record Rules" editable="top">
+                                    <field name="name" />
+                                    <field name="model_id" />
+                                    <field name="domain_force" />
+                                    <field name="groups" widget="many2many_tags" />
+                                    <field name="perm_read" />
+                                    <field name="perm_write" />
+                                    <field name="perm_create" />
+                                    <field name="perm_unlink" />
+                                </list>
+                            </field>
+                        </page>
+
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True" />
+            </form>
+
+        </field>
+    </record>
+    <!-- List View -->
+    <record id="view_odoo_repo_list" model="ir.ui.view">
+        <field name="name">prd.odoo.repo.list</field>
+        <field name="model">prd.odoo_repo</field>
+        <field name="arch" type="xml">
+            <list string="Odoo Repositories">
+                <field name="name" />
+                <field name="branch_ids" widget="many2many_tags" />
+            </list>
+        </field>
+    </record>
+    <!-- Form View -->
+    <record id="view_odoo_repo_form" model="ir.ui.view">
+        <field name="name">prd.odoo.repo.form</field>
+        <field name="model">prd.odoo_repo</field>
+        <field name="arch" type="xml">
+            <form string="Odoo Repository">
+                <header>
+                    <button name="git_odoo_branches" string="Get Branches" type="object" class="oe_highlight" />
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <!--
+                             <field name="path" />
+                        -->
+                        <field name="owner" />
+                        <field name="repo_source" />
+                        <field name="branch_ids" widget="many2many_tags" />
+                    </group>
+                    <notebook>
+                        <page string="Modules">
+                            <field name="module_ids">
+                                <list>
+                                    <field name="technical_name" />
+                                    <field name="name" />
+                                    <field name="application" />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Actions -->
+    <record id="action_prd_requirement_type" model="ir.actions.act_window">
+        <field name="name">Requirement Types</field>
+        <field name="res_model">prd.requirement_type</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Klicka här för att skapa en ny kravtyp.</p>
+        </field>
+    </record>
+    <record id="action_prd_requirement_category" model="ir.actions.act_window">
+        <field name="name">Requirement Categories</field>
+        <field name="res_model">prd.requirement_category</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Klicka här för att skapa en ny kravkategori.</p>
+        </field>
+    </record>
+    <record id="action_prd_odoo_view_type" model="ir.actions.act_window">
+        <field name="name">Odoo View Types</field>
+        <field name="res_model">prd.odoo_view_type</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Klicka här för att skapa en ny vytyp.</p>
+        </field>
+    </record>
+    <record id="action_prd_function_type" model="ir.actions.act_window">
+        <field name="name">Function Types</field>
+        <field name="res_model">prd.function_type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_prd_function_category" model="ir.actions.act_window">
+        <field name="name">Function Categories</field>
+        <field name="res_model">prd.function_category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_prd_odoo_module" model="ir.actions.act_window">
+        <field name="name">Odoo Modules</field>
+        <field name="res_model">prd.odoo_module</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_odoo_repo" model="ir.actions.act_window">
+        <field name="name">Odoo Repositories</field>
+        <field name="res_model">prd.odoo_repo</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_requirements" model="ir.actions.act_window">
+        <field name="name">PRD Requirements</field>
+        <field name="res_model">prd.requirement</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_functions" model="ir.actions.act_window">
+        <field name="name">PRD Functions</field>
+        <field name="res_model">prd.function</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <!-- Meny under Configuration -->
+    <menuitem id="menu_prd_configuration_root" name="Configuration" sequence="90" parent="menu_prd_document_root" />
+    <menuitem id="menu_prd_requirement_types" name="Requirement Types" parent="menu_prd_configuration_root" sequence="1" action="action_prd_requirement_type" />
+    <menuitem id="menu_prd_requirement_categories" name="Requirement Categories" parent="menu_prd_configuration_root" sequence="2" action="action_prd_requirement_category" />
+    <menuitem id="menu_prd_function_types" name="Function Types" parent="menu_prd_configuration_root" sequence="4" action="action_prd_function_type" />
+    <menuitem id="menu_prd_function_categories" name="Function Categories" parent="menu_prd_configuration_root" sequence="5" action="action_prd_function_category" />
+    <menuitem id="menu_prd_odoo_view_types" name="Odoo View Types" parent="menu_prd_configuration_root" sequence="10" action="action_prd_odoo_view_type" />
+    <menuitem id="menu_prd_odoo_modules" name="Odoo Modules" parent="menu_prd_configuration_root" sequence="11" action="action_prd_odoo_module" />
+    <menuitem id="menu_prd_odoo_repo_root" name="Odoo Repository" parent="menu_prd_configuration_root" action="action_odoo_repo" sequence="20" />
+    <menuitem id="menu_prd_requirement" name="Requirement" parent="menu_prd_configuration_root" sequence="30" action="action_requirements" />
+    <menuitem id="menu_prd_function" name="Function" parent="menu_prd_configuration_root" sequence="31" action="action_functions" />
 </odoo>

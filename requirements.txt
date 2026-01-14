@@ -1,4 +1,5 @@
 mermaid-python
 paramiko
 PyGithub
+python-gitlab
 filetype

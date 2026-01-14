@@ -1,132 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <!-- Search View -->
-  <record id="view_prd_document_search" model="ir.ui.view">
-    <field name="name">prd.document.search</field>
-    <field name="model">prd.document</field>
-    <field name="inherit_id" ref="prd.view_prd_document_search" />
-    <field name="arch" type="xml">
-      <field name="state" position="after">
-        <field name="module_id" />
-        <field name="repo_id" />
-        <field name="application" />
-        <field name="description" />
-        <field name="summary" />
-        <field name="technical_name" />
-      </field>
-      <filter name="group_by_approved_by" position="after">
-        <filter string="App Project" name="group_by_app_project" context="{'group_by':'repo_id'}" />
-        <filter string="App Category" name="group_by_app_category" context="{'group_by':'app_category_id'}" />
-        <filter string="App License" name="group_by_app_license" context="{'group_by':'licence_id'}" />
-      </filter>
-    </field>
-  </record>
-  <!-- Form View -->
-  <record id="view_prd_document_form" model="ir.ui.view">
-    <field name="name">prd.document.form</field>
-    <field name="model">prd.document</field>
-    <field name="inherit_id" ref="prd.view_prd_document_form" />
-    <field name="arch" type="xml">
-      <div name="button_box" position="inside">
-        <button class="oe_stat_button" type="object" name="action_files" icon="fa-check" string="Files">
-          <div class="o_field_widget o_stat_info">
-            <span class="o_stat_text">Files</span>
-            <span class="o_stat_value">
-              <!--
-                   <field name="files_count" />
-              -->
-            </span>
-          </div>
-        </button>
-      </div>
-      <div class="oe_title" position="inside">
-        <field name="summary" class="flex-grow-1 o_text_overflow" placeholder="e.g. Summary" />
-      </div>
-      <group id="c2" position="inside">
-        <separator string="Repo/module" id="repo" invisible="not document_type == 'module'" />
-        <field name="repo_id" string="Repo" invisible="not document_type == 'module'" />
-        <field name="technical_name" string="Tekniskt namn" invisible="not document_type == 'module'" />
-        <field name="module_id" string="Modul" invisible="not document_type == 'module'" />
-        <field name="branch_id" invisible="not document_type == 'module'" />
-        <separator string="Manifest" id="manifest" invisible="not document_type == 'module'" />
-        <field name="author" placeholder="Author..." invisible="not document_type == 'module'" />
-        <field name="website" placeholder="https://example.com" widget="url" invisible="not document_type == 'module'" />
-        <field name="licence_id" invisible="not document_type == 'module'" />
-        <field name="app_category_id" help="Category" invisible="not document_type == 'module'" />
-        <field name="application" help="Is this an application?" invisible="not document_type == 'module'" />
-        <field name="auto_install" help="Auto-installation when the modules that this module depends on is installed" invisible="not document_type == 'module'" />
-        <field name="maintainer" placeholder="Maintainer..." invisible="not document_type == 'module'" />
-      </group>
-      <group id="c1" position="inside">
-        <separator string="Files" id="files" invisible="not document_type == 'module'" />
-        <field name="manifest_file_id" domain="[('file_type', '=', 'manifest'),('module_id','=',module_id)]" />
-        <field name="banner_image_file_id" domain="[('file_type', '=', 'static'),('name','ilike','banner'),('module_id','=',module_id)]" />
-        <field name="icon_image_file_id" domain="[('file_type', '=', 'static'),('name','ilike','icon'),('module_id','=',module_id)]" />
-        <field name="index_file_id" domain="[('file_type', '=', 'static'),('name','ilike','index'),('module_id','=',module_id)]" />
-      </group>
-      <notebook position="inside">
-        <page name="index" string="index.html" invisible="not (document_type == 'module' and index_file_id)">
-          <field name="index_file_id" domain="[('file_type', '=', 'static'),('name','ilike','index'),('module_id','=',module_id)]" />
-          <field name="index_content" widget="ace" options="{'mode': 'qweb'}" />
-        </page>
-        <page name="security" string="Security" invisible="not document_type == 'module'">
-          <notebook name="sec">
-            <page string="Access Rights" name="access_rights">
-              <field name="model_access"  >
-                <list string="Access Rights" editable="bottom" context="{'default_prd_id': id}">
-                  <field name="name" />
-                  <field name="model_id" />
-                  <field name="group_id" />
-                  <field name="perm_read" />
-                  <field name="perm_write" />
-                  <field name="perm_create" />
-                  <field name="perm_unlink" />
-                </list>
-              </field>
-            </page>
-            <page string="Record Rules" name="record_rules">
-              <field name="record_rule" widget="one2many_list">
-                <list string="Record Rules" editable="bottom"  create="True" delete="True" context="{'default_prd_id': id}">
-                  <field name="name" />
-                  <field name="model_id" />
-                  <field name="groups" widget="many2many_tags" />
-                  <field name="global" />
-                  <field name="domain_force" />
-                  <field name="perm_read" />
-                  <field name="perm_write" />
-                  <field name="perm_create" />
-                  <field name="perm_unlink" />
-                </list>
-              </field>
-            </page>
-<!--
-            <page name="group" String="Group">
-              <field name="rule_groups" nolabel="1" />
-            </page>
--->
-          </notebook>
-        </page>
-      </notebook>
-    </field>
-  </record>
-  <!-- List (Tree) View -->
-  <record id="view_prd_document_tree" model="ir.ui.view">
-    <field name="name">prd.document.module</field>
-    <field name="model">prd.document</field>
-    <field name="inherit_id" ref="prd.view_prd_document_tree" />
-    <field name="arch" type="xml">
-      <list position="inside">
-        <!--
-             <field name="sequence" widget="handle" optional="view" />
-        -->
-        <field name="document_type" invisible="1" />
-        <field name="repo_id" invisible="not document_type == 'module'" optional="hide" />
-        <field name="module_id" invisible="not document_type == 'module'" optional="hide" />
-        <field name="technical_name" invisible="not document_type == 'module'" optional="hide" />
-        <field name="application" invisible="not document_type == 'module'" optional="hide" />
-        <field name="summary" invisible="not document_type == 'module'" optional="hide" />
-        <field name="website" invisible="not document_type == 'module'" optional="hide" />
-      </list>
-    </field>
-  </record>
+    <!-- Search View -->
+    <record id="view_prd_document_search" model="ir.ui.view">
+        <field name="name">prd.document.search</field>
+        <field name="model">prd.document</field>
+        <field name="inherit_id" ref="prd.view_prd_document_search" />
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="module_id" />
+                <field name="repo_id" />
+                <field name="application" />
+                <field name="description" />
+                <field name="summary" />
+                <field name="technical_name" />
+            </field>
+            <filter name="group_by_approved_by" position="after">
+                <filter string="App Project" name="group_by_app_project" context="{'group_by':'repo_id'}" />
+                <filter string="App Category" name="group_by_app_category" context="{'group_by':'app_category_id'}" />
+                <filter string="App License" name="group_by_app_license" context="{'group_by':'licence_id'}" />
+            </filter>
+        </field>
+    </record>
+    <!-- Form View -->
+    <record id="view_prd_document_form" model="ir.ui.view">
+        <field name="name">prd.document.form</field>
+        <field name="model">prd.document</field>
+        <field name="inherit_id" ref="prd.view_prd_document_form" />
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button class="oe_stat_button" type="object" name="action_files" icon="fa-check" string="Files">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Files</span>
+                        <span class="o_stat_value">
+                            <!--
+                                 <field name="files_count" />
+                            -->
+                        </span>
+                    </div>
+                </button>
+            </div>
+            <div class="oe_title" position="inside">
+                <field name="summary" class="flex-grow-1 o_text_overflow" placeholder="e.g. Summary" />
+            </div>
+            <group id="c2" position="inside">
+                <separator string="Repo/module" id="repo" invisible="not document_type == 'module'" />
+                <field name="repo_id" string="Repo" invisible="not document_type == 'module'" />
+                <field name="technical_name" string="Tekniskt namn" invisible="not document_type == 'module'" />
+                <field name="module_id" string="Modul" invisible="not document_type == 'module'" />
+                <field name="branch_id" invisible="not document_type == 'module'" />
+                <separator string="Manifest" id="manifest" invisible="not document_type == 'module'" />
+                <field name="author" placeholder="Author..." invisible="not document_type == 'module'" />
+                <field name="website" placeholder="https://example.com" widget="url" invisible="not document_type == 'module'" />
+                <field name="licence_id" invisible="not document_type == 'module'" />
+                <field name="app_category_id" help="Category" invisible="not document_type == 'module'" />
+                <field name="application" help="Is this an application?" invisible="not document_type == 'module'" />
+                <field name="auto_install" help="Auto-installation when the modules that this module depends on is installed" invisible="not document_type == 'module'" />
+                <field name="maintainer" placeholder="Maintainer..." invisible="not document_type == 'module'" />
+            </group>
+            <group id="c1" position="inside">
+                <separator string="Files" id="files" invisible="not document_type == 'module'" />
+                <field name="manifest_file_id" domain="[('file_type', '=', 'manifest'),('module_id','=',module_id)]" />
+                <field name="banner_image_file_id" domain="[('file_type', '=', 'static'),('name','ilike','banner'),('module_id','=',module_id)]" />
+                <field name="icon_image_file_id" domain="[('file_type', '=', 'static'),('name','ilike','icon'),('module_id','=',module_id)]" />
+                <field name="index_file_id" domain="[('file_type', '=', 'static'),('name','ilike','index'),('module_id','=',module_id)]" />
+            </group>
+            <notebook position="inside">
+                <page name="index" string="index.html" invisible="not (document_type == 'module' and index_file_id)">
+                    <field name="index_file_id" domain="[('file_type', '=', 'static'),('name','ilike','index'),('module_id','=',module_id)]" />
+                    <field name="index_content" widget="ace" options="{'mode': 'qweb'}" />
+                </page>
+                <page name="security" string="Security" invisible="not document_type == 'module'">
+                    <notebook name="sec">
+                        <page string="Access Rights" name="access_rights">
+                            <field name="model_access"  >
+                                <list string="Access Rights" editable="bottom" context="{'default_prd_id': id}">
+                                    <field name="name" />
+                                    <field name="model_id" />
+                                    <field name="group_id" />
+                                    <field name="perm_read" />
+                                    <field name="perm_write" />
+                                    <field name="perm_create" />
+                                    <field name="perm_unlink" />
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Record Rules" name="record_rules">
+                            <field name="record_rule" widget="one2many_list">
+                                <list string="Record Rules" editable="bottom"  create="True" delete="True" context="{'default_prd_id': id}">
+                                    <field name="name" />
+                                    <field name="model_id" />
+                                    <field name="groups" widget="many2many_tags" />
+                                    <field name="global" />
+                                    <field name="domain_force" />
+                                    <field name="perm_read" />
+                                    <field name="perm_write" />
+                                    <field name="perm_create" />
+                                    <field name="perm_unlink" />
+                                </list>
+                            </field>
+                        </page>
+                        <!--
+                                    <page name="group" String="Group">
+                                      <field name="rule_groups" nolabel="1" />
+                                    </page>
+                        -->
+                    </notebook>
+                </page>
+            </notebook>
+        </field>
+    </record>
+    <!-- List (Tree) View -->
+    <record id="view_prd_document_tree" model="ir.ui.view">
+        <field name="name">prd.document.module</field>
+        <field name="model">prd.document</field>
+        <field name="inherit_id" ref="prd.view_prd_document_tree" />
+        <field name="arch" type="xml">
+            <list position="inside">
+                <!--
+                     <field name="sequence" widget="handle" optional="view" />
+                -->
+                <field name="document_type" invisible="1" />
+                <field name="repo_id" invisible="not document_type == 'module'" optional="hide" />
+                <field name="module_id" invisible="not document_type == 'module'" optional="hide" />
+                <field name="technical_name" invisible="not document_type == 'module'" optional="hide" />
+                <field name="application" invisible="not document_type == 'module'" optional="hide" />
+                <field name="summary" invisible="not document_type == 'module'" optional="hide" />
+                <field name="website" invisible="not document_type == 'module'" optional="hide" />
+            </list>
+        </field>
+    </record>
 </odoo>
