@@ -269,85 +269,166 @@ class OdooRepo(models.Model):
         help=''
     )
     owner = fields.Char(string='Owner', size=64, trim=True, )
-    repo_source = fields.Selection(selection=[('github','Github'),('gitlab','Gitlab')],string='Source')
+    repo_source = fields.Selection(selection=[('github', 'Github'), ('gitlab', 'Gitlab')],string='Source')
     branch_ids = fields.Many2many(comodel_name='prd.odoo_branch',string='Branch',help="")
     
     @api.onchange("repo_source",'name','owner')
     def _repo_source(self):
+        """Validate repo source selection."""
+        if self.repo_source and self.repo_source not in ['github', 'gitlab']:
+            raise UserError(f"Unsupported repository source: {self.repo_source}")
+
+    def _get_provider_adapter(self):
+        """Factory method to get the appropriate git provider adapter."""
+        if not self.repo_source:
+            raise UserError("Repository source not configured. Please select GitHub or GitLab.")
+
         if self.repo_source == 'github':
-            pass
-            # ~ self.url = "f\"" + f"https://api.github.com/repos/{self.owner}/{self.name}/git/trees/" + "{branch_id.name}?recursive=1\""
+            return self.env['git.provider.github']
+        elif self.repo_source == 'gitlab':
+            return self.env['git.provider.gitlab']
+        else:
+            raise UserError(f"Unsupported repository source: {self.repo_source}")
     
     def _get_auth_token(self):
-        authToken = self.env["ir.config_parameter"].sudo().get_param('prd.github_token')
+        """Get authentication token for the configured provider."""
+        if not self.repo_source:
+            raise UserError("Repository source not configured")
+
+        param_name = f'prd.{self.repo_source}_token'
+        authToken = self.env["ir.config_parameter"].sudo().get_param(param_name)
+
         if not authToken:
-            raise UserError("Github token missing, please create a parameter called github_token and paste an token.")
+            raise UserError(
+                f"{self.repo_source.title()} token missing. "
+                f"Please configure '{param_name}' in Settings > Technical > Parameters > System Parameters."
+            )
         return authToken
 
     def git_odoo_branches(self):
-        g = Github(auth=Auth.Token(self._get_auth_token().strip()))
+        """Fetch branches from git repository using configured provider."""
+        adapter = self._get_provider_adapter()
+        token = self._get_auth_token()
+
         try:
-            repo_name = f"odoo/odoo" if self.owner == 'odoo' else f"{self.owner}/{self.name}"
-            repo = g.get_repo(repo_name)
+            client = adapter.authenticate(token)
+            repo = adapter.get_repository(client, self.owner, self.name)
+            branches = adapter.get_branches(repo)
+
+            # Filter for Odoo version branches (e.g., "14.0", "15.0")
+            odoo_branches = [b for b in branches if re.match(r"^\d+\.0$", b['name'])]
+
+            branch_ids = []
+            for branch_info in sorted(odoo_branches, key=lambda x: float(x['name'])):
+                b = self.env['prd.odoo_branch'].search([('name', '=', branch_info['name'])], limit=1)
+                if not b:
+                    b = self.env['prd.odoo_branch'].create({'name': branch_info['name']})
+                branch_ids.append(b.id)
+
+            if branch_ids:
+                self.branch_ids = [(6, 0, branch_ids)]
+
+            _logger.info(f"Fetched {len(branch_ids)} Odoo branches from {self.repo_source}")
+
         except Exception as e:
-            _logger.warning(f"Could not read {repo_name} {e}")
-            return None
-        for name in sorted([b.name for b in repo.get_branches() if re.match(r"^\d*[.]0$", b.name)], key=float):
-            b = self.env['prd.odoo_branch'].search([('name','=',name)],limit=1)
-            if not b:
-                b = self.env['prd.odoo_branch'].create({'name': name})
-            self.branch_ids = [(6,0,[b.id])]
+            _logger.error(f"Failed to fetch branches from {self.repo_source}: {e}")
+            raise UserError(f"Could not fetch branches: {str(e)}")
 
     def _git_repo(self):
-        g = Github(auth=Auth.Token(self._get_auth_token().strip()))
-        try:
-            repo_name = f"odoo/odoo" if self.owner == 'odoo' else f"{self.owner}/{self.name}"
-            repo = g.get_repo(repo_name)
-        except Exception as e:
-            _logger.warning(f"Could not read {repo_name} {e}")
-            raise
-        return repo
+        """Get repository object using configured provider."""
+        adapter = self._get_provider_adapter()
+        token = self._get_auth_token()
 
-    def get_files(self,filename, branch="14.0"):
+        try:
+            client = adapter.authenticate(token)
+            return adapter.get_repository(client, self.owner, self.name)
+        except Exception as e:
+            _logger.error(f"Failed to access repository {self.owner}/{self.name}: {e}")
+            raise UserError(f"Could not access repository: {str(e)}")
+
+    def get_files(self, filename, branch="14.0"):
+        """Get all files in a directory recursively."""
+        adapter = self._get_provider_adapter()
+        repo = self._git_repo()
         mfiles = []
+
         if self.owner == 'odoo':
             filename = f"addons/{filename}"
-        try: 
-            files = self._git_repo().get_contents(filename, ref=branch)
-            if not isinstance(files, list):
-                files=[files]
-            _logger.warning(f"Read {files=}")
-        except Exception as e:
-            _logger.warning(f"Could not read  {filename=} {branch=} {self._git_repo()=} {e}")
-            raise
-            return []
-        while files:
-            file_content = files.pop(0)
-            pos = 1 if self.owner != 'odoo' else 2
-            if file_content.type == "dir" and "i18n" == path_list[pos] if len(path_list := file_content.path.split('/')) > pos else path_list[pos-1]:
-                continue
-            if file_content.type == "dir":
-                files.extend(self._git_repo().get_contents(file_content.path,ref=branch))
-            elif file_content.path not in ['.gitignore']:
-                mfiles.append(file_content)
-        p_files = set([f.path.replace('.p.','.') for f in mfiles if '.p.' in f.path and (f.path.endswith('.p.py') or f.path.endswith('.p.xml'))])
-        # ~ _logger.warning(f"{mfiles=} {p_files=}\n\n{[f for f in mfiles if not f.path in p_files]=}")
-        return [f for f in mfiles if not f.path in list(p_files)]
 
-    def get_contents(self,filename,branch):
         try:
-            content = self._git_repo().get_contents(filename,ref=branch)
+            files = adapter.get_contents(repo, filename, branch)
+            if not isinstance(files, list):
+                files = [files]
+            _logger.info(f"Retrieved {len(files)} items from {filename}")
         except Exception as e:
-            content = f"{filename} Error {e}" 
-        return content
+            _logger.error(f"Could not read {filename=} {branch=}: {e}")
+            raise
+
+        # Process files recursively
+        while files:
+            file_obj = files.pop(0)
+            file_info = adapter.normalize_file_object(file_obj)
+
+            pos = 1 if self.owner != 'odoo' else 2
+            path_parts = file_info['path'].split('/')
+
+            # Skip i18n directories
+            if file_info['type'] in ['dir', 'tree']:
+                if len(path_parts) > pos and path_parts[pos] == 'i18n':
+                    continue
+                # Get contents of subdirectory
+                try:
+                    subfiles = adapter.get_contents(repo, file_info['path'], branch)
+                    if isinstance(subfiles, list):
+                        files.extend(subfiles)
+                except Exception as e:
+                    _logger.warning(f"Could not read subdirectory {file_info['path']}: {e}")
+            elif file_info['name'] not in ['.gitignore']:
+                mfiles.append(file_obj)
+
+        # Filter out .p.py and .p.xml duplicates
+        normalized_files = [adapter.normalize_file_object(f) for f in mfiles]
+        p_files = set([
+            f['path'].replace('.p.', '.')
+            for f in normalized_files
+            if '.p.' in f['path'] and (f['path'].endswith('.p.py') or f['path'].endswith('.p.xml'))
+        ])
+
+        result = [
+            f for f, norm in zip(mfiles, normalized_files)
+            if norm['path'] not in p_files
+        ]
+
+        _logger.info(f"Returning {len(result)} files after filtering")
+        return result
+
+    def get_contents(self, filename, branch):
+        """Get contents of a file or directory."""
+        adapter = self._get_provider_adapter()
+        repo = self._git_repo()
+
+        try:
+            return adapter.get_contents(repo, filename, branch)
+        except Exception as e:
+            _logger.error(f"Error getting contents of {filename}: {e}")
+            return f"{filename} Error {e}"
     
-    def get_file_content(self,filename,branch):
-        _logger.warning(f"{filename=} {branch=}")
+    def get_file_content(self, filename, branch):
+        """Get decoded content of a file."""
+        adapter = self._get_provider_adapter()
+        repo = self._git_repo()
+
+        _logger.debug(f"Getting file content: {filename=} {branch=}")
         try:
-            content = self._git_repo().get_contents(filename,ref=branch)[0].decoded_content.decode('utf-8')
+            file_obj = adapter.get_contents(repo, filename, branch)
+            if isinstance(file_obj, list):
+                file_obj = file_obj[0]
+
+            file_info = adapter.normalize_file_object(file_obj)
+            return file_info['decoded_content']
         except Exception as e:
-            content = f"{filename} Error {e}" 
-        return content
+            _logger.error(f"Error getting file content {filename}: {e}")
+            return f"{filename} Error {e}"
 
 class OdooModule(models.Model):
     _name = 'prd.odoo_module'

@@ -12,7 +12,7 @@
                             <field name="github_token" />
                         </setting>
                     </block>
-                    <block title="Gitlab" id="github">
+                    <block title="Gitlab" id="gitlab">
                         <setting id="prd_gitlab_token" help="Token to access Gitlab">
                             <field name="gitlab_token" />
                         </setting>
