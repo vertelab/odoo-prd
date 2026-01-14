@@ -8,7 +8,7 @@ class ConfSetting(models.TransientModel):
     _inherit = "res.config.settings"
 
     github_token = fields.Char(
-        string="GitHub Token", store=True, config_parameter='prd.github_token')
-    
+        string="Github Token", store=True, config_parameter='prd.github_token')
+
     gitlab_token = fields.Char(
         string="GitLab Token", store=True, config_parameter='prd.gitlab_token')

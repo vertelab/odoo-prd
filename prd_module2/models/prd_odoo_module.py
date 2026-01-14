@@ -1,4 +1,4 @@
-# Removed GitHub-specific import - now using normalized file objects from adapters
+from github.ContentFile import ContentFile
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError, AccessError
 import base64
@@ -384,55 +384,53 @@ class OdooModuleFile(models.Model):
     # ~ raise UserError(_(f"OBS: An error occurred, you should contact administrator to look into the quest {result=}"))
 
     @api.model
-    def _create_update(self, file_object, module):
-        """Create or update file record from git provider file object."""
-        # Get the provider adapter to normalize the file
-        adapter = module.repo_id._get_provider_adapter()
-        file_info = adapter.normalize_file_object(file_object)
-
-        _logger.info(f"Processing file: {file_info['name']} for module {module.name}")
-
-        # Determine file type based on path
+    def _create_update(self, file: ContentFile, module):
+        _logger.warning(f"{file=} {module.name=}")
         ft = "other"
         pos = 1 if module.repo_id.owner != "odoo" else 2
-        path_parts = file_info["path"].split("/")
-
         for file_type in dict(self._fields["file_type"].selection).keys():
-            if len(path_parts) > pos and file_type in path_parts[pos]:
+            if (
+                file_type in path_list[pos]
+                if len(path_list := file.path.split("/")) > pos
+                else path_list[pos - 1]
+            ):
                 ft = file_type
-                break
-
-        # Determine content type
-        content_mime = file_info.get("mime_type", "text/plain")
+        mime = filetype.guess(base64.b64decode(file.content))
+        content_mime = (
+            mime.mime
+            if mime
+            else (
+                "image/svg+xml"
+                if "<svg" in getattr(file, "decoded_content", "").decode("utf-8")
+                else "text/plain"
+            )
+        )
 
         vals = {
-            "name": file_info["relative_path"],
+            "name": "/".join(file.path.split("/")[1:]),
             "module_id": module.id,
             "file_type": ft,
             "content": (
-                file_info["decoded_content"] if content_mime == "text/plain" else False
+                file.decoded_content.decode("utf-8")
+                if content_mime == "text/plain"
+                else False
             ),
-            "content_bin": (
-                file_info["content"] if content_mime != "text/plain" else False
-            ),
+            "content_bin": file.content if content_mime != "text/plain" else False,
             "content_mime": content_mime,
-            "git_url": file_info.get("download_url", ""),
+            "git_url": file.download_url,
         }
-
-        _logger.debug(f"File values: {vals}")
-
-        # Check if file already exists
+        _logger.warning(f"{vals=}")
         file_rec = self.search(
-            [("module_id", "=", module.id), ("name", "=", file_info["relative_path"])],
+            [
+                ("module_id", "=", module.id),
+                ("name", "=", "/".join(file.path.split("/")[1:])),
+            ],
             limit=1,
         )
-
         if file_rec:
             file_rec.write(vals)
-            _logger.info(f"Updated existing file: {file_info['relative_path']}")
         else:
             self.create(vals)
-            _logger.info(f"Created new file: {file_info['relative_path']}")
 
     def build_python_dir(self):
         init = {}
@@ -447,7 +445,7 @@ class OdooModuleFile(models.Model):
         main_init = []
 
         # Process all functions
-        for function in self.function_ids:
+        for file in self.function_ids:
             if function.has_views and function.views_filename:
                 writer.write_file("views/", function.views_filename, function.views_xml)
                 data.append(f"views/{function.views_filename}")
