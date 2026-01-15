@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Repository List Template -->
+    <template id="repo_list" name="PRD Repositories">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <section class="s_title pt-5 pb-3">
+                    <div class="container">
+                        <h1>Repositories</h1>
+                        <p class="lead text-muted">Browse our collection of Odoo module repositories</p>
+                    </div>
+                </section>
+                
+                <section class="s_text_block pb-5">
+                    <div class="container py-4">
+                        <t t-if="not repos">
+                            <div class="alert alert-info text-center" role="alert">
+                                <h4>No repositories found</h4>
+                                <p>There are currently no PRD repositories configured.</p>
+                            </div>
+                        </t>
+                        
+                        <t t-else="">
+                            <div class="row d-flex align-items-stretch">
+                                <t t-foreach="repos" t-as="repo_data">
+                                    <div class="col-lg-3 col-md-4 col-sm-6 s_col_no_bgcolor pt16 pb16">
+                                        <div class="card bg-white h-100 shadow-sm">
+                                            <div class="card-body d-flex flex-column">
+                                                <div class="mb-3">
+                                                    <h5 class="card-title mb-2">
+                                                        <a t-attf-href="/apps/#{repo_data['repo'].id}" class="text-decoration-none text-reset">
+                                                            <t t-esc="repo_data['repo'].name"/>
+                                                        </a>
+                                                    </h5>
+                                                </div>
+
+                                                
+                                                <div class="mt-auto">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="badge bg-primary">
+                                                            <t t-esc="repo_data['module_count']"/> 
+                                                            <t t-if="repo_data['module_count'] == 1">module</t>
+                                                            <t t-else="">modules</t>
+                                                        </span>
+                                                        <a t-attf-href="/apps/#{repo_data['repo'].id}" class="btn btn-sm btn-outline-primary">
+                                                            View Modules <i class="fa fa-arrow-right ms-1"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <!-- Module List Template -->
+    <template id="module_list" name="PRD Modules in Repository">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <section class="s_title pt-4 pb-0">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb bg-transparent p-0 mb-2">
+                                        <li class="breadcrumb-item"><a href="/apps">Apps</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">
+                                            <t t-esc="repo.name"/>
+                                        </li>
+                                    </ol>
+                                </nav>
+                                <h3 class="mb-4"><t t-esc="repo_display_name"/> Modules</h3>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="s_text_block pb-5">
+                    <div class="container py-1">
+                        <t t-if="not modules">
+                            <div class="alert alert-info text-center" role="alert">
+                                <h4>No modules found</h4>
+                                <p>This repository doesn't contain any modules yet.</p>
+                            </div>
+                        </t>
+                        
+                        <t t-else="">
+                            <div class="row d-flex align-items-stretch">
+                                <t t-foreach="modules" t-as="module">
+                                    <div class="col-lg-3 col-md-4 col-sm-6 s_col_no_bgcolor pt16 pb16">
+                                        <div class="card bg-white h-100 shadow-sm">
+                                            <!-- Module Banner/Icon -->
+                                            <a t-attf-href="/apps/#{repo.id}/#{module.id}" 
+                                               class="text-decoration-none d-block" 
+                                               style="height: 200px; overflow: hidden;">
+                                                <t t-if="module.banner_file or module.banner_image">
+                                                    <img class="card-img-top w-100" 
+                                                         t-attf-src="data:image/png;base64,#{module.banner_file or module.banner_image}" 
+                                                         t-att-alt="module.name or module.technical_name"
+                                                         style="height: 200px; object-fit: cover;"/>
+                                                </t>
+                                                <t t-elif="module.icon_file or module.icon_image">
+                                                    <div class="d-flex align-items-center justify-content-center bg-light h-100">
+                                                        <img t-attf-src="data:image/png;base64,#{module.icon_file or module.icon_image}" 
+                                                             style="max-width: 120px; max-height: 120px; object-fit: contain;"
+                                                             t-att-alt="module.name or module.technical_name"/>
+                                                    </div>
+                                                </t>
+                                                <t t-else="">
+                                                    <div class="d-flex align-items-center justify-content-center bg-light h-100">
+                                                        <i class="fa fa-puzzle-piece" style="font-size: 80px; color: #dee2e6;"></i>
+                                                    </div>
+                                                </t>
+                                            </a>
+
+                                            <!-- Module Info -->
+                                            <div class="card-body d-flex flex-column">
+                                                <a t-attf-href="/apps/#{repo.id}/#{module.id}" 
+                                                   class="d-block text-reset text-decoration-none o_blog_post_title my-0 h5">
+                                                    <t t-esc="module.name or module.technical_name"/>
+                                                </a>
+                                                <p class="text-muted small mb-2">
+                                                    <t t-esc="module.technical_name"/>
+                                                </p>
+                                                <p class="card-text text-muted small flex-grow-1">
+                                                    <t t-esc="module.summary or 'No summary available'"/>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <!-- Module Detail Template -->
+    <template id="module_detail" name="PRD Module Details">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <section id="o_wblog_post_top" style="margin-bottom:45px;background-color:#F9FAFB;">
+                    <div class="container" style="padding-top:20px;padding-bottom:20px;">
+                        <nav aria-label="breadcrumb" class="breadcrumb flex-nowrap py-0 mb-3">
+                            <li class="breadcrumb-item"><a href="/apps">All Apps</a></li>
+                            <li class="breadcrumb-item">
+                                <a t-attf-href="/apps/#{repo.id}" t-esc="repo.name"/>
+                            </li>
+                            <li class="breadcrumb-item text-truncate active">
+                                <span t-esc="module.technical_name"/>
+                            </li>
+                        </nav>
+
+                        <div class="row">
+                            <!-- Banner/Screenshot -->
+                            <div class="col-md-6">
+                                <t t-if="module.banner_file or module.banner_image">
+                                    <img t-attf-src="data:image/png;base64,#{module.banner_file or module.banner_image}" 
+                                         class="img-fluid rounded shadow-sm" 
+                                         alt="Module banner"/>
+                                </t>
+                                <t t-elif="module.icon_file or module.icon_image">
+                                    <div class="bg-light rounded shadow-sm d-flex align-items-center justify-content-center" style="min-height: 300px;">
+                                        <img t-attf-src="data:image/png;base64,{{module.icon_file or module.icon_image}}" 
+                                             style="max-width: 200px; max-height: 200px; object-fit: contain;"
+                                             alt="Module icon"/>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="bg-light rounded shadow-sm d-flex align-items-center justify-content-center" style="min-height: 300px;">
+                                        <i class="fa fa-puzzle-piece" style="font-size: 80px; color: #dee2e6;"></i>
+                                    </div>
+                                </t>
+                            </div>
+                            
+                            <!-- Module Info Panel -->
+                            <div class="col-md-6">
+                                <!-- Module Header -->
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <t t-if="module.icon_file or module.icon_image">
+                                            <img t-attf-src="data:image/png;base64,{{module.icon_file or module.icon_image}}" 
+                                                 class="me-2" 
+                                                 style="width:48px;height:48px;object-fit:contain;"
+                                                 alt="Module icon"/>
+                                        </t>
+                                        <div>
+                                            <h3 class="mb-0"><t t-esc="module.name or module.technical_name"/></h3>
+                                            <small class="text-muted">by <strong><t t-esc="module.author or 'Vertel AB'"/></strong></small>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Branch Badge -->
+                                    <div class="mb-2">
+                                        <t t-if="module.branch_id">
+                                            <span class="badge bg-primary"><t t-esc="module.branch_id.name"/></span>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Info Section -->
+                                <div>
+                                    <!-- Category -->
+                                    <div class="row mb-2 m-0" t-if="module.app_category_id">
+                                        <div class="col-5 p-0">
+                                            <strong class="text-muted">Category</strong>
+                                        </div>
+                                        <div class="col-7 p-0">
+                                            <t t-esc="module.app_category_id.name"/>
+                                        </div>
+                                    </div>
+                                    <hr t-if="module.app_category_id"/>
+                                    
+                                    <!-- Technical Name -->
+                                    <div class="row mb-2 m-0">
+                                        <div class="col-5 p-0">
+                                            <strong class="text-muted">Technical Name</strong>
+                                        </div>
+                                        <div class="col-7 p-0">
+                                            <code><t t-esc="module.technical_name"/></code>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    
+                                    <!-- License -->
+                                    <div class="row mb-2 m-0" t-if="module.licence_id">
+                                        <div class="col-5 p-0">
+                                            <strong class="text-muted">License</strong>
+                                        </div>
+                                        <div class="col-7 p-0">
+                                            <t t-esc="module.licence_id.name"/>
+                                        </div>
+                                    </div>
+                                    <hr t-if="module.licence_id"/>
+                                    
+                                    <!-- Website -->
+                                    <div class="row mb-2 m-0" t-if="module.website">
+                                        <div class="col-5 p-0">
+                                            <strong class="text-muted">Website</strong>
+                                        </div>
+                                        <div class="col-7 p-0">
+                                            <a t-att-href="module.website" target="_blank" class="text-break">
+                                                <t t-esc="module.website"/>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <hr t-if="module.website"/>
+                                    
+                                    <!-- Versions -->
+                                    <div class="row mb-2 m-0" t-if="branches">
+                                        <div class="col-5 p-0">
+                                            <strong class="text-muted">Versions</strong>
+                                        </div>
+                                        <div class="col-7 p-0">
+                                            <t t-foreach="branches" t-as="branch">
+                                                <span class="badge bg-info me-1 mb-1"><t t-esc="branch.name"/></span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Summary -->
+                                <div class="mt-3" t-if="module.summary">
+                                    <p><t t-esc="module.summary"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Full Description/Index -->
+                <div class="container mt-5">
+                    <t t-if="module.index_content">
+                        <div class="oe_structure" id="product_full_description">
+                            <t t-out="module.index_content"/>
+                        </div>
+                    </t>
+                    <t t-elif="module.description_html">
+                        <div class="oe_structure" id="product_full_description">
+                            <t t-out="module.description_html"/>
+                        </div>
+                    </t>
+                    <t t-elif="module.description">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Description</h5>
+                            </div>
+                            <div class="card-body">
+                                <pre class="mb-0"><t t-esc="module.description"/></pre>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
