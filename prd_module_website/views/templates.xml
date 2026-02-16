@@ -163,7 +163,7 @@
                             <!-- Banner/Screenshot -->
                             <div class="col-md-6">
                                 <t t-if="module.banner_file or module.banner_image">
-                                    <img t-attf-src="data:image/png;base64,#{module.banner_file or module.banner_image}" 
+                                    <img t-attf-src="data:image/png;base64,{{module.banner_file or module.banner_image}}" 
                                          class="img-fluid rounded shadow-sm" 
                                          alt="Module banner"/>
                                 </t>
@@ -286,6 +286,60 @@
                     <t t-elif="module.description_html">
                         <div class="oe_structure" id="product_full_description">
                             <t t-out="module.description_html"/>
+                            <!-- Index "footer" -->
+
+                            <section class="s_text_block pt-5 pb-5 px-5 mb-5" style="background-color: #4b1f50; color: white;">
+                                <div class="container">
+                                        <div class="row mb-4">
+                                            <div class="col-lg-5 px-4">
+                                            <h1 class="display-4 fw-bold mb-3 text-white">
+                                                <t t-esc="module.name or module.technical_name"/>
+                                            </h1>
+                                                <p class="lead">
+                                                    This module was created by Vertel AB for x-customer. 
+                                                    For support, query and question contact us.
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="col-lg-4"></div>
+                                            
+                                            <!-- <div class="col-lg-3 order-lg-2 mb-4">
+                                                <img src="/static/images/Vertel_Vit.svg" 
+                                                    class="img-fluid" 
+                                                    alt="Logo"
+                                                    style="height:100px;"/>
+                                            </div> -->
+                                            <div class="col-lg-3 order-lg-2 mb-4">
+                                                <img t-attf-src="/logo.png?company=#{res_company.id}" 
+                                                    class="img-fluid" 
+                                                    alt="Logo" 
+                                                    style="height: 100%; max-height:100px; width:auto; min-height: 50px;"/>
+                                            </div>
+                                        
+                                        </div>
+
+                                        <div class="row mb-4 o_colored_level">
+                                            <t t-set="btn_style" t-value="'background-color: #F29E29; border: 3px solid white; color: white; border-radius: 12px; padding: 10px 30px; font-weight: bold; font-size: 1.2rem; transition: transform 0.2s;'"/>
+                                            <div class="col-lg-4 o_colored_level mb-2">
+                                                <a t-att-href="module.website or '#'" target="_blank" class="btn d-flex align-items-center text-white" t-att-style="btn_style">
+                                                    <i class="fa fa-lg fa-github me-2"></i> Support
+                                                </a>
+                                            </div>
+                                            
+                                            <div class="col-lg-4 o_colored_level mb-2">
+                                                <a href="/apps" class="btn d-flex align-items-center text-white" t-att-style="btn_style">
+                                                    More apps
+                                                </a>
+                                            </div>
+                                            <div class="col-lg-4 o_colored_level mb-2">
+                                                <a href="/contactus" class="btn d-flex align-items-center text-white" t-att-style="btn_style">
+                                                    Contact us
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+                            </section>
                         </div>
                     </t>
                     <t t-elif="module.description">
