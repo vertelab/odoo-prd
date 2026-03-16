@@ -146,6 +146,39 @@
     <!-- Module Detail Template -->
     <template id="module_detail" name="PRD Module Details">
         <t t-call="website.layout">
+            <style>
+                h1.oe_slogan, h1:not(.footer) {
+                    font-weight: 800;
+                    font-size: 6rem;
+                    text-align: center;
+                    color: #4b1f50;
+                    margin-bottom: 0.2rem;
+                    line-height: 1;
+                }
+                h2.oe_slogan {
+                    font-weight: 800;
+                    font-size: 6rem;
+                    text-align: center;
+                    color: #4b1f50;
+                    margin-bottom: 0.2rem;
+                    line-height: 1;
+                }
+                h3.oe_slogan {
+                    text-align: center;
+                    font-weight: normal;
+                    color: #F29E29;
+                    font-size: 3rem;
+                    line-height: 1;
+                }
+                .oe_container, .oe_structure #product_full_description {
+                    background-color: #efefef;
+                    padding: 1rem;
+                }
+
+                pre {
+                    margin: 1rem;
+                }
+            </style>
             <div id="wrap" class="oe_structure oe_empty">
                 <section id="o_wblog_post_top" style="margin-bottom:45px;background-color:#F9FAFB;">
                     <div class="container" style="padding-top:20px;padding-bottom:20px;">
@@ -292,11 +325,11 @@
                                 <div class="container">
                                         <div class="row mb-4">
                                             <div class="col-lg-5 px-4">
-                                            <h1 class="display-4 fw-bold mb-3 text-white">
+                                            <h1 class="footer display-4 fw-bold mb-3 text-white">
                                                 <t t-esc="module.name or module.technical_name"/>
                                             </h1>
                                                 <p class="lead">
-                                                    This module was created by Vertel AB for x-customer. 
+                                                    This module was created by Vertel AB. 
                                                     For support, query and question contact us.
                                                 </p>
                                             </div>
