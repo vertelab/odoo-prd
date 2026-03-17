@@ -296,6 +296,7 @@ class OdooBranch(models.Model):
     _description = "Odoo Branch"
 
     name = fields.Char(string="Name", required=True)
+    active = fields.Boolean(string='Active', default=True)
 
 
 class OdooRepo(models.Model):

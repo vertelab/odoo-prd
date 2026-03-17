@@ -20,7 +20,7 @@
 ##############################################################################
 
 {
-    'name': 'Project: PRD Odoo moudle',
+    'name': 'Project: PRD Odoo module',
     'version': '1.0',
     'summary': 'Create Odoo module from Product Requirements Document (PRD)',
     'category': 'Productivity',
@@ -36,21 +36,18 @@
     'license': 'AGPL-3',
     'contributor': '',
     'maintainer': 'Vertel AB',
-    'depends': ['prd',],
+    'depends': ['prd','ai_agent'],
     'data': [
-        # ~ 'data/cron.xml',
-        # ~ 'data/odoo_branches.xml',
-        # ~ 'data/odoo_library.xml',
-        # ~ 'data/odoo_licence.xml',
-        # ~ 'data/odoo_module.xml',
-        # ~ 'data/odoo_project.xml',
-        # ~ 'data/odoo_repo.xml',
+        'security/prd_security.xml',
         'security/ir.model.access.csv',
+        'data/server_action.xml',
+        'data/ai_data.xml',
         'views/prd_views.xml',
         'views/prd_function_views.xml',
+        'views/prd_odoo_module_file_views.xml',
         'views/prd_configuration_views.xml',
-        # ~ 'views/users_views.xml',
     ],
+    'qweb': ['static/src/xml/many2many_checkboxes_3cols.xml'],
     'application': False,
 }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

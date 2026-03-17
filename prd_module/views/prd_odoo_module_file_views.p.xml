@@ -142,7 +142,7 @@
         <field name="inherit_id" ref="prd.view_prd_odoo_module_form" />
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
-                <button name="button_get_module_files" string="Get Files" type="object" class="oe_highlight" />
+                <button name="button_get_modules_files" string="Get Files" type="object" class="oe_highlight" />
             </xpath>
 
             <xpath expr="//div[@name='button_box']" position="inside">

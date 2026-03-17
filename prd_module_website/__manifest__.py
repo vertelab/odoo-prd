@@ -40,7 +40,7 @@
     'license': 'AGPL-3',
     'contributor': '',
     'maintainer': 'Vertel AB',
-    'depends': ['prd_module2', 'website'],
+    'depends': ['prd_module', 'website'],
     'data': [
         'views/templates.xml',
     ],

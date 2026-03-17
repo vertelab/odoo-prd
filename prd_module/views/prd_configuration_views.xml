@@ -2,9 +2,9 @@
 <odoo>
     
     <!-- Views and actions for prd.odoo_branches -->
-    <record id="view_prd_odoo_branches_tree" model="ir.ui.view">
-      <field name="name">prd.odoo_branches.tree</field>
-      <field name="model">prd.odoo_branches</field>
+    <record id="view_prd_odoo_branch_tree" model="ir.ui.view">
+      <field name="name">prd.odoo_branch.tree</field>
+      <field name="model">prd.odoo_branch</field>
       <field name="arch" type="xml">
         <list>
           <field name="name" />
@@ -12,9 +12,9 @@
         </list>
       </field>
     </record>
-    <record id="view_prd_odoo_branches_form" model="ir.ui.view">
-      <field name="name">prd.odoo_branches.form</field>
-      <field name="model">prd.odoo_branches</field>
+    <record id="view_prd_odoo_branch_form" model="ir.ui.view">
+      <field name="name">prd.odoo_branch.form</field>
+      <field name="model">prd.odoo_branch</field>
       <field name="arch" type="xml">
         <form>
           <sheet>
@@ -26,9 +26,9 @@
         </form>
       </field>
     </record>
-    <record id="view_prd_odoo_branches_search" model="ir.ui.view">
-      <field name="name">prd.odoo_branches.search</field>
-      <field name="model">prd.odoo_branches</field>
+    <record id="view_prd_odoo_branch_search" model="ir.ui.view">
+      <field name="name">prd.odoo_branch.search</field>
+      <field name="model">prd.odoo_branch</field>
       <field name="arch" type="xml">
         <search>
           <field name="name" />
@@ -36,13 +36,13 @@
         </search>
       </field>
     </record>
-    <record id="action_prd_odoo_branches" model="ir.actions.act_window">
-      <field name="name">Odoo Branches</field>
-      <field name="res_model">prd.odoo_branches</field>
+    <record id="action_prd_odoo_branch" model="ir.actions.act_window">
+      <field name="name">Odoo Branch</field>
+      <field name="res_model">prd.odoo_branch</field>
       <field name="view_mode">list,form</field>
-      <field name="search_view_id" ref="view_prd_odoo_branches_search" />
+      <field name="search_view_id" ref="view_prd_odoo_branch_search" />
     </record>
-    <menuitem id="menu_prd_odoo_branches" name="Odoo Branches" parent="prd.menu_prd_configuration_root" action="action_prd_odoo_branches" sequence="1" />
+    <menuitem id="menu_prd_odoo_branch" name="Odoo Branches" parent="prd.menu_prd_configuration_root" action="action_prd_odoo_branch" sequence="1" />
 
     <!-- Menu parent for Configuration -->
 

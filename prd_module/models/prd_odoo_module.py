@@ -118,7 +118,7 @@ class OdooModule(models.Model):
         for record in self:
             record.files_count = len(record.file_ids)
 
-    def button_get_module_files(self):
+    def button_get_modules_files(self):
         self.ensure_one()
         if not all([self.repo_id, self.repo_id.owner, self.branch_id]):
             raise UserError(_("Missing repo, branch or owner"))
@@ -370,7 +370,7 @@ class OdooModuleFile(models.Model):
     # ~ self.views_instructions = vi
 
     # ~ def views_prompt_do(self):
-    # ~ quest = self.env.ref('prd_module2.build_views_bot_28')	__custom__.rpd
+    # ~ quest = self.env.ref('prd_module.build_views_bot_28')	__custom__.rpd
     # ~ quest = self.env.ref('__custom__.rpd')
     # ~ result = quest.run(record=self)
     # ~ raise UserError(f"{self.views_prompt=} {self=} {result=}")
