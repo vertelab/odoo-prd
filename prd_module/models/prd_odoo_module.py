@@ -1,5 +1,6 @@
 from github.ContentFile import ContentFile
 from odoo import api, fields, models, _
+from odoo.addons.prd_module.utils import TarFileWriter, SFTPFileWriter
 from odoo.exceptions import UserError, ValidationError, AccessError
 import base64
 import filetype
@@ -9,78 +10,6 @@ import ast
 import re
 
 _logger = logging.getLogger(__name__)
-
-
-VIEW_FIELD_WIDGETS = """
-| Widget | Description | Suitable Field Types | Odoo Versions |
-| :-- | :-- | :-- | :-- |
-| attachment_image | Displays attachments as images | binary | 16,17,18,19 |
-| badge | Colored badges for status display | char,selection | 16,17,18,19 |
-| badge_selection | Badge-style selection display | many2one,selection | 16,17,18,19 |
-| badge_selection_with_filter | Badge with filtering capabilities | many2one | 17,18,19 |
-| binary | File upload and download | binary | 14,15,16,17,18,19 |
-| boolean | Standard checkbox | boolean | 14+ |
-| boolean_favorite | Star icon for favorites | boolean | 16,17,18,19 |
-| boolean_icon | Icon representation of boolean | boolean | 15+ |
-| boolean_toggle | Toggle switch for boolean | boolean | 16,17,18,19 |
-| char | Text input field | char | 14+ |
-| color | Color display | integer,char | 14+ |
-| color_picker | Color picker interface | char,integer | 16+ |
-| contact_image | Contact profile image | binary,image | 17,18,19 |
-| contact_statistics | Contact statistics display | many2one | 18,19 |
-| copy_clipboard | Copy to clipboard button | char,text | 15+ |
-| datetime | Date and time picker | datetime | 14+ |
-| domain | Domain editor | char | 16+ |
-| email | Email link with mailto | char | 14+ |
-| field_selector | Field selection dropdown | char | 17+ |
-| float | Decimal number input | float | 14+ |
-| float_factor | Multiplier/percentage factor | float | 14+ |
-| float_time | Time in decimal hours | float | 14+ |
-| float_toggle | Toggle with float values | float | 16+ |
-| gauge | Gauge chart visualization | float,integer | 15+ |
-| google_slide_viewer | Google Slides viewer | char,url | 16+ |
-| handle | Drag handle for reordering | integer | 14+ |
-| html | Rich text/HTML editor | html | 14+ |
-| iframe_wrapper | iFrame embedding wrapper | char | 16+ |
-| image | Image display and upload | binary | 14+ |
-| image_url | Image from external URL | char,url | 15+ |
-| integer | Integer number input | integer | 14+ |
-| ir_ui_view_ace | ACE editor for view XML | text | 16+ |
-| journal_dashboard_graph | Journal dashboard graph | many2one | 15+ |
-| json | JSON data editor | json | 17+ |
-| json_checkboxes | JSON as checkbox list | json | 18,19 |
-| kanban_color_picker | Kanban color picker | integer | 18,19 |
-| label_selection | Selection with labels | selection | 15+ |
-| many2many_binary | Many2many file attachments | many2many(binary) | 15+ |
-| many2many_checkboxes | Many2many as checkboxes | many2many | 16+ |
-| many2many_tags | Tag-style many2many | many2many | 14+ |
-| many2many_tags_avatar | Tags with user avatars | many2many | 17+ |
-| many2one | Standard many2one dropdown | many2one | 14+ |
-| many2one_avatar | Many2one with avatar | many2one | 16+ |
-| many2one_barcode | Many2one with barcode scan | many2one | 16+ |
-| many2one_reference | Dynamic model reference | reference | 15+ |
-| many2one_reference_integer | Integer-based reference | reference | 16+ |
-| monetary | Currency amount display | monetary | 14+ |
-| pdf_viewer | PDF document viewer | binary | 15+ |
-| percent_pie | Percentage pie chart | float | 15+ |
-| percentage | Percentage input | float | 14+ |
-| phone | Phone link with tel protocol | char | 14+ |
-| priority | Priority stars rating | selection | 14+ |
-| progress_bar | Progress bar visualization | float,integer | 14+ |
-| properties | Dynamic properties editor | properties | 18,19 |
-| radio | Radio button selection | selection | 14+ |
-| reference | Reference field to any model | reference | 14+ |
-| remaining_days | Days remaining counter | integer,float | 16+ |
-| selection | Dropdown selection | selection | 14+ |
-| signature | Signature pad drawing | binary | 15+ |
-| stat_info | Statistical information display | char,many2one | 16+ |
-| state_selection | State-based selection | selection | 16+ |
-| statusbar | Horizontal status bar | selection | 14+ |
-| text | Multi-line text area | text | 14+ |
-| timezone_mismatch | Timezone mismatch warning | datetime | 17+ |
-| url | Clickable URL link | char | 14+ |
-| x2many | Embedded relational lists | one2many,many2many | 14+ |
-"""
 
 
 class OdooModule(models.Model):
@@ -141,6 +70,32 @@ class OdooModule(models.Model):
             "view_mode": "kanban,list,form",
             "target": "current",
         }
+
+    def _build_module_structure(self, writer):
+        self.ensure_one()
+
+        if not self.file_ids:
+            raise UserError(
+                _("No files found on this module. Please fetch module files first.")
+            )
+
+        file_entries = []
+        for file_rec in self.file_ids.filtered(lambda f: f.name):
+            if file_rec.content_type == "bin" or (
+                file_rec.content_mime and file_rec.content_mime != "text/plain"
+            ):
+                content = (
+                    base64.b64decode(file_rec.content_bin)
+                    if file_rec.content_bin
+                    else b""
+                )
+            else:
+                content = file_rec.content or ""
+
+            file_entries.append((file_rec.name, content))
+
+        self._write_module_files(writer, file_entries)
+
 
     def get_files(self):
         for m in self:
@@ -440,70 +395,6 @@ class OdooModuleFile(models.Model):
             for file in self.search():
                 pass
 
-    def _build_module_structure(self, writer):
-        data = []
-        models_init = []
-        controllers_init = []
-        main_init = []
-
-        # Process all functions
-        for function in self.function_ids:
-            if function.has_views and function.views_filename:
-                writer.write_file("views/", function.views_filename, function.views_xml)
-                data.append(f"views/{function.views_filename}")
-
-            if function.has_models and function.models_filename:
-                writer.write_file(
-                    "models/", function.models_filename, function.models_src
-                )
-                split_filename = function.models_filename.split(".")[0]
-                models_init.append(f"from . import {split_filename}")
-
-            if function.has_data and function.data_filename:
-                writer.write_file("data/", function.data_filename, function.data_xml)
-                data.append(f"data/{function.data_filename}")
-
-            if function.has_controllers and function.controllers_filename:
-                writer.write_file(
-                    "controllers/",
-                    function.controllers_filename,
-                    function.controllers_src,
-                )
-                split_filename = function.controllers_filename.split(".")[0]
-                controllers_init.append(f"from . import {split_filename}")
-
-        # Create __init__.py files for models
-        if models_init:
-            content = "\n".join(models_init)
-            writer.write_file("models/", "__init__.py", content)
-            main_init.append("from . import models")
-
-        # Create __init__.py files for controllers
-        if controllers_init:
-            content = "\n".join(controllers_init)
-            writer.write_file("controllers/", "__init__.py", content)
-            main_init.append("from . import controllers")
-
-        # Create security files
-        writer.write_file(
-            "security/", "ir.model.access.csv", self.create_ir_model_access()
-        )
-
-        rec_rule_path = writer.write_file(
-            "security/", f"{self.name}_record_rules.xml", self.create_record_rules()
-        )
-        # Extract relative path for manifest (remove module path prefix)
-        rec_rule_relative = "/".join(rec_rule_path.split("/")[1:])
-        data.append(rec_rule_relative)
-
-        # Create main __init__.py
-        main_init_content = "\n".join(main_init)
-        writer.write_file("", "__init__.py", main_init_content)
-
-        # Create manifest
-        writer.write_file("", "__manifest__.py", self.create_manifest(data))
-
-        return data
 
     # ~ def identify_all_odoo_models(self) -> dict:
     # ~ """

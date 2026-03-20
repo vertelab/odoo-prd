@@ -99,9 +99,6 @@ class PrdFunction(models.Model):
 
     # models / data / sequrity / sequirity.xml / views /
 
-    module_id = fields.Many2one(
-        comodel_name="prd.odoo_module", related="prd_id.module_id"
-    )
     icon_image = fields.Binary(
         string="Function Icon",
     )

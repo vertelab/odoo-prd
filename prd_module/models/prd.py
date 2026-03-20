@@ -33,74 +33,59 @@ class ProductRequirementDocument(models.Model):
             "target": "self",
         }
 
-    # def sftp_upload(self):
-    #     hostname = self.env.user.sftp_hostname
-    #     port = self.env.user.sftp_port
-    #     username = self.env.user.sftp_username
-    #
-    #     if not hostname or not port or not username:
-    #         raise UserError(f"One of the following values are not set on the user {self.env.user.name}\n\nHostname: {hostname}\nPort: {port}\nUsername: {username}")
-    #
-    #     module_path = f"/usr/share/{self.repo_id.name}/"
-
-
 
     def _build_module_structure(self, writer):
         data = []
         models_init = []
         controllers_init = []
         main_init = []
+        module_files = []
 
-        # Process all functions
         for function in self.function_ids:
             if function.has_views and function.views_filename:
-                writer.write_file("views/", function.views_filename, function.views_xml)
+                module_files.append((f"views/{function.views_filename}", function.views_xml))
                 data.append(f"views/{function.views_filename}")
 
             if function.has_models and function.models_filename:
-                writer.write_file("models/", function.models_filename, function.models_src)
+                module_files.append((f"models/{function.models_filename}", function.models_src))
                 split_filename = function.models_filename.split(".")[0]
                 models_init.append(f"from . import {split_filename}")
 
             if function.has_data and function.data_filename:
-                writer.write_file("data/", function.data_filename, function.data_xml)
+                module_files.append((f"data/{function.data_filename}", function.data_xml))
                 data.append(f"data/{function.data_filename}")
 
             if function.has_controllers and function.controllers_filename:
-                writer.write_file("controllers/", function.controllers_filename, function.controllers_src)
+                module_files.append((f"controllers/{function.controllers_filename}", function.controllers_src))
                 split_filename = function.controllers_filename.split(".")[0]
                 controllers_init.append(f"from . import {split_filename}")
 
         # Create __init__.py files for models
         if models_init:
             content = "\n".join(models_init)
-            writer.write_file("models/", "__init__.py", content)
+            module_files.append(("models/__init__.py", content))
             main_init.append("from . import models")
 
         # Create __init__.py files for controllers
         if controllers_init:
             content = "\n".join(controllers_init)
-            writer.write_file("controllers/", "__init__.py", content)
+            module_files.append(("controllers/__init__.py", content))
             main_init.append("from . import controllers")
 
         # Create security files
-        writer.write_file("security/", "ir.model.access.csv", self.create_ir_model_access())
+        module_files.append(("security/ir.model.access.csv", self.create_ir_model_access()))
 
-        rec_rule_path = writer.write_file(
-            "security/",
-            f"{self.name}_record_rules.xml",
-            self.create_record_rules()
-        )
-        # Extract relative path for manifest (remove module path prefix)
-        rec_rule_relative = "/".join(rec_rule_path.split("/")[1:])
+        rec_rule_relative = f"security/{self.name}_record_rules.xml"
+        module_files.append((rec_rule_relative, self.create_record_rules()))
         data.append(rec_rule_relative)
 
         # Create main __init__.py
         main_init_content = "\n".join(main_init)
-        writer.write_file("", "__init__.py", main_init_content)
+        module_files.append(("__init__.py", main_init_content))
 
         # Create manifest
-        writer.write_file("", "__manifest__.py", self.create_manifest(data))
+        module_files.append(("__manifest__.py", self.create_manifest(data)))
+        self._write_module_files(writer, module_files)
 
         return data
 
@@ -131,48 +116,6 @@ class ProductRequirementDocument(models.Model):
             'target': 'self',
         }
 
-    def sftp_upload(self):
-        """Upload module directly to server via SFTP"""
-        hostname = self.env.user.sftp_hostname
-        port = self.env.user.sftp_port
-        username = self.env.user.sftp_username
-
-        if not hostname or not port or not username:
-            raise UserError(
-                f"One of the following values are not set on the user {self.env.user.name}\n\n"
-                f"Hostname: {hostname}\nPort: {port}\nUsername: {username}"
-            )
-
-        if self.app_module.repo_id:
-            module_path = f"/usr/share/{self.app_module.repo_id.name}/{self.app_module.technical_name}/"
-        else:
-            module_path = f"/usr/share/{self.name}/{self.app_module.technical_name}/"
-
-        try:
-            writer = SFTPFileWriter(
-                username=username,
-                hostname=hostname,
-                port=port,
-                module_path=module_path
-            )
-            self._build_module_structure(writer)
-            writer.close()
-
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('Success'),
-                    'message': _('Module uploaded successfully to %s:%s%s') % (hostname, port, module_path),
-                    'type': 'success',
-                    'sticky': False,
-                }
-            }
-        except Exception as e:
-            _logger.error(f"SFTP upload failed: {str(e)}")
-            raise UserError(f"Failed to upload module via SFTP:\n\n{str(e)}")
-
-
     def sync_module(self):
         git_url = self.env['ir.config_parameter'].sudo().get_param('GitHubBaseUrl')
         raw_git_url = self.env['ir.config_parameter'].sudo().get_param('RawGitHubBaseUrl')
@@ -183,18 +126,18 @@ class ProductRequirementDocument(models.Model):
             raise UserError(_("Git URL is not set"))
         if not self.app_project:
             raise UserError(_("No Git Project was specified"))
-        if not self.app_module:
+        if not self.module_id:
             raise UserError(_("No Module was specified"))
         for module in self:
             if not module.app_project:
                 raise UserError(_("No Git Project was specified %s" % module.name))
-            if not module.app_module:
+            if not module.module_id:
                 raise UserError(_("No Module was specified %s" % module.name))
             if not module.app_tree:
                 raise UserError(_("No Module Tree was specified %s" % module.name))
-            if module.app_project and module.app_module:
-                module_url = f"{git_url}/{module.app_project}/tree/{module.app_tree}/{module.app_module}"
-                raw_module_url = f"{raw_git_url}/{module.app_project}/{module.app_tree}/{module.app_module}"
+            if module.app_project and module.module_id:
+                module_url = f"{git_url}/{module.app_project}/tree/{module.app_tree}/{module.module_id}"
+                raw_module_url = f"{raw_git_url}/{module.app_project}/{module.app_tree}/{module.module_id}"
                 # get icon
                 _logger.warning("--------->> module_url: %s" % module_url)
                 _logger.warning("--------->> raw_module_url: %s" % raw_module_url)

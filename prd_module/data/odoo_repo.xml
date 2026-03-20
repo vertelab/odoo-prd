@@ -1,13 +1,21 @@
 <odoo>
     
+  <record id="repo_odoo" model="prd.odoo_repo">
+    <field name="name">Odoo</field>
+    <field name="path">addons</field>
+    <field name="owner">odoo</field>
+    <field name="repo_source">github</field>
+  </record>
 
  
   <!-- Sample records for prd.odoo_repo -->
   <record id="repo_contract" model="prd.odoo_repo">
-    <field name="name">Contract Repo</field>
+    <field name="name">odoo-contract</field>
     <field name="url">git@github.com:vertelab/odoo-contract.git</field>
     <field name="path">/usr/share/odoo-contract</field>
     <field name="description">Git repository for contracts</field>
+    <field name="owner">vertelab</field>
+    <field name="repo_source">github</field>
     <field name="active">True</field>
   </record>
 

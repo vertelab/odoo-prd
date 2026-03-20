@@ -136,10 +136,10 @@
         </field>
     </record>
 
-    <record id="view_prd_odoo_module_form" model="ir.ui.view">
+    <record id="view_prd_odoo_module_form_files" model="ir.ui.view">
         <field name="name">prd.odoo_module.form.files</field>
         <field name="model">prd.odoo_module</field>
-        <field name="inherit_id" ref="prd.view_prd_odoo_module_form" />
+        <field name="inherit_id" ref="prd_module.view_prd_odoo_module_form" />
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
                 <button name="button_get_modules_files" string="Get Files" type="object" class="oe_highlight" />

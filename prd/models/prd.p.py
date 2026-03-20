@@ -17,7 +17,6 @@ class ProductRequirementDocument(models.Model):
         "mermaid.mixin",
         "mail.thread",
         "mail.activity.mixin",
-        "prd.odoo_module.mixin",
     ]
     _description = "Product Requirement Document"
     _order = "sequence desc, name desc"

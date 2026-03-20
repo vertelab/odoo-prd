@@ -38,21 +38,17 @@
     "depends": ["mail", "web_mermaid"],
     "data": [
         # ~ 'data/cron.xml',
-        "data/server_action.xml",
-        "data/odoo_repo.xml",
         "data/odoo_view_types.xml",
         "data/prd_function_types.xml",
         "views/prd_views.xml",
         "views/prd_function_views.xml",
         "views/prd_requirement_views.xml",
         "views/prd_configuration_views.xml",
-        "views/res_config_settings_views.xml",
         "wizard/prd_requirement_wizard_views.xml",
         "security/prd_security.xml",
         "security/ir.model.access.csv",
         "report/prd_requirement_report.xml",
     ],
-    "post_init_hook": "post_init_hook",
     "application": True,
 }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

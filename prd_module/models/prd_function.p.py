@@ -82,6 +82,10 @@ VIEW_FIELD_WIDGETS = """
 class PrdFunction(models.Model):
     _inherit = "prd.function"
 
+    module_id = fields.Many2one(
+        comodel_name="prd.odoo_module", related="prd_id.module_id"
+    )
+
     ## Model/View
     prompt_model = fields.Text(
         string="Prompt (model)", placeholder="e.g. Promt for python code"
@@ -623,14 +627,6 @@ class PrdFunction(models.Model):
     # ~ description = fields.Text(string='Description')
     # ~ active = fields.Boolean(string='Active', default=True)
 
-class OdooLicence(models.Model):
-    _name = 'prd.odoo_lincence'
-    _description = 'Odoo Branches'
-
-    name = fields.Char(string='Name', required=True)
-    code = fields.Char(string='Licence Code', required=True)
-    description = fields.Text(string='Description')
-    active = fields.Boolean(string='Active', default=True)
 
 # ~ class OdooModule(models.Model):
     # ~ _name = 'prd.odoo_module'
@@ -656,19 +652,3 @@ class OdooLicence(models.Model):
     # ~ path = fields.Char(string='Url', help="/usr/share/odoo-contract",)
     # ~ description = fields.Text(string='Description')
     # ~ active = fields.Boolean(string='Active', default=True)
-
-class OdooLibrary(models.Model):
-    _name = 'prd.odoo_library'
-    _description = 'Odoo Library'
-
-    name = fields.Char(string='Name', required=True)
-    description = fields.Text(string='Description')
-    active = fields.Boolean(string='Active', default=True)
-
-   
-class OdooModels(models.Model):
-    _name = 'prd.odoo_models'
-    _description = 'Odoo Models'
-
-    name = fields.Char(string='Name', required=True)
-    active = fields.Boolean(string='Active', default=True)
