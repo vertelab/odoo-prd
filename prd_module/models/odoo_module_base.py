@@ -291,19 +291,24 @@ class OdooModule(models.Model):
 
 class PrdRule(models.Model):
     _name = "prd.rule"
-    _inherit = "ir.rule"
     _description = "PRD rules for modules"
 
     prd_id = fields.Many2one(comodel_name="prd.document")
-    # ~ group_ids = fields.One2many(comodel_name="prd.rule.groups",inverse_name="rule_id")
-
+    file_id = fields.Many2one(comodel_name="prd.odoo_module.file", string="Source File")
+    
+    name = fields.Char(string="Name")
+    model_ref = fields.Char(string="Model Ref")
+    domain_force = fields.Text(string="Domain")
     groups = fields.Many2many(
-        comodel_name="res.groups",
-        relation="prd_rule_group_rel",
-        column1="rule_id",
-        column2="group_id",
+        comodel_name="prd.rule.groups",
         string="Groups",
     )
+    
+    perm_read = fields.Boolean(string="Read", default=True)
+    perm_write = fields.Boolean(string="Write", default=True)
+    perm_create = fields.Boolean(string="Create", default=True)
+    perm_unlink = fields.Boolean(string="Delete", default=True)
+
 
 
 class PrdLicence(models.Model):
@@ -318,17 +323,27 @@ class PrdLicence(models.Model):
 
 class PrdModelAccess(models.Model):
     _name = "prd.model.access"
-    _inherit = "ir.model.access"
     _description = "PRD model to set access rights for modules and models"
 
     prd_id = fields.Many2one(comodel_name="prd.document")
+    file_id = fields.Many2one(comodel_name="prd.odoo_module.file", string="Source File")
+    
+    name = fields.Char(string="Name")
+    model_ref = fields.Char(string="Model Ref")
+    group_ref = fields.Char(string="Group Ref")
+    
+    perm_read = fields.Boolean(string="Read", default=True)
+    perm_write = fields.Boolean(string="Write", default=True)
+    perm_create = fields.Boolean(string="Create", default=True)
+    perm_unlink = fields.Boolean(string="Delete", default=True)
 
 
-# ~ class PrdRuleGroups(models.Model):
-# ~ _name = 'prd.rule.groups'
-# ~ _description = 'Glue model for prd.rule and res.groups'
+class PrdRuleGroups(models.Model):
+    _name = 'prd.rule.groups'
+    _description = 'PRD Extracted Groups'
 
-# ~ rule_id = fields.Many2one(comodel_name="prd.rule")
-# ~ groups_id = fields.Many2one(comodel_name="res.groups")
-
-
+    prd_id = fields.Many2one(comodel_name="prd.document")
+    file_id = fields.Many2one(comodel_name="prd.odoo_module.file", string="Source File")
+    
+    name = fields.Char(string='Group Ref / Ext ID', required=True)
+    description = fields.Char(string='Description / Name')

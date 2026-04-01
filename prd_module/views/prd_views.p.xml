@@ -30,6 +30,7 @@
             <header position="inside">
                 <button name="button_export_module" string="Export Module" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
                 <button name="sftp_upload" string="SFTP Upload" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
+                <button name="action_parse_security_files" string="Parse Security Files" type="object" class="oe_highlight" invisible="not file_ids"/>
             </header>
             <div name="button_box" position="inside">
                 <button class="oe_stat_button" type="object" name="action_files" icon="fa-check" string="Files">
@@ -81,37 +82,42 @@
                     <notebook name="sec">
                         <page string="Access Rights" name="access_rights">
                             <field name="model_access">
-                                <list string="Access Rights" editable="bottom" context="{'default_prd_id': id}">
+                                <list string="Access Rights" editable="bottom">
                                     <field name="name" />
-                                    <field name="model_id" />
-                                    <field name="group_id" />
-                                    <field name="perm_read" />
-                                    <field name="perm_write" />
-                                    <field name="perm_create" />
-                                    <field name="perm_unlink" />
+                                    <field name="model_ref" />
+                                    <field name="group_ref" />
+                                    <field name="perm_read" widget="boolean" />
+                                    <field name="perm_write" widget="boolean" />
+                                    <field name="perm_create" widget="boolean" />
+                                    <field name="perm_unlink" widget="boolean" />
+                                    <field name="file_id" optional="hide" />
                                 </list>
                             </field>
                         </page>
                         <page string="Record Rules" name="record_rules">
-                            <field name="record_rule" widget="one2many_list">
-                                <list string="Record Rules" editable="bottom" create="True" delete="True" context="{'default_prd_id': id}">
+                            <field name="record_rule">
+                                <list string="Record Rules" editable="bottom">
                                     <field name="name" />
-                                    <field name="model_id" />
+                                    <field name="model_ref" />
                                     <field name="groups" widget="many2many_tags" />
-                                    <field name="global" />
                                     <field name="domain_force" />
-                                    <field name="perm_read" />
-                                    <field name="perm_write" />
-                                    <field name="perm_create" />
-                                    <field name="perm_unlink" />
+                                    <field name="perm_read" widget="boolean" />
+                                    <field name="perm_write" widget="boolean" />
+                                    <field name="perm_create" widget="boolean" />
+                                    <field name="perm_unlink" widget="boolean" />
+                                    <field name="file_id" optional="hide" />
                                 </list>
                             </field>
                         </page>
-                        <!--
-                                    <page name="group" String="Group">
-                                      <field name="rule_groups" nolabel="1" />
-                                    </page>
-                        -->
+                        <page string="Groups" name="groups">
+                            <field name="rule_groups">
+                                <list string="Groups" editable="bottom" create="True" delete="True">
+                                    <field name="name" string="External ID (e.g. group_manager)"/>
+                                    <field name="description" string="Name/Description"/>
+                                    <field name="file_id" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
                     </notebook>
                 </page>
             </notebook>

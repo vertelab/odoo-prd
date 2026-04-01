@@ -13,3 +13,4 @@ access_prd_odoo_repo_user,prd.odoo_repo user,model_prd_odoo_repo,base.group_user
 access_prd_odoo_repo_manager,prd.odoo_repo manager,model_prd_odoo_repo,base.group_system,1,1,1,1
 access_prd_model_access,access_prd_model_access,model_prd_model_access,base.group_user,1,1,1,1
 access_prd_rule,prd.rule access,model_prd_rule,prd.group_prd_manager,1,1,1,1
+access_prd_rule_groups,prd.rule.groups,model_prd_rule_groups,base.group_user,1,1,1,1

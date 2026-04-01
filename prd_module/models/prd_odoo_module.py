@@ -516,15 +516,22 @@ class ProductRequirementDocument(models.Model):
         string="Manifest", related="manifest_file_id.content", readonly=False
     )
 
-    model_access = fields.Many2many(
-        comodel_name="prd.model.access", string="Model Access", help=""
-    )  # relation|column1|column2
-    record_rule = fields.Many2many(
-        comodel_name="prd.rule", string="Access Rules", help=""
-    )  # relation|column1|column2
-    rule_groups = fields.Many2many(
-        comodel_name="prd.rule.groups", string="Access Group", help=""
-    )  # relation|column1|column2
+    model_access = fields.One2many(
+        comodel_name="prd.model.access", 
+        inverse_name="prd_id", 
+        string="Model Access"
+    )
+    record_rule = fields.One2many(
+        comodel_name="prd.rule", 
+        inverse_name="prd_id", 
+        string="Access Rules"
+    )
+    rule_groups = fields.One2many(
+        comodel_name="prd.rule.groups", 
+        inverse_name="prd_id", 
+        string="Access Groups"
+    )
+    
     files_count = fields.Integer(string="Total Files", related="module_id.files_count")
     file_ids = fields.One2many(
         comodel_name="prd.odoo_module.file",

@@ -9,7 +9,8 @@ import tarfile
 import io
 import base64
 import time
-
+import csv
+from lxml import etree
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError, AccessError
@@ -256,3 +257,79 @@ class ProductRequirementDocument(models.Model):
             'qweb': []
         }
         return json.dumps(manifest_vals, indent=2)
+
+    def action_parse_security_files(self):
+        self.ensure_one()
+        self.model_access.unlink()
+        self.record_rule.unlink()
+        self.rule_groups.unlink()
+
+        _bool = lambda v: str(v or '').strip().lower() in ('1', 'true')
+        for file in self.file_ids.filtered(lambda f: f.name and 'security/' in f.name):
+            try:
+                content = (file.content or "")
+                if not content and file.content_bin:
+                    content = base64.b64decode(file.content_bin).decode('utf-8')
+
+                content = content.lstrip('\ufeff').strip()
+                if not content:
+                    continue
+
+                if file.name.endswith('.csv'):
+                    for row in csv.DictReader(io.StringIO(content)):
+                        self.env['prd.model.access'].create({
+                            'prd_id': self.id,
+                            'file_id': file.id,
+                            'name': row.get('id') or row.get('name', ''),
+                            'model_ref': row.get('model_id:id', ''),
+                            'group_ref': row.get('group_id:id', ''),
+                            'perm_read': _bool(row.get('perm_read')),
+                            'perm_write': _bool(row.get('perm_write')),
+                            'perm_create': _bool(row.get('perm_create')),
+                            'perm_unlink': _bool(row.get('perm_unlink')),
+                        })
+                    continue
+
+                if not file.name.endswith('.xml'):
+                    continue
+
+                root = etree.fromstring(content.encode('utf-8'))
+
+                for group in root.findall(".//record[@model='res.groups']"):
+                    group_id = group.get('id')
+                    if not group_id:
+                        continue
+                    name_node = group.find("field[@name='name']")
+                    self.env['prd.rule.groups'].create({
+                        'prd_id': self.id,
+                        'file_id': file.id,
+                        'name': group_id,
+                        'description': (name_node.text if name_node is not None else '') or group_id,
+                    })
+
+                for record in root.findall(".//record[@model='ir.rule']"):
+                    groups_field = record.find("field[@name='groups']")
+                    refs = re.findall(
+                        r"ref\(['\"]([^'\"]+)['\"]\)",
+                        groups_field.get('eval', '') if groups_field is not None else ''
+                    )
+
+                    group_refs = []
+                    for ref in refs:
+                        grp = self.env['prd.rule.groups'].search([('name', '=', ref), ('prd_id', '=', self.id)], limit=1)
+                        if not grp:
+                            grp = self.env['prd.rule.groups'].create({'name': ref, 'prd_id': self.id})
+                        group_refs.append(grp.id)
+
+                    perms = {p: _bool((n := record.find(f"field[@name='{p}']")) and n.get('eval', '')) for p in ('perm_read', 'perm_write', 'perm_create', 'perm_unlink')}
+                    self.env['prd.rule'].create({
+                        'prd_id': self.id,
+                        'file_id': file.id,
+                        'name': (n := record.find("field[@name='name']")) and n.text or record.get('id', ''),
+                        'model_ref': (m := record.find("field[@name='model_id']")) and m.get('ref') or '',
+                        'domain_force': (d := record.find("field[@name='domain_force']")) and d.text or '',
+                        **{f'perm_{k}': v or True for k, v in perms.items()},
+                        'groups': [(6, 0, group_refs)],
+                    })
+            except Exception as e:
+                _logger.error(f"Misslyckades att parsa {file.name}: {e}")

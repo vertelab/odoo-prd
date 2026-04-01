@@ -86,8 +86,8 @@
               <field name="model_access_ids">
                 <list string="Access Rights" editable="top">
                   <field name="name" />
-                  <field name="model_id" />
-                  <field name="group_id" />
+                  <field name="model_ref" />
+                  <field name="group_ref" />
                   <field name="perm_read" />
                   <field name="perm_write" />
                   <field name="perm_create" />
@@ -99,7 +99,7 @@
               <field name="rule_ids">
                 <list string="Record Rules" editable="top">
                   <field name="name" />
-                  <field name="model_id" />
+                  <field name="model_ref" />
                   <field name="domain_force" />
                   <field name="groups" widget="many2many_tags" />
                   <field name="perm_read" />
