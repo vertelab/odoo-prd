@@ -130,8 +130,17 @@ class ExcelWizard(models.TransientModel):
         return req_type_id
 
     def check_row_len(self,row,row_index,max_len,min_len):
-        check = str(row[row_index]).strip() if len(row) > row_index and row[row_index] and len(row[row_index]) <= max_len and len(row[row_index]) >= min_len else False
-        return check
+#        check = str(row[row_index]).strip() if len(row) > row_index and row[row_index] and len(row[row_index]) <= max_len and len(row[row_index]) >= min_len else False
+         # NY SÄKER KOD (ersätt rad 133):
+         if len(row) > row_index and row[row_index] is not None:
+             str_value = str(row[row_index]).strip()
+             # kolla längd
+             if len(str_value) <= max_len and len(str_value) >= min_len:
+                 return str_value
+         else:
+             check = False
+
+#        return check
 
     def fix_broken_excel(self,file):
         try:
@@ -158,3 +167,4 @@ class ExcelWizard(models.TransientModel):
         except Exception as e:
             raise UserError(f"Tried to fix broken Excel but failed: {e}")
         return wb
+
