@@ -60,6 +60,20 @@ class ExcelWizard(models.TransientModel):
                     priority = self.get_priority(row)
                     category = self.get_category(row,is_category)
 
+                    # SMART TRUNKERING:
+                    # 1. Om desc är längre än 150 tecken, korta av
+                    # 2. Försök klippa vid sista punkten eller mellanslaget om möjligt
+                    max_len = 100
+                    if desc and len(desc) > max_len:
+                        # Försök hitta en punkt inom de första 150 tecknen
+                        snippet = desc[:max_len]
+                        if '.' in snippet:
+                            name = snippet.rsplit('.', 1)[0] + "."
+                        else:
+                            name = snippet.strip() + "..."
+                    else:
+                        name = desc
+
                     # Skapa requirement-posten
                     values = {
                         'code': code,
