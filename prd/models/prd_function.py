@@ -168,19 +168,9 @@ class PrdFunction(models.Model):
 
     sequence = fields.Integer(string="Sequence")
     state = fields.Selection(
-        [
-            ("draft", "Draft"),
-            ("in_review", "In Review"),
-            ("approved", "Approved"),
-            ("ongoing", "Ongoing"),
-            ("implemented", "Implemented"),
-            ("verified", "Verified"),
-            ("done", "Done"),
-            ("deferred", "Deferred"),
-        ],
+        [("draft", "Draft"), ("ongoing", "Ongoing"), ("done", "Done")],
         string="State",
         default="draft",
-        tracking=True,
     )
     to_check = fields.Boolean()
     user_id = fields.Many2one(comodel_name="res.users", string="Author", help="")

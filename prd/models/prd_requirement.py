@@ -84,41 +84,34 @@ class PrdRequirement(models.Model):
     )
     sequence = fields.Integer(string="Sequence")
     state = fields.Selection(
-        [
-            ("draft", "Draft"),
-            ("in_review", "In Review"),
-            ("approved", "Approved"),
-            ("ongoing", "Ongoing"),
-            ("implemented", "Implemented"),
-            ("verified", "Verified"),
-            ("done", "Done"),
-            ("deferred", "Deferred"),
-        ],
+        [("draft", "Draft"), ("ongoing", "Ongoing"), ("done", "Done")],
         string="State",
         default="draft",
-        tracking=True,
     )
     to_check = fields.Boolean()
     user_id = fields.Many2one(comodel_name="res.users", string="Responsible")
 
     @api.depends("code")
     def _compute_parent_id(self):
-        # Pre-fetch all requirements for this PRD in one query
-        prd_ids = self.mapped("prd_id").ids
-        all_reqs = {}
-        if prd_ids:
-            all_reqs = {
-                req.code: req.id
-                for req in self.search([
-                    ("prd_id", "in", prd_ids),
-                    ("code", "!=", False)
-                ])
-            }
         for record in self:
-            if record.code and "." in record.code:
-                parent_code = ".".join(record.code.split(".")[:-1])
-                parent_id = all_reqs.get(parent_code)
-                record.parent_id = parent_id if parent_id else False
+            if record.code:
+                code = record.code
+
+                parent_code_list = (
+                    record.code.split(".") if "." in record.code else False
+                )
+                parent = (
+                    ".".join(parent_code_list[: len(parent_code_list) - 1])
+                    if parent_code_list
+                    else False
+                )
+
+                parent_id = record.search(
+                    [("code", "=", parent), ("prd_id", "=", record.prd_id.id)], limit=1
+                )
+
+                if parent_id:
+                    record.write({"parent_id": parent_id.id})
             else:
                 record.parent_id = False
 
@@ -194,19 +187,9 @@ class PRDRequirementFunction(models.Model):
     )
     sequence = fields.Integer(string="Sequence")
     state = fields.Selection(
-        [
-            ("draft", "Draft"),
-            ("in_review", "In Review"),
-            ("approved", "Approved"),
-            ("ongoing", "Ongoing"),
-            ("implemented", "Implemented"),
-            ("verified", "Verified"),
-            ("done", "Done"),
-            ("deferred", "Deferred"),
-        ],
+        [("draft", "Draft"), ("ongoing", "Ongoing"), ("done", "Done")],
         string="State",
         default="draft",
-        tracking=True,
     )
 
 

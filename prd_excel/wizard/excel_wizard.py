@@ -60,20 +60,6 @@ class ExcelWizard(models.TransientModel):
                     priority = self.get_priority(row)
                     category = self.get_category(row,is_category)
 
-                    # SMART TRUNKERING:
-                    # 1. Om desc är längre än 150 tecken, korta av
-                    # 2. Försök klippa vid sista punkten eller mellanslaget om möjligt
-                    max_len = 100
-                    if desc and len(desc) > max_len:
-                        # Försök hitta en punkt inom de första 150 tecknen
-                        snippet = desc[:max_len]
-                        if '.' in snippet:
-                            name = snippet.rsplit('.', 1)[0] + "."
-                        else:
-                            name = snippet.strip() + "..."
-                    else:
-                        name = desc
-
                     # Skapa requirement-posten
                     values = {
                         'code': code,
@@ -144,17 +130,8 @@ class ExcelWizard(models.TransientModel):
         return req_type_id
 
     def check_row_len(self,row,row_index,max_len,min_len):
-#        check = str(row[row_index]).strip() if len(row) > row_index and row[row_index] and len(row[row_index]) <= max_len and len(row[row_index]) >= min_len else False
-         # NY SÄKER KOD (ersätt rad 133):
-         if len(row) > row_index and row[row_index] is not None:
-             str_value = str(row[row_index]).strip()
-             # kolla längd
-             if len(str_value) <= max_len and len(str_value) >= min_len:
-                 return str_value
-         else:
-             check = False
-
-#        return check
+        check = str(row[row_index]).strip() if len(row) > row_index and row[row_index] and len(row[row_index]) <= max_len and len(row[row_index]) >= min_len else False
+        return check
 
     def fix_broken_excel(self,file):
         try:
@@ -181,4 +158,3 @@ class ExcelWizard(models.TransientModel):
         except Exception as e:
             raise UserError(f"Tried to fix broken Excel but failed: {e}")
         return wb
-
