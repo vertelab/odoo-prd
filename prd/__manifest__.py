@@ -44,10 +44,16 @@
         "views/prd_function_views.xml",
         "views/prd_requirement_views.xml",
         "views/prd_configuration_views.xml",
+        "views/prd_stakeholder_views.xml",
+        "views/prd_template_views.xml",
+        "views/prd_traceability_views.xml",
         "wizard/prd_requirement_wizard_views.xml",
         "security/prd_security.xml",
         "security/ir.model.access.csv",
         "report/prd_requirement_report.xml",
+    ],
+    "demo": [
+        "data/prd_demo.xml",
     ],
     "application": True,
 }

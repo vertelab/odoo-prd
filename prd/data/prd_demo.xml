@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================
+         DEMO DATA for PRD Module
+         ============================================================ -->
+
+    <!-- PRD Templates -->
+    <record id="template_module" model="prd.template">
+        <field name="name">Odoo Module Template</field>
+        <field name="description">Standard template for Odoo module PRDs</field>
+        <field name="document_type">module</field>
+        <field name="goals">Build a well-structured Odoo module that follows OCA conventions.</field>
+        <field name="user_persona">Odoo developer and module maintainer who needs clear specifications.</field>
+        <field name="use_cases">1. Developer reads PRD to understand scope
+2. Tester verifies implementation against requirements
+3. Product owner approves deliverable</field>
+        <field name="success_criteria">All requirements implemented and verified
+Module installs without errors
+Security access rules properly defined</field>
+        <field name="risks">Dependency on external OCA modules
+API changes between Odoo versions</field>
+        <field name="default_requirements">1.0|Module Structure|Module follows standard Odoo structure with models, views, security, and data directories|must
+1.1|Model Definition|Core business models defined with proper fields and relations|must
+1.2|Access Rights|CSV access rights and record rules for all models|must
+1.3|Views|Form, tree, and search views for all models|must
+1.4|Demo Data|Demo data demonstrating module functionality|should</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="template_procurement" model="prd.template">
+        <field name="name">Procurement / Call-off Template</field>
+        <field name="description">Template for Swedish public procurement requirements</field>
+        <field name="document_type">procurement</field>
+        <field name="goals">Define requirements for public procurement according to LOU.</field>
+        <field name="user_persona">Procurement officer who needs structured requirements for tender evaluation.</field>
+        <field name="use_cases">1. Create tender requirements
+2. Import from Excel (Bilaga 3 - Kravspecifikation)
+3. Evaluate supplier responses
+4. Generate procurement report</field>
+        <field name="success_criteria">All mandatory (ska) requirements clearly stated
+Evaluation criteria defined
+Compliant with LOU format</field>
+        <field name="risks">Incomplete requirement specification
+Ambiguous evaluation criteria
+Legal challenge to procurement decision</field>
+        <field name="default_requirements">1.0|System Requirements|Core system requirements for the procurement|must
+1.1|Technical Platform|System shall run on modern infrastructure|must
+1.2|Security|System shall support role-based access control|must
+2.0|Functional Requirements|Business functionality requirements|must
+2.1|User Management|System should support self-service user management|should</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Requirement Categories -->
+    <record id="category_security" model="prd.requirement_category">
+        <field name="name">Security</field>
+    </record>
+    <record id="category_performance" model="prd.requirement_category">
+        <field name="name">Performance</field>
+    </record>
+    <record id="category_usability" model="prd.requirement_category">
+        <field name="name">Usability</field>
+    </record>
+    <record id="category_compliance" model="prd.requirement_category">
+        <field name="name">Compliance</field>
+    </record>
+
+    <!-- Function Categories -->
+    <record id="func_category_backend" model="prd.function_category">
+        <field name="name">Backend</field>
+    </record>
+    <record id="func_category_frontend" model="prd.function_category">
+        <field name="name">Frontend</field>
+    </record>
+    <record id="func_category_integration" model="prd.function_category">
+        <field name="name">Integration</field>
+    </record>
+
+    <!-- Sample PRD: Keykeep Module -->
+    <record id="prd_keykeep" model="prd.document">
+        <field name="name">Keykeep — SaaS Subscription Manager</field>
+        <field name="description">Central management of SaaS subscriptions, credentials, and costs for organizations.</field>
+        <field name="document_type">module</field>
+        <field name="goals">Build a subscription management module that gives full overview of SaaS costs, renewal dates, and credentials.</field>
+        <field name="user_persona">IT Manager who needs to track all SaaS subscriptions across the organization.</field>
+        <field name="use_cases">1. IT Manager views all subscriptions in Kanban
+2. Finance team sees cost forecast
+3. Admin manages API credentials securely</field>
+        <field name="success_criteria">All subscription types viewable in Kanban, cost forecast accurate within 5%, credentials encrypted with Fernet.</field>
+        <field name="dependencies">mail, account, contacts</field>
+        <field name="risks">PCI-DSS compliance for payment methods, Fernet key management</field>
+        <field name="state">in_review</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <!-- Stakeholders for Keykeep PRD -->
+    <record id="stakeholder_po" model="prd.stakeholder">
+        <field name="name">Anna ProductOwner</field>
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="role">approver</field>
+        <field name="sign_off_state">approved</field>
+        <field name="sign_off_comment">Looks good, proceed with implementation.</field>
+        <field name="sequence">1</field>
+    </record>
+    <record id="stakeholder_architect" model="prd.stakeholder">
+        <field name="name">Björn Architect</field>
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="role">reviewer</field>
+        <field name="sign_off_state">pending</field>
+        <field name="sequence">2</field>
+    </record>
+    <record id="stakeholder_security" model="prd.stakeholder">
+        <field name="name">Cecilia Security</field>
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="role">reviewer</field>
+        <field name="sign_off_state">pending</field>
+        <field name="sign_off_comment">Need to verify Fernet encryption implementation before approval.</field>
+        <field name="sequence">3</field>
+    </record>
+
+    <!-- Requirements for Keykeep -->
+    <record id="req_subscription_model" model="prd.requirement">
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="code">1.0</field>
+        <field name="name">Subscription Data Model</field>
+        <field name="description">Core subscription model with name, cost, renewal date, and category.</field>
+        <field name="priority">must</field>
+        <field name="state">approved</field>
+        <field name="category" eval="[(4, ref('category_security'))]"/>
+    </record>
+    <record id="req_credential_storage" model="prd.requirement">
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="code">1.1</field>
+        <field name="name">Encrypted Credential Storage</field>
+        <field name="description">API keys and passwords must be stored encrypted using Fernet encryption via OCA data_encryption module.</field>
+        <field name="priority">must</field>
+        <field name="state">draft</field>
+        <field name="category" eval="[(4, ref('category_security'))]"/>
+    </record>
+    <record id="req_kanban_view" model="prd.requirement">
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="code">2.0</field>
+        <field name="name">Kanban View with Subscription Cards</field>
+        <field name="description">Kanban view showing subscription logo, name, cost, renewal date, and status color.</field>
+        <field name="priority">must</field>
+        <field name="state">draft</field>
+        <field name="category" eval="[(4, ref('category_usability'))]"/>
+    </record>
+    <record id="req_cost_forecast" model="prd.requirement">
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="code">3.0</field>
+        <field name="name">Cost Forecast Report</field>
+        <field name="description">Monthly cost forecast with breakdown by category and supplier.</field>
+        <field name="priority">should</field>
+        <field name="state">draft</field>
+        <field name="category" eval="[(4, ref('category_performance'))]"/>
+    </record>
+    <record id="req_auto_renewal" model="prd.requirement">
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="code">4.0</field>
+        <field name="name">Automatic Renewal Notifications</field>
+        <field name="description">Daily cron job that sends notifications when subscriptions are approaching renewal.</field>
+        <field name="priority">could</field>
+        <field name="state">draft</field>
+        <field name="category" eval="[(4, ref('category_usability'))]"/>
+    </record>
+
+    <!-- Functions for Keykeep -->
+    <record id="func_subscription_model" model="prd.function">
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="name">keykeep.subscription model</field>
+        <field name="description">Python model for SaaS subscription with all fields.</field>
+        <field name="func_type" ref="prd.function_type_mv"/>
+        <field name="state">implemented</field>
+        <field name="weight">4</field>
+        <field name="category_ids" eval="[(4, ref('func_category_backend'))]"/>
+    </record>
+    <record id="func_credential_model" model="prd.function">
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="name">keykeep.credential model with encryption</field>
+        <field name="description">Credential model using Fernet encryption for passwords and API keys.</field>
+        <field name="func_type" ref="prd.function_type_mv"/>
+        <field name="state">ongoing</field>
+        <field name="weight">8</field>
+        <field name="category_ids" eval="[(4, ref('func_category_backend'))]"/>
+    </record>
+    <record id="func_kanban_view" model="prd.function">
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="name">Subscription Kanban View</field>
+        <field name="description">Kanban view XML with card template showing logo, cost, renewal.</field>
+        <field name="func_type" ref="prd.function_type_mv"/>
+        <field name="state">draft</field>
+        <field name="weight">2</field>
+        <field name="category_ids" eval="[(4, ref('func_category_frontend'))]"/>
+    </record>
+
+    <!-- Link Requirements to Functions -->
+    <record id="link_req1_func1" model="prd.requirement.function">
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="req_id" ref="req_subscription_model"/>
+        <field name="func_id" ref="func_subscription_model"/>
+        <field name="state">done</field>
+    </record>
+    <record id="link_req2_func2" model="prd.requirement.function">
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="req_id" ref="req_credential_storage"/>
+        <field name="func_id" ref="func_credential_model"/>
+        <field name="state">ongoing</field>
+    </record>
+    <record id="link_req3_func3" model="prd.requirement.function">
+        <field name="prd_id" ref="prd_keykeep"/>
+        <field name="req_id" ref="req_kanban_view"/>
+        <field name="func_id" ref="func_kanban_view"/>
+        <field name="state">draft</field>
+    </record>
+
+    <!-- Second PRD: Procurement -->
+    <record id="prd_procurement" model="prd.document">
+        <field name="name">E-tjänsteplattform — Upphandling</field>
+        <field name="description">Kravspecifikation för upphandling av e-tjänsteplattform för kommun.</field>
+        <field name="document_type">procurement</field>
+        <field name="goals">Specificera krav för en modern e-tjänsteplattform enligt LOU.</field>
+        <field name="user_persona">Upphandlare på kommunal IT-avdelning.</field>
+        <field name="use_cases">1. Medborgare ansöker om bygglov digitalt
+2. Handläggare granskar och godkänner ansökningar
+3. Integration med befintliga system</field>
+        <field name="success_criteria">Alla ska-krav uppfyllda, plattformen i drift inom 12 månader.</field>
+        <field name="tender_id">UH-2026-001</field>
+        <field name="state">draft</field>
+        <field name="sequence">90</field>
+    </record>
+
+    <record id="req_platform_security" model="prd.requirement">
+        <field name="prd_id" ref="prd_procurement"/>
+        <field name="code">1.0</field>
+        <field name="name">Säkerhetskrav</field>
+        <field name="description">Plattformen ska stödja BankID-inloggning och rollbaserad åtkomstkontroll.</field>
+        <field name="priority">must</field>
+        <field name="state">draft</field>
+        <field name="category" eval="[(4, ref('category_security')), (4, ref('category_compliance'))]"/>
+    </record>
+    <record id="req_platform_accessibility" model="prd.requirement">
+        <field name="prd_id" ref="prd_procurement"/>
+        <field name="code">1.1</field>
+        <field name="name">Tillgänglighetskrav</field>
+        <field name="description">Plattformen bör uppfylla WCAG 2.1 nivå AA.</field>
+        <field name="priority">should</field>
+        <field name="state">draft</field>
+        <field name="category" eval="[(4, ref('category_compliance'))]"/>
+    </record>
+
+    <!-- Stakeholders for Procurement PRD -->
+    <record id="stakeholder_proc_po" model="prd.stakeholder">
+        <field name="name">David Procurement</field>
+        <field name="prd_id" ref="prd_procurement"/>
+        <field name="role">approver</field>
+        <field name="sequence">1</field>
+    </record>
+</odoo>

@@ -291,7 +291,7 @@ class OdooModule(models.Model):
 
 class PrdRule(models.Model):
     _name = "prd.rule"
-    _description = "PRD rules for modules"
+    _description = "PRD Record Rule"
 
     prd_id = fields.Many2one(comodel_name="prd.document")
     file_id = fields.Many2one(comodel_name="prd.odoo_module.file", string="Source File")
@@ -313,7 +313,7 @@ class PrdRule(models.Model):
 
 class PrdLicence(models.Model):
     _name = "prd.odoo_licence"
-    _description = "PRD model licences"
+    _description = "PRD Odoo Licence"
 
     name = fields.Char(string="Licence")
     code = fields.Char(string='Licence Code', required=True)
@@ -323,7 +323,7 @@ class PrdLicence(models.Model):
 
 class PrdModelAccess(models.Model):
     _name = "prd.model.access"
-    _description = "PRD model to set access rights for modules and models"
+    _description = "PRD Model Access Rights"
 
     prd_id = fields.Many2one(comodel_name="prd.document")
     file_id = fields.Many2one(comodel_name="prd.odoo_module.file", string="Source File")
@@ -340,7 +340,7 @@ class PrdModelAccess(models.Model):
 
 class PrdRuleGroups(models.Model):
     _name = 'prd.rule.groups'
-    _description = 'PRD Extracted Groups'
+    _description = 'PRD Record Rule Groups'
 
     prd_id = fields.Many2one(comodel_name="prd.document")
     file_id = fields.Many2one(comodel_name="prd.odoo_module.file", string="Source File")

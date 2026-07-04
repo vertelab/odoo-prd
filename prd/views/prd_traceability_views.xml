@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Traceability Matrix Tree View -->
+    <record id="view_prd_traceability_tree" model="ir.ui.view">
+        <field name="name">prd.traceability.tree</field>
+        <field name="model">prd.traceability</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="coverage_status == 'none'" decoration-warning="coverage_status == 'partial'">
+                <field name="requirement_code"/>
+                <field name="requirement_name"/>
+                <field name="requirement_state" widget="badge" decoration-success="requirement_state in ('done', 'verified', 'implemented')"/>
+                <field name="requirement_priority"/>
+                <field name="function_name"/>
+                <field name="function_state" widget="badge"/>
+                <field name="task_name"/>
+                <field name="task_stage_id" optional="show"/>
+                <field name="coverage_status" widget="badge" decoration-success="coverage_status == 'full'" decoration-warning="coverage_status == 'partial'" decoration-danger="coverage_status == 'none'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Traceability Pivot View -->
+    <record id="view_prd_traceability_pivot" model="ir.ui.view">
+        <field name="name">prd.traceability.pivot</field>
+        <field name="model">prd.traceability</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="requirement_code" type="row"/>
+                <field name="coverage_status" type="col"/>
+                <field name="function_name" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Traceability Matrix Action -->
+    <record id="action_prd_traceability" model="ir.actions.act_window">
+        <field name="name">Traceability Matrix</field>
+        <field name="res_model">prd.traceability</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="context">{'search_default_group_by_requirement': 1}</field>
+    </record>
+</odoo>

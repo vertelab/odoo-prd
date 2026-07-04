@@ -10,7 +10,9 @@
                     <field name="name" />
                     <field name="version" />
                     <field name="state" />
+                    <field name="document_type" />
                     <filter name="draft" string="Draft" domain="[('state','=','draft')]" />
+                    <filter name="in_review" string="In Review" domain="[('state','=','in_review')]" />
                     <filter name="approved" string="Approved" domain="[('state','=','approved')]" />
                     <filter name="rejected" string="Rejected" domain="[('state','=','rejected')]" />
                     <filter name="by_author" string="My Documents" domain="[('author_id','=',uid)]" groups="base.group_user" />
@@ -33,9 +35,12 @@
             <field name="arch" type="xml">
                 <form string="Product Requirement Document">
                     <header>
-                        <button name="button_major_version" string="Major Version" type="object" xclass="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
+                        <button name="action_submit_review" string="Submit for Review" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                        <button name="action_approve" string="Approve" type="object" class="btn-success" invisible="state != 'in_review'"/>
+                        <button name="action_reject" string="Reject" type="object" class="btn-danger" invisible="state != 'in_review'"/>
+                        <button name="button_major_version" string="Major Version" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
                         <button name="button_minor_version" string="Minor Version" type="object" class="oe_highlight" groups="prd.group_prd_manager" data-hotkey="m" />
-                        <field name="state" widget="statusbar_duration" options="{'clickable': '1', 'fold_field': 'fold'}" />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,in_review,approved,implemented,verified" />
                     </header>
                     <sheet string="PRD">
                         <div class="oe_button_box" name="button_box" groups="base.group_user">
@@ -62,6 +67,16 @@
                                         (
                                         <field name="functions_percentage" widget="percentage" options="{'digits': [1, 0]}" />
                                         )
+                                    </span>
+                                </div>
+                            </button>
+                            <button class="oe_stat_button" type="object" name="action_stakeholders" icon="fa-users" string="Stakeholders">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_text">Approvals</span>
+                                    <span class="o_stat_value">
+                                        <field name="stakeholders_approved_count" />
+                                        /
+                                        <field name="stakeholders_total_count" />
                                     </span>
                                 </div>
                             </button>
@@ -122,6 +137,17 @@
                             </page>
                             <page string="Goals" id="goals">
                                 <field name="goals" no-label="1" />
+                            </page>
+                            <page string="Stakeholders" id="stakeholders">
+                                <field name="stakeholder_ids" nolabel="1">
+                                    <tree editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="name"/>
+                                        <field name="partner_id"/>
+                                        <field name="role"/>
+                                        <field name="sign_off_state" widget="badge" decoration-success="sign_off_state == 'approved'" decoration-danger="sign_off_state == 'rejected'" decoration-warning="sign_off_state == 'pending'"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page string="Success Criteria/Risks" id="success_criteria">
                                 <group>

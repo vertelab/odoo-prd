@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Template Tree View -->
+    <record id="view_prd_template_tree" model="ir.ui.view">
+        <field name="name">prd.template.tree</field>
+        <field name="model">prd.template</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="document_type"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Template Form View -->
+    <record id="view_prd_template_form" model="ir.ui.view">
+        <field name="name">prd.template.form</field>
+        <field name="model">prd.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="create_prd_from_template" string="Create PRD from Template" type="object" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Template Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="document_type"/>
+                            <field name="active"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" nolabel="1"/>
+                        </page>
+                        <page string="Goals">
+                            <field name="goals" nolabel="1" placeholder="Default goals for PRDs created from this template"/>
+                        </page>
+                        <page string="User Persona">
+                            <field name="user_persona" nolabel="1"/>
+                        </page>
+                        <page string="Use Cases">
+                            <field name="use_cases" nolabel="1"/>
+                        </page>
+                        <page string="Success Criteria">
+                            <field name="success_criteria" nolabel="1"/>
+                        </page>
+                        <page string="Risks">
+                            <field name="risks" nolabel="1"/>
+                        </page>
+                        <page string="Default Requirements">
+                            <field name="default_requirements" nolabel="1" placeholder="CODE|Name|Description|Priority&#10;One per line"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Template Action -->
+    <record id="action_prd_template" model="ir.actions.act_window">
+        <field name="name">PRD Templates</field>
+        <field name="res_model">prd.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create PRD templates to standardize your requirements documentation.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu item for Templates -->
+    <menuitem id="menu_prd_template"
+              name="Templates"
+              parent="prd.menu_prd_root"
+              action="action_prd_template"
+              sequence="15"/>
+</odoo>

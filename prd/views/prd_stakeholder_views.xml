@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Stakeholder Tree View -->
+    <record id="view_prd_stakeholder_tree" model="ir.ui.view">
+        <field name="name">prd.stakeholder.tree</field>
+        <field name="model">prd.stakeholder</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="role"/>
+                <field name="sign_off_state" widget="badge" decoration-success="sign_off_state == 'approved'" decoration-danger="sign_off_state == 'rejected'" decoration-warning="sign_off_state == 'pending'"/>
+                <field name="sign_off_date" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Stakeholder Form View -->
+    <record id="view_prd_stakeholder_form" model="ir.ui.view">
+        <field name="name">prd.stakeholder.form</field>
+        <field name="model">prd.stakeholder</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" string="Approve" type="object" class="btn-success" attrs="{'invisible': [('sign_off_state', 'not in', ('pending', 'rejected'))]}"/>
+                    <button name="action_reject" string="Reject" type="object" class="btn-danger" attrs="{'invisible': [('sign_off_state', 'not in', ('pending', 'approved'))]}"/>
+                    <field name="sign_off_state" widget="statusbar" statusbar_visible="pending,approved,rejected"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Stakeholder Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="user_id"/>
+                            <field name="role"/>
+                            <field name="prd_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="sign_off_date"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <group string="Sign-off Comment">
+                        <field name="sign_off_comment" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Stakeholder Action -->
+    <record id="action_prd_stakeholder" model="ir.actions.act_window">
+        <field name="name">Stakeholders</field>
+        <field name="res_model">prd.stakeholder</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

@@ -20,3 +20,9 @@ access_prd_function_category_manager,prd.function manager,model_prd_function_cat
 access_prd_function_type_user,prd.function user,model_prd_function_type,base.group_user,1,0,0,0
 access_prd_function_type_manager,prd.function manager,model_prd_function_type,base.group_system,1,1,1,1
 access_prd_requirement_wizard,access_prd_requirement_wizard,prd.model_prd_requirement_wizard,base.group_user,1,1,1,1
+access_prd_stakeholder_user,prd.stakeholder user,model_prd_stakeholder,base.group_user,1,0,0,0
+access_prd_stakeholder_manager,prd.stakeholder manager,model_prd_stakeholder,prd.group_prd_manager,1,1,1,1
+access_prd_template_user,prd.template user,model_prd_template,base.group_user,1,0,0,0
+access_prd_template_manager,prd.template manager,model_prd_template,prd.group_prd_manager,1,1,1,1
+access_prd_traceability_user,prd.traceability user,model_prd_traceability,base.group_user,1,0,0,0
+access_prd_traceability_manager,prd.traceability manager,model_prd_traceability,prd.group_prd_manager,1,1,1,1
