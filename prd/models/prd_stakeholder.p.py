@@ -10,6 +10,7 @@ class PrdStakeholder(models.Model):
     """Stakeholder for PRD sign-off and review tracking."""
 
     _name = "prd.stakeholder"
+    _inherit = ["mail.thread"]
     _description = "PRD Stakeholder"
     _order = "sequence, name"
 
