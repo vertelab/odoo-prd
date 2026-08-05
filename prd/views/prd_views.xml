@@ -170,7 +170,7 @@
                     <field name="state" />
                     <field name="author_id" />
                     <templates>
-                        <t t-name="card">
+                        <t t-name="kanban-box">
                             <div class="oe_kanban_card">
                                 <div>
                                     <strong>

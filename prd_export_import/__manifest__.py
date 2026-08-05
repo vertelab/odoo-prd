@@ -2,7 +2,6 @@
     'name': 'PRD Export Import',
     'version': '18.0.1.0.0',
     'category': 'prd',
-    'license': 'LGPL-3',
     'summary': 'Export and import PRD easily',
     'depends': ['prd', 'prd_scrum'],
     'data': [
