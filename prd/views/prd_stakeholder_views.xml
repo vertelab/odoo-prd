@@ -5,14 +5,14 @@
         <field name="name">prd.stakeholder.tree</field>
         <field name="model">prd.stakeholder</field>
         <field name="arch" type="xml">
-            <tree editable="bottom">
+            <list editable="bottom">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="partner_id"/>
                 <field name="role"/>
                 <field name="sign_off_state" widget="badge" decoration-success="sign_off_state == 'approved'" decoration-danger="sign_off_state == 'rejected'" decoration-warning="sign_off_state == 'pending'"/>
                 <field name="sign_off_date" optional="show"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -55,6 +55,6 @@
     <record id="action_prd_stakeholder" model="ir.actions.act_window">
         <field name="name">Stakeholders</field>
         <field name="res_model">prd.stakeholder</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 </odoo>
