@@ -95,7 +95,7 @@
                 <field name="file_type" />
                 <field name="git_url" />
                 <templates>
-                    <t t-name="kanban-box">
+                    <t t-name="card">
                         <div class="oe_kanban_global_click">
                             <div class="oe_kanban_details">
                                 <field name="file_type" widget="badge" class="oe_kanban_badge" />
