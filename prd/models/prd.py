@@ -84,6 +84,17 @@ class ProductRequirementDocument(models.Model):
     function_ids = fields.One2many(
         comodel_name="prd.function", inverse_name="prd_id", string="Functions", help=""
     )
+    stakeholder_ids = fields.One2many(
+        comodel_name="prd.stakeholder",
+        inverse_name="prd_id",
+        string="Stakeholders",
+    )
+    stakeholders_total_count = fields.Integer(
+        string="Total Stakeholders", compute="_compute_stakeholder_counts"
+    )
+    stakeholders_approved_count = fields.Integer(
+        string="Approved Stakeholders", compute="_compute_stakeholder_counts"
+    )
 
     requirements_count = fields.Integer(
         string="Total Requirements", compute="_compute_requirements_counts"
@@ -118,6 +129,16 @@ class ProductRequirementDocument(models.Model):
             self.date = fields.Date.today()
         else:
             self.approved_by_id = False
+
+    @api.depends("stakeholder_ids", "stakeholder_ids.sign_off_state")
+    def _compute_stakeholder_counts(self):
+        for record in self:
+            record.stakeholders_total_count = len(record.stakeholder_ids)
+            record.stakeholders_approved_count = len(
+                record.stakeholder_ids.filtered(
+                    lambda s: s.sign_off_state == "approved"
+                )
+            )
 
     @api.depends("function_ids")
     def _compute_functions_counts(self):
