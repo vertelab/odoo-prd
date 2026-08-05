@@ -35,7 +35,7 @@
     "license": "AGPL-3",
     "contributor": "",
     "maintainer": "Vertel AB",
-    "depends": ["mail", "web_mermaid"],
+    "depends": ["mail", "web_mermaid", "project"],
     "data": [
         # ~ 'data/cron.xml',
         "data/odoo_view_types.xml",
@@ -46,6 +46,7 @@
         "views/prd_configuration_views.xml",
         "views/prd_stakeholder_views.xml",
         "views/prd_template_views.xml",
+        "views/prd_traceability_views.xml",
         "wizard/prd_requirement_wizard_views.xml",
         "security/prd_security.xml",
         "security/ir.model.access.csv",
