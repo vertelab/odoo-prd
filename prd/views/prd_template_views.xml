@@ -77,7 +77,7 @@
     <!-- Menu item for Templates -->
     <menuitem id="menu_prd_template"
               name="Templates"
-              parent="prd.menu_prd_root"
+              parent="prd.menu_prd_document_root"
               action="action_prd_template"
               sequence="15"/>
 </odoo>
