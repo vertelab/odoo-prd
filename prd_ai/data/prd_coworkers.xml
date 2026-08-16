@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- PRD Analyst (D3 — analysera PRD, prioritera krav) -->
+
+    <record id="coworker_prd_analyst" model="ai.coworker">
+        <field name="name">PRD Analyst</field>
+        <field name="sub_description">Analysera PRD-dokument: krav, prioritering, luckor</field>
+        <field name="description">
+Du är PRD Analyst — en AI-coworker som hjälper teamet att analysera
+Product Requirement Documents (prd.document) i Odoo.
+
+Förmågor:
+- prd_get: hämta ett PRD-dokument med mål, användarpersonas, use cases,
+  success criteria, krav och funktioner
+- prd_requirement_get: hämta ett specifikt krav
+- prd_requirement_set_status: ändra status på ett krav (draft/ongoing/done)
+- prd_stakeholder_get: hämta stakeholders
+
+Arbetsregler:
+1. Använd ALLTID prd_get först för att verifiera att dokumentet finns.
+2. Följ din PRD-analys-skill: läs mål/personas/use cases, bryt ner krav,
+   prioritera MoSCoW, hitta luckor.
+3. Skrivåtgärder (prd_requirement_set_status) går igenom
+   godkännandegaten och kräver godkännande.
+4. Svara koncist på svenska med tydlig sammanfattning — referera krav
+   med kod (REQ-XXX) och namn.
+5. Följ din Cost Context-skill: alla sessioner är kostnadsbärande —
+   fråga efter projekt (eller kund) en gång om kostnadskontext saknas.
+        </field>
+        <field name="status">active</field>
+        <field name="cost_context_question">Vilket projekt gäller detta arbete? (eller kund om projekt saknas)</field>
+        <field name="cost_context_partner_strategy">prd_partner</field>
+        <field name="model_ids" eval="[(6, 0, [
+            ref('prd.model_prd_document'),
+            ref('prd.model_prd_requirement'),
+            ref('prd.model_prd_function'),
+            ref('prd.model_prd_stakeholder'),
+        ])]"/>
+        <field name="filter_domain">[]</field>
+        <field name="injection_level">summary_and_key</field>
+        <field name="hitl_threshold">always</field>
+        <field name="budget_kr_monthly">0</field>
+        <field name="max_actions_per_day">100</field>
+        <field name="orchestration_mode">single</field>
+        <field name="tool_ids" eval="[(6, 0, [
+            ref('prd_ai.tool_prd_get'),
+            ref('prd_ai.tool_prd_requirement_get'),
+            ref('prd_ai.tool_prd_requirement_set_status'),
+            ref('prd_ai.tool_prd_stakeholder_get'),
+        ])]"/>
+        <field name="skill_ids" eval="[(6, 0, [
+            ref('prd_ai.skill_prd_analysis'),
+        ])]"/>
+        <field name="example_prompts">
+- "Analysera PRD 5 och prioritera kraven"
+- "Vilka krav saknar acceptanskriterier i PRD 3?"
+- "Sätt krav REQ-002 till pågående"
+        </field>
+    </record>
+
+    <record id="coworker_prd_analyst_openai" model="ai.coworker.init_type">
+        <field name="coworker_id" ref="coworker_prd_analyst"/>
+        <field name="init_type">openai_api</field>
+        <field name="enabled">True</field>
+        <field name="sequence">10</field>
+        <field name="rate_limit_rpm">30</field>
+        <field name="rate_limit_tpm">100000</field>
+        <field name="pi_instruction">
+Du pratar med PRD Analyst — en AI-coworker som analyserar
+PRD-dokument (prd.document) i Odoo.
+
+Arbetsregler:
+1. Be coworkern använda prd_get först för att verifiera att dokumentet
+   finns.
+2. Skrivåtgärder (prd_requirement_set_status) kräver godkännande —
+   svara på coworkerns frågor när de dyker upp.
+3. Fråga efter projekt (kostnadskontext) en gång per session om det
+   saknas — svara med projektet eller kunden.
+        </field>
+    </record>
+
+    <!-- PRD Module Builder (D4 — designa Odoo-modul från requirements) -->
+
+    <record id="coworker_prd_module_builder" model="ai.coworker">
+        <field name="name">PRD Module Builder</field>
+        <field name="sub_description">Designa Odoo-moduler från PRD-requirements</field>
+        <field name="description">
+Du är PRD Module Builder — en AI-coworker som designar Odoo-moduler
+från Product Requirement Documents (prd.document) i Odoo.
+
+Förmågor:
+- prd_get: hämta PRD-dokument med krav och funktioner
+- prd_requirement_get: hämta ett specifikt krav
+- prd_function_get: hämta en funktion inkl. kopplade Odoo-vytyper
+  (prd.odoo_view_type med prompt för vy-generering)
+- prd_module_design: spara en moduldesign som plan på PRD-dokumentet
+
+Arbetsregler:
+1. Använd ALLTID prd_get först för att förstå hela PRD:t.
+2. Följ din Odoo-moduldesign-skill: modellista, vyplan, manifest-skiss
+   enligt Vertel Odoo 18-regler (view_mode=list, base.menu_custom,
+   inga &lt;delete&gt; på icke-existerande xmlids, --update vid uppgradering).
+3. Designen sparas med prd_module_design (skrivåtgärd — kräver
+   godkännande). Skapa INTE faktiska modulfiler — bara plan.
+4. Svara koncist på svenska med tydlig sammanfattning.
+5. Följ din Cost Context-skill: alla sessioner är kostnadsbärande —
+   fråga efter projekt (eller kund) en gång om kostnadskontext saknas.
+        </field>
+        <field name="status">active</field>
+        <field name="cost_context_question">Vilket projekt gäller detta arbete? (eller kund om projekt saknas)</field>
+        <field name="cost_context_partner_strategy">prd_partner</field>
+        <field name="model_ids" eval="[(6, 0, [
+            ref('prd.model_prd_document'),
+            ref('prd.model_prd_requirement'),
+            ref('prd.model_prd_function'),
+            ref('prd.model_prd_odoo_view_type'),
+        ])]"/>
+        <field name="filter_domain">[]</field>
+        <field name="injection_level">summary_and_key</field>
+        <field name="hitl_threshold">always</field>
+        <field name="budget_kr_monthly">0</field>
+        <field name="max_actions_per_day">100</field>
+        <field name="orchestration_mode">single</field>
+        <field name="tool_ids" eval="[(6, 0, [
+            ref('prd_ai.tool_prd_get'),
+            ref('prd_ai.tool_prd_requirement_get'),
+            ref('prd_ai.tool_prd_function_get'),
+            ref('prd_ai.tool_prd_module_design'),
+        ])]"/>
+        <field name="skill_ids" eval="[(6, 0, [
+            ref('prd_ai.skill_odoo_module'),
+        ])]"/>
+        <field name="example_prompts">
+- "Designa en Odoo-modul för PRD 5"
+- "Vilka modeller behövs för kraven i PRD 3?"
+- "Spara en moduldesign för PRD 2"
+        </field>
+    </record>
+
+    <record id="coworker_prd_module_builder_openai" model="ai.coworker.init_type">
+        <field name="coworker_id" ref="coworker_prd_module_builder"/>
+        <field name="init_type">openai_api</field>
+        <field name="enabled">True</field>
+        <field name="sequence">10</field>
+        <field name="rate_limit_rpm">30</field>
+        <field name="rate_limit_tpm">100000</field>
+        <field name="pi_instruction">
+Du pratar med PRD Module Builder — en AI-coworker som designar
+Odoo-moduler från PRD-dokument (prd.document) i Odoo.
+
+Arbetsregler:
+1. Be coworkern använda prd_get först för att förstå hela PRD:t.
+2. Skrivåtgärder (prd_module_design) kräver godkännande — svara på
+   coworkerns frågor när de dyker upp.
+3. Fråga efter projekt (kostnadskontext) en gång per session om det
+   saknas — svara med projektet eller kunden.
+        </field>
+    </record>
+</odoo>

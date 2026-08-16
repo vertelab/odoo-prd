@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Copyright (C) {year} {company} info@vertel.se
+#    Copyright (C) 2026 Vertel Sverige AB (<https://vertel.se>).
 #    All Rights Reserved
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -18,27 +18,34 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-#
-# https://www.odoo.com/documentation/14.0/reference/module.html
-#
 {
     'name': 'PRD: AI',
-    'version': '1.0',
-    'summary': """
-        Short (1 phrase/line) summary of the module's purpose, used as
-        subtitle on modules listing or apps.odoo.com""",
-    'category': '', # Technical Settings|Localization|Payroll Localization|Account Charts|User types|Invoicing|Sales|Human Resources|Operations|Marketing|Manufacturing|Website|Theme|Administration|Appraisals|Sign|Helpdesk|Administration|Extra Rights|Other Extra Rights|
+    'version': '18.0.1.0.0',
+    'summary': 'PRD-coworkers — PRD Analyst + PRD Module Builder',
+    'category': 'Productivity',
     'description': """
-        Long description of module's purpose
+        AI-medarbetare för Product Requirement Documents (PRD):
+        analysera dokument, prioritera krav och designa Odoo-moduler
+        från requirements. Bridge-modul (depends prd + ai_agent_core)
+        enligt Vertel bridge-standard: ai.coworker + ai.tool + ai.skill
+        som data-XML.
     """,
-    'author': 'Vertel AB',
-    'website': 'https://vertel.se/apps/odoo-',
-    'images': ['static/description/banner.png'],
+    'author': 'Vertel Sverige AB',
+    'website': 'https://vertel.se/apps/odoo-prd',
     'license': 'AGPL-3',
-    'depends': ["prd","ai_agent"],
-    'data': ["data/ai_data.xml"],
+    'depends': [
+        'prd',
+        'ai_agent_core',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+        'data/prd_tools.xml',
+        'data/prd_skills.xml',
+        'data/prd_coworkers.xml',
+        'views/session_views.xml',
+    ],
     'demo': [],
     'application': False,
-    'installable': True,    
+    'installable': True,
     'auto_install': False,
 }

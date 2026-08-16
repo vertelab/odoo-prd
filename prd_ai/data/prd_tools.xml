@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- PRD AI tools (D3/D4: ai.tool, körs i run()-sandboxen) -->
+
+    <record id="tool_prd_get" model="ai.tool">
+        <field name="name">prd_get</field>
+        <field name="description">Hämta ett PRD-dokument (prd.document) inkl. krav och funktioner. Returnerar JSON med id, namn, beskrivning, mål, användarpersonas, use cases, success criteria, krav och funktioner.</field>
+        <field name="parameters">{"type": "object", "properties": {"prd_id": {"type": "integer", "description": "ID för prd.document"}}, "required": ["prd_id"]}</field>
+        <field name="risk_level">read_only</field>
+        <field name="code"><![CDATA[
+async def execute(prd_id):
+    """Hämta PRD-dokument + krav + funktioner."""
+    res = env['ai.coworker'].prd_get(int(prd_id))
+    # Kostnadskontext: registrera vilket PRD-dokument sessionen arbetar med
+    try:
+        env['ai.coworker']._capture_session_from_prd(int(prd_id))
+    except Exception:
+        pass
+    return res
+]]></field>
+    </record>
+
+    <record id="tool_prd_requirement_get" model="ai.tool">
+        <field name="name">prd_requirement_get</field>
+        <field name="description">Hämta ett specifikt krav (prd.requirement). Returnerar JSON med id, kod, namn, beskrivning, prioritet, status och kopplade funktioner.</field>
+        <field name="parameters">{"type": "object", "properties": {"req_id": {"type": "integer", "description": "ID för prd.requirement"}}, "required": ["req_id"]}</field>
+        <field name="risk_level">read_only</field>
+        <field name="code"><![CDATA[
+async def execute(req_id):
+    """Hämta specifikt krav."""
+    return env['ai.coworker'].prd_requirement_get(int(req_id))
+]]></field>
+    </record>
+
+    <record id="tool_prd_requirement_set_status" model="ai.tool">
+        <field name="name">prd_requirement_set_status</field>
+        <field name="description">Ändra status på ett krav (prd.requirement). Giltiga statusar: draft, ongoing, done. Skrivåtgärd — går genom godkännandegaten.</field>
+        <field name="parameters">{"type": "object", "properties": {"req_id": {"type": "integer", "description": "ID för prd.requirement"}, "status": {"type": "string", "description": "önskad status: draft/ongoing/done"}}, "required": ["req_id", "status"]}</field>
+        <field name="risk_level">write</field>
+        <field name="code"><![CDATA[
+async def execute(req_id, status):
+    """Sätt status på krav."""
+    return env['ai.coworker'].prd_requirement_set_status(int(req_id), str(status))
+]]></field>
+    </record>
+
+    <record id="tool_prd_stakeholder_get" model="ai.tool">
+        <field name="name">prd_stakeholder_get</field>
+        <field name="description">Hämta stakeholders för ett PRD-dokument. Returnerar JSON-lista med id, namn och partner.</field>
+        <field name="parameters">{"type": "object", "properties": {"prd_id": {"type": "integer", "description": "ID för prd.document"}}, "required": ["prd_id"]}</field>
+        <field name="risk_level">read_only</field>
+        <field name="code"><![CDATA[
+async def execute(prd_id):
+    """Hämta stakeholders."""
+    return env['ai.coworker'].prd_stakeholder_get(int(prd_id))
+]]></field>
+    </record>
+
+    <record id="tool_prd_function_get" model="ai.tool">
+        <field name="name">prd_function_get</field>
+        <field name="description">Hämta en funktion (prd.function) inkl. kopplade Odoo-vytyper (prd.odoo_view_type med prompt för vy-generering). Returnerar JSON med input/process/output och vytyper.</field>
+        <field name="parameters">{"type": "object", "properties": {"func_id": {"type": "integer", "description": "ID för prd.function"}}, "required": ["func_id"]}</field>
+        <field name="risk_level">read_only</field>
+        <field name="code"><![CDATA[
+async def execute(func_id):
+    """Hämta funktion med vytyper."""
+    return env['ai.coworker'].prd_function_get(int(func_id))
+]]></field>
+    </record>
+
+    <record id="tool_prd_module_design" model="ai.tool">
+        <field name="name">prd_module_design</field>
+        <field name="description">Spara en Odoo-moduldesign som plan på PRD-dokumentet (tekniskt namn, modellista, vyplan, manifest-skiss). Skrivåtgärd — går genom godkännandegaten.</field>
+        <field name="parameters">{"type": "object", "properties": {"prd_id": {"type": "integer", "description": "ID för prd.document"}, "design_text": {"type": "string", "description": "moduldesign (markdown): tekniskt namn, modeller, vyer, manifest"}}, "required": ["prd_id", "design_text"]}</field>
+        <field name="risk_level">write</field>
+        <field name="code"><![CDATA[
+async def execute(prd_id, design_text):
+    """Spara moduldesign som plan."""
+    return env['ai.coworker'].prd_module_design(int(prd_id), str(design_text))
+]]></field>
+    </record>
+
+</odoo>

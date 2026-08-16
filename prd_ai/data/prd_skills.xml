@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- PRD AI skills (D3/D4) -->
+
+    <record id="skill_prd_analysis" model="ai.skill">
+        <field name="name">PRD-analys</field>
+        <field name="description">Analysera PRD-dokument: läsa mål, användarpersonas, use cases och success criteria; bryta ner requirements; prioritera (MoSCoW); identifiera luckor och föreslå funktioner.</field>
+        <field name="compatibility">any</field>
+        <field name="category">analysis</field>
+        <field name="recipe_text">
+# PRD-analys
+
+Följ detta flöde när du analyserar ett PRD-dokument (prd.document):
+
+1. Hämta dokumentet med prd_get (inkl. krav och funktioner).
+2. Läs målen (goals), användarpersonas (user_persona), use cases
+   (use_cases) och success criteria (success_criteria).
+3. Strukturera kraven:
+   - Gruppera efter funktion.
+   - Prioritera med MoSCoW (Must/Should/Could/Won't) baserat på mål
+     och success criteria.
+   - Identifiera beroenden mellan krav.
+4. Hitta luckor:
+   - Krav som saknar tydlig beskrivning eller acceptanskriterier.
+   - Funktioner som nämns i mål/use cases men saknar krav.
+5. Sammanfatta: prioriterade krav, föreslagna funktioner, öppna frågor.
+
+Regler:
+- Använd prd_requirement_get för djupdykning i enskilda krav.
+- Uppdatera INTE status utan att användaren ber om det
+  (prd_requirement_set_status är en skrivåtgärd med HITL-gate).
+- Var konkret: referera krav med kod (t.ex. REQ-001) och namn.
+        </field>
+    </record>
+
+    <record id="skill_odoo_module" model="ai.skill">
+        <field name="name">Odoo-moduldesign</field>
+        <field name="description">Designa en Odoo-modul från PRD-requirements: tekniskt namn, modellista, vyplan och manifest-skiss — enligt Vertel Odoo 18-regler.</field>
+        <field name="compatibility">any</field>
+        <field name="category">development</field>
+        <field name="recipe_text">
+# Odoo-moduldesign (från PRD)
+
+Följ detta flöde när du designar en Odoo-modul från ett PRD-dokument:
+
+1. Hämta PRD:t med prd_get — fokusera på requirements + functions.
+2. Hämta funktioner med prd_function_get — titta på odoo_view_ids och
+   deras prompt-fält (prd.odoo_view_type.prompt) för vy-generering.
+3. Designa modulen:
+   - Tekniskt namn: &lt;domän&gt;_ai (t.ex. marketing_ai) — aldrig mellanslag.
+   - Modellista: för varje funktion/krav, föreslå _name/_inherit och
+     viktiga fält (med typ och label).
+   - Vyplan: list/form (Odoo 18: view_mode=list, aldrig tree), sökvy.
+   - Meny: rotmeny → undermeny; tekniska menyer under base.menu_custom
+     (parent före barn i menu.xml).
+   - Manifest-skiss: name, version, depends, data, author.
+4. Spara designen med prd_module_design (skrivåtgärd — HITL-gate).
+
+Odoo 18-regler (obligatoriska):
+- view_mode: list (aldrig tree).
+- CodeEditor/ace-widget: endast modes javascript/xml/qweb/scss/python;
+  themes "" eller monokai.
+- Technical-meny = base.menu_custom; parent före barn i menu.xml.
+- Inga &lt;delete&gt; på icke-existerande xmlids (kraschar uppgradering).
+- Uppgradering: --update (inte --init) force:ar moduluppgradering.
+- Author: Vertel Sverige AB.
+        </field>
+    </record>
+</odoo>
