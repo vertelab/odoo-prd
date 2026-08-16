@@ -39,8 +39,6 @@ Arbetsregler:
         <field name="filter_domain">[]</field>
         <field name="injection_level">summary_and_key</field>
         <field name="hitl_threshold">always</field>
-        <field name="budget_kr_monthly">0</field>
-        <field name="max_actions_per_day">100</field>
         <field name="orchestration_mode">single</field>
         <field name="tool_ids" eval="[(6, 0, [
             ref('prd_ai.tool_prd_get'),
@@ -118,8 +116,6 @@ Arbetsregler:
         <field name="filter_domain">[]</field>
         <field name="injection_level">summary_and_key</field>
         <field name="hitl_threshold">always</field>
-        <field name="budget_kr_monthly">0</field>
-        <field name="max_actions_per_day">100</field>
         <field name="orchestration_mode">single</field>
         <field name="tool_ids" eval="[(6, 0, [
             ref('prd_ai.tool_prd_get'),
