@@ -16,13 +16,13 @@
         </field>
     </record>
 
-    <!-- Session-form: object_id read-only -->
+    <!-- Session-form: object_id read-only (Arbetsobjekt ovanför notebook) -->
     <record id="view_ai_session_form_prd" model="ir.ui.view">
         <field name="name">ai.coworker.session.form.prd</field>
         <field name="model">ai.coworker.session</field>
         <field name="inherit_id" ref="ai_agent_core.view_ai_session_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//sheet" position="inside">
+            <xpath expr="//notebook" position="before">
                 <group name="object_context" string="Arbetsobjekt">
                     <field name="object_id" readonly="1"/>
                 </group>
