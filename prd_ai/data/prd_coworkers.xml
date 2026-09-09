@@ -29,7 +29,7 @@ Arbetsregler:
         </field>
         <field name="status">active</field>
         <field name="cost_context_question">Vilket projekt gäller detta arbete? (eller kund om projekt saknas)</field>
-        <field name="cost_context_partner_strategy">prd_partner</field>
+        <field name="cost_context_partner_strategy">object_partner</field>
         <field name="model_ids" eval="[(6, 0, [
             ref('prd.model_prd_document'),
             ref('prd.model_prd_requirement'),
@@ -106,7 +106,7 @@ Arbetsregler:
         </field>
         <field name="status">active</field>
         <field name="cost_context_question">Vilket projekt gäller detta arbete? (eller kund om projekt saknas)</field>
-        <field name="cost_context_partner_strategy">prd_partner</field>
+        <field name="cost_context_partner_strategy">object_partner</field>
         <field name="model_ids" eval="[(6, 0, [
             ref('prd.model_prd_document'),
             ref('prd.model_prd_requirement'),

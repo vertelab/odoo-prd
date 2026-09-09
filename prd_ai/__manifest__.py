@@ -20,7 +20,7 @@
 ##############################################################################
 {
     'name': 'PRD: AI',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.0.1',
     'summary': 'PRD-coworkers — PRD Analyst + PRD Module Builder',
     'category': 'Productivity',
     'description': """

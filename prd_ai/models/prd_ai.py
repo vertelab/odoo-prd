@@ -151,7 +151,7 @@ class AICoworkerPRDHelper(models.Model):
                 int(self.env.context.get('_ai_context_id') or 0))
             if not sess.exists():
                 return self.env['ai.coworker.session']
-            sess._capture_context(prd=prd_id)
+            sess._capture_context(object_ref=prd_id)
             return sess
         except Exception as e:
             _logger.warning('session capture from prd failed: %s', e)

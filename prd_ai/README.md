@@ -17,9 +17,13 @@ Båda har init_type `openai_api` (Pi/Cline via `/ai/openai/<id>/v1/chat/completi
 
 ## Session-kontext
 
-`ai.coworker.session` får domänfältet `prd_id` (prd.document) via arv.
-Resolver-strategi "prd_partner" registreras: `partner_id` härleds från
-PRD-dokumentet (primary stakeholder → författare → företag).
+`ai.coworker.session` får det generiska fältet `object_id` (Reference:
+modell + id) via arv — sessionen kan kopplas till ett "arbetsobjekt"
+(PRD, ärende, …). `prd.document` är den första typen; fler läggs till
+via `_ai_object_types()`.
+Resolver-strategi "object_partner" registreras: `partner_id` härleds från
+arbetsobjektet när projekt/uppgift saknas (objektets egen partner → PRD:
+primary stakeholder → författare → företag).
 
 ## Verktyg
 
