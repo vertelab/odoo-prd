@@ -31,7 +31,7 @@
         som data-XML.
     """,
     'author': 'Vertel Sverige AB',
-    'website': 'https://vertel.se/apps/odoo-prd',
+    'website': 'https://vertel.se/apps/odoo-prd/prd_ai',
     'license': 'AGPL-3',
     'depends': [
         'prd',

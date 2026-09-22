@@ -31,7 +31,7 @@
         understanding of the product's goals, functionality, and priorities.
     """,
     "author": "Vertel AB",
-    "website": "https://vertel.se/apps/odoo-project/prd",
+    "website": "https://vertel.se/apps/odoo-prd/prd",
     "license": "AGPL-3",
     "contributor": "",
     "maintainer": "Vertel AB",
