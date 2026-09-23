@@ -39,6 +39,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/okf_artifact_types_prd.xml',
         'data/prd_tools.xml',
         'data/prd_skills.xml',
         'data/prd_coworkers.xml',
