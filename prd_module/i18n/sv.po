@@ -20,10 +20,10 @@ msgstr ""
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_branches__active
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_library__active
-#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_lincence__active
+#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_licence__active
 #: model_terms:ir.ui.view,arch_db:prd_module.view_prd_odoo_branches_search
 #: model_terms:ir.ui.view,arch_db:prd_module.view_prd_odoo_library_search
-#: model_terms:ir.ui.view,arch_db:prd_module.view_prd_odoo_lincence_search
+#: model_terms:ir.ui.view,arch_db:prd_module.view_prd_odoo_licence_search
 msgid "Active"
 msgstr "Aktiv"
 
@@ -98,14 +98,14 @@ msgstr "Controller"
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_branches__create_uid
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_library__create_uid
-#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_lincence__create_uid
+#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_licence__create_uid
 msgid "Created by"
 msgstr "Skapad av"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_branches__create_date
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_library__create_date
-#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_lincence__create_date
+#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_licence__create_date
 msgid "Created on"
 msgstr "Skapad den"
 
@@ -122,14 +122,14 @@ msgstr "Beroenden"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_library__description
-#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_lincence__description
+#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_licence__description
 msgid "Description"
 msgstr "Beskrivning"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_branches__display_name
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_library__display_name
-#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_lincence__display_name
+#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_licence__display_name
 msgid "Display Name"
 msgstr "Visningsnamn"
 
@@ -148,7 +148,7 @@ msgstr "Git URL är inte inställd"
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_branches__id
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_library__id
-#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_lincence__id
+#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_licence__id
 msgid "ID"
 msgstr "ID"
 
@@ -165,19 +165,19 @@ msgstr "Index-fil"
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_branches__write_uid
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_library__write_uid
-#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_lincence__write_uid
+#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_licence__write_uid
 msgid "Last Updated by"
 msgstr "Senast uppdaterad av"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_branches__write_date
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_library__write_date
-#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_lincence__write_date
+#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_licence__write_date
 msgid "Last Updated on"
 msgstr "Senast uppdaterad den"
 
 #. module: prd_module
-#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_lincence__code
+#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_licence__code
 msgid "Licence Code"
 msgstr "Licensnummer"
 
@@ -189,7 +189,7 @@ msgstr "Modeller"
 
 #. module: prd_module
 #: model:ir.model.fields,field_description:prd_module.field_prd_odoo_library__name
-#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_lincence__name
+#: model:ir.model.fields,field_description:prd_module.field_prd_odoo_licence__name
 msgid "Name"
 msgstr "Namn"
 
@@ -231,7 +231,7 @@ msgstr "Ingen modul har angetts %s"
 #. module: prd_module
 #: model:ir.actions.act_window,name:prd_module.action_prd_odoo_branches
 #: model:ir.model,name:prd_module.model_prd_odoo_branches
-#: model:ir.model,name:prd_module.model_prd_odoo_lincence
+#: model:ir.model,name:prd_module.model_prd_odoo_licence
 #: model:ir.ui.menu,name:prd_module.menu_prd_odoo_branches
 msgid "Odoo Branches"
 msgstr "Odoo Brancher"
@@ -248,7 +248,7 @@ msgid "Odoo Library"
 msgstr "Odoo bibliotek"
 
 #. module: prd_module
-#: model:ir.ui.menu,name:prd_module.menu_prd_odoo_lincence
+#: model:ir.ui.menu,name:prd_module.menu_prd_odoo_licence
 msgid "Odoo Licences"
 msgstr "Odoo licenser"
 
@@ -302,6 +302,6 @@ msgid "Website"
 msgstr "Webbplats"
 
 #. module: prd_module
-#: model:ir.actions.act_window,name:prd_module.action_prd_odoo_lincence
+#: model:ir.actions.act_window,name:prd_module.action_prd_odoo_licence
 msgid "[translate:Odoo Licences]"
 msgstr "[översätt:Odoo Licenser]"
