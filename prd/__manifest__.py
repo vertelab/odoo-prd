@@ -21,7 +21,7 @@
 
 {
     "name": "PRD: Product Requirement Document",
-    "version": "1.0",
+    'version': '18.0.1.1.0',
     "summary": "A Product Requirements Document (PRD) is a formal document that outlines the purpose, features, and requirements.",
     "category": "Productivity",
     "description": """

@@ -21,20 +21,25 @@
 
 {
     'name': 'PRD Module Website',
-    'version': '1.0',
-    'summary': 'Website interface for listing PRD modules and repositories',
+    'version': '18.0.1.0.0',
+    'summary': 'Website interface for listing PRD modules and repositories.',
     'category': 'Website',
-    'description': """
-        Website Module for PRD
-        =======================
-        
-        This module provides a website interface to browse and view PRD repositories and modules.
-        
-        Features:
-        - List all PRD repositories
-        - Browse modules within each repository
-        - View detailed module information including manifest and files
-    """,
+    'description': '''
+PRD Module Website
+==================
+
+    This module provides a website interface to browse and view PRD repositories and modules.
+
+    Features:
+            - List all PRD repositories
+            - Browse modules within each repository
+            - View detailed module information including manifest and files
+
+    Features:
+
+        - Web integration: Exposes HTTP endpoints for external systems.
+        - UI Integration: Extends 1 view(s) in the Odoo interface.
+    ''',
     'author': 'Vertel AB',
     'website': 'https://vertel.se/apps/odoo-prd/prd_module_website',
     'license': 'AGPL-3',

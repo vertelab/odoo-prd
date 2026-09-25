@@ -21,15 +21,17 @@
 {
     'name': 'PRD: AI',
     'version': '18.0.1.0.1',
-    'summary': 'PRD-coworkers — PRD Analyst + PRD Module Builder',
+    'summary': 'PRD-coworkers — PRD Analyst + PRD Module Builder.',
     'category': 'Productivity',
-    'description': """
-        AI-medarbetare för Product Requirement Documents (PRD):
-        analysera dokument, prioritera krav och designa Odoo-moduler
-        från requirements. Bridge-modul (depends prd + ai_agent_core)
-        enligt Vertel bridge-standard: ai.coworker + ai.tool + ai.skill
-        som data-XML.
-    """,
+    'description': '''
+AI
+==
+
+    AI co-worker for Product Requirement Documents (PRD).
+
+Analyses documents, prioritises requirements and designs Odoo modules from
+requirements. Bridge module (depends on prd + ai_agent_core).
+    ''',
     'author': 'Vertel Sverige AB',
     'website': 'https://vertel.se/apps/odoo-prd/prd_ai',
     'license': 'AGPL-3',
