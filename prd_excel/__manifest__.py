@@ -21,25 +21,16 @@
 
 {
     'name': 'Project: PRD Excel',
-    'version': '18.0.1.0.0',
-    'summary': 'Read requirement from an Excel file.',
+    'version': '1.0',
+    'summary': 'Read requirement from an Excel file',
     'category': 'Productivity',
-    'description': '''
-PRD Excel
-=========
-
-    Creats requirements from excel
-            A Product Requirement Document (PRD), is a central guiding document in product development that describes what a product should do, 
-            which needs it should fulfill, and which features it should contain — without specifying how these should be solved technically. 
-            The purpose is to ensure that all stakeholders – from product owners and developers to designers and testers – have a shared 
-            understanding of the product's goals, functionality, and priorities.
-
-    Features:
-
-        - Guided Wizards: Step-by-step dialogs for data entry.
-        - UI Integration: Extends 2 view(s) in the Odoo interface.
-        - Extends Odoo: Builds on prd.document.
-    ''',
+    'description': """
+        Creats requirements from excel
+        A Product Requirement Document (PRD), is a central guiding document in product development that describes what a product should do, 
+        which needs it should fulfill, and which features it should contain — without specifying how these should be solved technically. 
+        The purpose is to ensure that all stakeholders – from product owners and developers to designers and testers – have a shared 
+        understanding of the product's goals, functionality, and priorities.
+    """,
     'author': 'Vertel AB',
     'website': 'https://vertel.se/apps/odoo-prd/prd_excel',
     'license': 'AGPL-3',
@@ -53,3 +44,4 @@ PRD Excel
     ],
     'application': False,
 }
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
