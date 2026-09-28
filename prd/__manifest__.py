@@ -21,7 +21,7 @@
 
 {
     "name": "PRD: Product Requirement Document",
-    'version': '18.0.1.1.0',
+    "version": "1.0",
     "summary": "A Product Requirements Document (PRD) is a formal document that outlines the purpose, features, and requirements.",
     "category": "Productivity",
     "description": """
@@ -31,7 +31,7 @@
         understanding of the product's goals, functionality, and priorities.
     """,
     "author": "Vertel AB",
-    "website": "https://vertel.se/apps/odoo-prd/prd",
+    "website": "https://vertel.se/apps/odoo-project/prd",
     "license": "AGPL-3",
     "contributor": "",
     "maintainer": "Vertel AB",
@@ -57,3 +57,4 @@
     ],
     "application": True,
 }
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

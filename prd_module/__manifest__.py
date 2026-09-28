@@ -21,25 +21,16 @@
 
 {
     'name': 'Project: PRD Odoo module',
-    'version': '18.0.1.0.0',
-    'summary': 'Create Odoo module from Product Requirements Document (PRD).',
+    'version': '1.0',
+    'summary': 'Create Odoo module from Product Requirements Document (PRD)',
     'category': 'Productivity',
-    'description': '''
-PRD Odoo module
-===============
-
-    Using PRD to create a tar-file
-            A Product Requirement Document (PRD), is a central guiding document in product development that describes what a product should do, 
-            which needs it should fulfill, and which features it should contain — without specifying how these should be solved technically. 
-            The purpose is to ensure that all stakeholders – from product owners and developers to designers and testers – have a shared 
-            understanding of the product's goals, functionality, and priorities.
-
-    Features:
-
-        - Guided Wizards: Step-by-step dialogs for data entry.
-        - UI Integration: Extends 10 view(s) in the Odoo interface.
-        - Extends Odoo: Builds on ai.quest, git.provider.github, git.provider.gitlab, git.provider.mixin.
-    ''',
+    'description': """
+        Using PRD to create a tar-file
+        A Product Requirement Document (PRD), is a central guiding document in product development that describes what a product should do, 
+        which needs it should fulfill, and which features it should contain — without specifying how these should be solved technically. 
+        The purpose is to ensure that all stakeholders – from product owners and developers to designers and testers – have a shared 
+        understanding of the product's goals, functionality, and priorities.
+    """,
     'author': 'Vertel AB',
     'website': 'https://vertel.se/apps/odoo-prd/prd_module',
     'license': 'AGPL-3',
@@ -66,3 +57,4 @@ PRD Odoo module
     "post_init_hook": "post_init_hook",
     'application': False,
 }
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
