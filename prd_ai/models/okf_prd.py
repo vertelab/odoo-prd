@@ -69,4 +69,9 @@ class PrdDocument(models.Model):
         """
         res = super()._register_hook()
         self.env['ai.okf.mixin']._okf_register_indexable('prd.document')
+        # PRD:s etikett-modeller (okf-mixin F4.4): kärnan får inte namnge
+        # dem — bryggan äger dem och registrerar dem (D11-mönstret).
+        mixin = self.env['ai.okf.mixin']
+        mixin._okf_register_label_model('prd.function_category')
+        mixin._okf_register_label_model('prd.requirement_category')
         return res
