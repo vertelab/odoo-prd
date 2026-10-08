@@ -227,7 +227,7 @@
                                         </t>
                                         <div>
                                             <h3 class="mb-0"><t t-esc="module.name or module.technical_name"/></h3>
-                                            <small class="text-muted">by <strong><t t-esc="module.author or 'Vertel AB'"/></strong></small>
+                                            <small class="text-muted">by <strong><t t-esc="module.author or 'Vertel Sverige AB'"/></strong></small>
                                         </div>
                                     </div>
                                     
@@ -329,7 +329,7 @@
                                                 <t t-esc="module.name or module.technical_name"/>
                                             </h1>
                                                 <p class="lead">
-                                                    This module was created by Vertel AB. 
+                                                    This module was created by Vertel Sverige AB. 
                                                     For support, query and question contact us.
                                                 </p>
                                             </div>
