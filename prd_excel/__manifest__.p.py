@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    Odoo SA, Open Source Management Solution, third party addon
-#    Copyright (C) 2025- Vertel AB (<https://vertel.se>).
+#    Copyright (C) 2025- Vertel Sverige AB (<https://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -31,11 +31,11 @@
         The purpose is to ensure that all stakeholders – from product owners and developers to designers and testers – have a shared 
         understanding of the product's goals, functionality, and priorities.
     """,
-    'author': 'Vertel AB',
+    'author': 'Vertel Sverige AB',
     'website': 'https://vertel.se/apps/odoo-prd/prd_excel',
     'license': 'AGPL-3',
     'contributor': '',
-    'maintainer': 'Vertel AB',
+    'maintainer': 'Vertel Sverige AB',
     'depends': ['prd'],
     'data': [
         'security/ir.model.access.csv',
