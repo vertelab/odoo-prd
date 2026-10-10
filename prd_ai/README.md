@@ -1,19 +1,40 @@
 # PRD: AI (prd_ai)
 
 AI-medarbetare för Product Requirement Documents (PRD) — bridge-modul
-(depends `prd` + `ai_agent_core`) enligt Vertel bridge-standard:
-`ai.coworker` + `ai.tool` + `ai.skill` som data-XML.
+(depends `prd` + `project_ai` + `ai_agent_core`) enligt Vertel
+bridge-standard: `ai.agent` + `ai.tool` + `ai.skill` som data-XML.
 
-## Coworkers
+## Agent — PRD-analytiker
 
-| Coworker | Roll | Verktyg | Skill |
-|----------|------|---------|-------|
-| **PRD Analyst** | Analysera PRD-dokument, prioritera krav (MoSCoW), hitta luckor | prd_get, prd_requirement_get, prd_requirement_set_status, prd_stakeholder_get | skill_prd_analysis |
-| **PRD Module Builder** | Designa Odoo-modul från PRD-requirements | prd_get, prd_requirement_get, prd_function_get, prd_module_design | skill_odoo_module |
+Sedan 18.0.2.0.0 levereras PRD-förmågan som en **specialist-agent**
+länkad till coworkern **Project** (`project_ai`), inte som egen coworker.
 
-Båda har init_type `openai_api` (Pi/Cline via `/ai/openai/<id>/v1/chat/completions`)
-+ `web_ui`. `pi_instruction` konfigurerad för klientstyrning
-(`system_prompt_add`/`skill_to_load` metadata — se openai-api-pi-orchestration).
+| Agent | Roll | Verktyg | Skills |
+|-------|------|---------|--------|
+| **PRD-analytiker** | Analysera PRD-dokument, prioritera krav (MoSCoW), kontrollera spårbarhet + acceptanskriterier, designa Odoo-modul | prd_get, prd_requirement_get, prd_requirement_set_status, prd_stakeholder_get, prd_function_get, prd_module_design | skill_prd_analysis, skill_odoo_module, skill_cost_context |
+
+Länkrad: `coworker_agent_prd_analyst` →
+`project_ai.coworker_project_task_manager`, `role=member`, `sequence=40`.
+
+### Mönstret — additiv förmågeexpansion
+
+`prd_ai` äger sin agent och sin länkrad. Avinstalleras `prd_ai`
+försvinner PRD-analytikern — Project och de andra agenterna förblir
+intakta. `project_ai` skriver aldrig över `agent_ids`, så en
+uppgradering av `project_ai` rör inte PRD-länken.
+
+Se `project_ai/docs/additiv-formageexpansion.md`.
+
+### Pensionerade coworkers (T/12020)
+
+| Coworker | Id | Sessioner | Ersatt av |
+|----------|-----|-----------|-----------|
+| PRD Analyst | #520 | 1 (id 319) | PRD-analytiker-agenten |
+| PRD Module Builder | #521 | 0 | PRD-analytiker-agenten (`prd_module_design`) |
+
+Motivering: de var separata personas för samma arbetsflöde som Project
+redan äger (analysera → planera → bygga). En supervisor + specialister ger
+ett sammanhållet flöde och en enda kostnadskontext.
 
 ## Session-kontext
 

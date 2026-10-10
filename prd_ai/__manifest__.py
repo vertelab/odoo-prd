@@ -20,8 +20,8 @@
 ##############################################################################
 {
     'name': 'PRD: AI',
-    'version': '18.0.1.0.0',
-    'summary': 'PRD-coworkers — PRD Analyst + PRD Module Builder',
+    'version': '18.0.2.0.0',
+    'summary': 'PRD analyst agent for the Project coworker',
     'category': 'Productivity',
     'description': """
         AI-medarbetare för Product Requirement Documents (PRD):
@@ -29,12 +29,20 @@
         från requirements. Bridge-modul (depends prd + ai_agent_core)
         enligt Vertel bridge-standard: ai.coworker + ai.tool + ai.skill
         som data-XML.
+
+        Sedan 18.0.2.0.0: PRD-analytiker-agenten länkas till Project-
+        coworkern (project_ai.coworker_project_task_manager) enligt
+        mönstret additiv förmågeexpansion — se
+        project_ai/docs/additiv-formageexpansion.md. De tidigare
+        fristående coworkererna PRD Analyst / PRD Module Builder är
+        pensionerade.
     """,
     'author': 'Vertel Sverige AB',
     'website': 'https://vertel.se/apps/odoo-prd',
     'license': 'AGPL-3',
     'depends': [
         'prd',
+        'project_ai',
         'ai_agent_core',
     ],
     'data': [
@@ -42,6 +50,7 @@
         'data/prd_tools.xml',
         'data/prd_skills.xml',
         'data/prd_coworkers.xml',
+        'data/prd_agents.xml',
         'views/session_views.xml',
     ],
     'demo': [],
