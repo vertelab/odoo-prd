@@ -21,6 +21,10 @@
 
 {
     'name': 'PRD: with added scrum',
+    'version': '1.0.0',
+    # Version ledger: 1 = Major. Non regressionable code. 2 = Minor. New features
+    # that are regressionable. 3 = Bug fixes.
+    # Odoo versionen skrivs ALDRIG här — Odoo prefixar själv (adapt_version).
     'summary': 'PRD with added scrum capabilities',
     'category': 'Productivity',
     'description': """
