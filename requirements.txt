@@ -3,3 +3,14 @@ paramiko
 PyGithub
 python-gitlab
 filetype
+
+# ── Saknade beroenden — inventering 2026-11-13 ──────────────────────────────
+# prd — BeautifulSoup på modulnivå
+beautifulsoup4
+
+# prd_module — markdown (rendering) och github/gitlab (PyGithub/python-gitlab
+# fanns redan; modulen importerar även markdown)
+markdown
+
+# prd_excel — openpyxl
+openpyxl
